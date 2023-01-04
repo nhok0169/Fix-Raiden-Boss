@@ -31,7 +31,7 @@ import re
 src = "RaidenShogun.ini" 
 add = """\
 ;raiden boss fixed by NK#1321 if you used it for fix your raiden pls give credit for "Nhok0169"
-;thank for nguen#2011 for support
+;thank nguen#2011 for support
 [TextureOverrideRaidenShogunBossBlend]
 hash = fe5c0180
 vb1 = ResourceRaidenShogunBossBlend
