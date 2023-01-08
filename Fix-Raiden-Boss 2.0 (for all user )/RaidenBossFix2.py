@@ -24,7 +24,7 @@ vg_remap = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':
              '92':'93','93':'63','94':'65','95':'107','96':'109','97':'111','98':'76','99':'78','100':'80','101':'88',
              '102':'90','103':'92','104':'96','105':'98','106':'100','107':'82','108':'84','109':'86','110':'69',
              '111':'71','112':'73','113':'105','114':'113','115':'101','116':'102','117':'103'}
-
+maxVGindex = 117
 
 # Diabling the OLD ini
 def dis_ini(file):
@@ -64,7 +64,7 @@ def blendCorrection():
         outputweights = bytearray()
         outputindices = bytearray()
         for weight, index in zip(blendweights, blendindices):
-            if weight != 0:
+            if weight != 0 and index <= maxVGindex:
                 index = int(vg_remap[str(index)])
             outputweights += struct.pack("<f", weight)
             outputindices += struct.pack("<I", index)
