@@ -16,6 +16,6 @@
 ### STEP 4: 
 double click on the .py file and enter. It will auto create DISABLED folder and copy original ini file for backup and do something just open for check im lazy to explan
 ### STEP 5:
-open the game and enjoy the fix ( i didn't test it with merge so if you have error just tell me )
+open the game and enjoy the fix ( i didn't test it with merge and if you merge them you need to run script on all original folder before merge so if you have error just tell me )
 ### VIDEO TUTORIAL :
 https://www.youtube.com/watch?v=0iJ5Q4dcn1Q
