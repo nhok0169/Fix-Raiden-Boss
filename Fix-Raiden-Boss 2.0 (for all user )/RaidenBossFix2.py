@@ -230,7 +230,7 @@ class RemapBlendModel():
 
 
 class IniFileService():
-    Credit = f'\n; raiden boss fixed by NK#1321 if you used it for fix your raiden pls give credit for "Nhok0169"\n; thank nguen#2011 SilentNightSound#7430 and HazrateGolabi#1364 for support'
+    Credit = f'\n; Raiden boss fixed by NK#1321 if you used it for fix your raiden pls give credit for "Nhok0169"\n; Thank nguen#2011 SilentNightSound#7430 HazrateGolabi#1364 and Albert Gold#2696 for support'
 
     def __init__(self, parser: configparser.ConfigParser):
         self._parser = parser
