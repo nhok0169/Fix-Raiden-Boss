@@ -67,6 +67,16 @@ class BlendFileNotRecognized(FileException):
         super().__init__(f"Blend file format not recognized for {os.path.basename(blendFile)}", path = os.path.dirname(blendFile))
 
 
+class DictTools():
+    @classmethod
+    def getFirstKey(cls, dict: Dict[Any, Any]) -> Any:
+        return next(iter(dict))
+
+    @classmethod
+    def getFirstValue(cls, dict: Dict[Any, Any]) -> Any:
+        return dict[cls.getFirstKey(dict)]
+
+
 class FileService():
     @classmethod
     def getFilesAndDirs(cls, path: str = DefaultPath) -> List[List[str]]:
@@ -245,16 +255,16 @@ class IniFileService():
         return content
 
     # retrieves the key-value pairs of a section in the .ini file. Manually parsed the file since ConfigParser
-    #   errors out on conditional statements in .ini file for mods. Could later inherit from the parser(RawConfigParser) 
+    #   errors out on conditional statements in .ini file for mods. Could later inherit from the parser (RawConfigParser) 
     #   to custom deal with conditionals
-    def getSectionOptions(self, iniFileLines: List[str], section: Union[str, re.Pattern]) -> List[Dict[str, Any]]:
+    def getSectionOptions(self, iniFileLines: List[str], section: Union[str, re.Pattern]) -> Dict[str, Dict[str, Any]]:
         sectionFilter = None
         if (isinstance(section, str)):
             sectionFilter = lambda line: line == section
         else:
             sectionFilter = lambda line: section.match(line)
 
-        result = []
+        result = {}
         currentSectionName = None
         currentSectionToParse = None
 
@@ -270,7 +280,7 @@ class IniFileService():
 
             if (line.strip() == ""):
                 self._parser.read_string(currentSectionToParse)
-                result.append(dict(self._parser[currentSectionName]))
+                result[currentSectionName] = dict(self._parser[currentSectionName])
 
                 currentSectionToParse = None
                 currentSectionName = None
@@ -279,10 +289,10 @@ class IniFileService():
 
         return result
 
-    def getTextureOverideBlendDicts(self, iniFileLines: List[str]):
+    def getTextureOverideBlendDicts(self, iniFileLines: List[str]) -> Dict[str, Dict[str, Any]]:
         return self.getSectionOptions(iniFileLines, self._textureOverrideBlendPattern)
     
-    def getResourceBlendDicts(self, iniFileLines: List[str]):
+    def getResourceBlendDicts(self, iniFileLines: List[str]) -> Dict[str, Dict[str, Any]]:
         return self.getSectionOptions(iniFileLines, self._resourceBlendPattern)
 
     # get the needed draw value
@@ -290,13 +300,22 @@ class IniFileService():
         if textureOverideKvps["draw"]:
             draw: str = textureOverideKvps["draw"]
         return draw
+    
+    def getMergedResourceIndex(self, mergedResourceName: str) -> str:
+        return mergedResourceName.split(".")[-1]
 
     # get the sorted order of the mod folders used in the merged.ini
-    def getResourceBlendFolderPaths(self, resourceDicts: List[Dict[str, Any]]) -> List[str]:
+    def getResourceBlendFolderPaths(self, resourceDicts: Dict[str, Dict[str, Any]]) -> List[str]:
         fileNameKey = "filename"
         modFolders = []
 
-        for resourceDict in resourceDicts:
+        # case where the resources are not put in the proper order
+        resourceTuples = [(k, v) for k, v in resourceDicts.items()]
+        resourceTuples.sort(key = lambda tuple: int(self.getMergedResourceIndex(tuple[0])))
+
+        for tuple in resourceTuples:
+            resourceDict = tuple[1]
+
             if (resourceDict[fileNameKey]):
                 folder = os.path.dirname(resourceDict[fileNameKey])
                 modFolders.append(folder)
@@ -482,7 +501,7 @@ class RaidenBossFixService():
 
         iniLines = self._iniFileService.getFileLines(iniFile)
         textureOverideBlendDicts = self._iniFileService.getTextureOverideBlendDicts(iniLines)
-        draw = self._iniFileService.getBlendDrawValue(textureOverideBlendDicts[0])
+        draw = self._iniFileService.getBlendDrawValue(DictTools.getFirstValue(textureOverideBlendDicts))
 
         fixedBlendName = self._blendCorrection(blendFile)
         fixedBlendName = os.path.basename(fixedBlendName).split('.')[0]
