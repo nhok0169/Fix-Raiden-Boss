@@ -3,6 +3,7 @@
 #   nguen#2011 (for support)
 #   SilentNightSound#7430 (for internal knowdege so wrote the blendCorrection code)
 #   HazrateGolabi#1364 (for being awesome, and improving the code)
+#   Albert Gold#2696 (for update the code for merged mods)
 
 
 import os
