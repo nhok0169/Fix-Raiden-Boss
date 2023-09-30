@@ -12,7 +12,7 @@ import re
 import struct
 import traceback
 from typing import List, Callable, Optional, Union, Dict, Any
-
+import argparse
 
 
 VGRemap = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'60','9':'61','10':'66','11':'67',
@@ -32,10 +32,15 @@ MaxVGIndex = 117
 DefaultFileType = "file"
 DefaultPath = "."
 IniExt = ".ini"
+TxtExt = ".txt"
+IniExtLen = len(IniExt)
 MergedFile = f"merged{IniExt}"
 
 IniFileType = "*.ini file"
 BlendFileType = "Blend.buf"
+
+argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
+argParser.add_argument('-d', '--deleteBackup', action='store_true', help='whether to keep a backup copy of the original .ini files')
 
 
 class Error(Exception):
@@ -177,7 +182,25 @@ class FileService():
         return result
     
 
-class ModFileService():
+class Mod():
+    def __init__(self, path: str = DefaultPath, files: Optional[List[str]] = None):
+        self.path = path
+        self._files = files
+        self._setupFiles()
+
+    @property
+    def files(self):
+        return self._files
+
+    @files.setter
+    def files(self, newFiles: Optional[List[str]] = None):
+        self._files = newFiles
+        self._setupFiles()
+
+    def _setupFiles(self):
+        if (self._files is None):
+            self._files = FileService.getFiles(path = self.path,)
+
     @classmethod
     def isMerged(cls, file: str) -> bool:
         return file.endswith(MergedFile)
@@ -190,17 +213,14 @@ class ModFileService():
     def isBlend(cls, file: str) -> bool:
         return file.endswith(BlendFileType)
     
-    @classmethod
-    def getBaseModFiles(cls, files: Optional[List[str]] = None, path: str = DefaultPath) -> List[str]:
-        return FileService.getSingleFiles(path = path, filters = {IniFileType: cls.isIni, BlendFileType: cls.isBlend}, files = files)
+    def getBaseModFiles(self) -> List[str]:
+        return FileService.getSingleFiles(path = self.path, filters = {IniFileType: self.isIni, BlendFileType: self.isBlend}, files = self._files)
     
-    @classmethod
-    def getIni(cls, files: Optional[List[str]] = None, path: str = DefaultPath) -> str:
-        return FileService.getSingleFiles(path = path, filters = {IniFileType: cls.isIni}, files = files)
+    def getIni(self) -> str:
+        return FileService.getSingleFiles(path = self.path, filters = {IniFileType: self.isIni}, files = self._files)
 
-    @classmethod
-    def getBlend(cls, files: Optional[List[str]] = None, path: str = DefaultPath) -> str:
-        return FileService.getSingleFiles(path = path, filters = {BlendFileType: cls.isBlend}, files = files)
+    def getBlend(self) -> str:
+        return FileService.getSingleFiles(path = self.path, filters = {BlendFileType: self.isBlend}, files = self._files)
 
 
 class Logger():
@@ -240,25 +260,49 @@ class RemapBlendModel():
         self.blendPath = os.path.join(self.path, f"{self.fixedBlendName}.buf")
 
 
-class IniFileService():
+class IniFile():
     Credit = f'\n; Raiden boss fixed by NK#1321 if you used it for fix your raiden pls give credit for "Nhok0169"\n; Thank nguen#2011 SilentNightSound#7430 HazrateGolabi#1364 and Albert Gold#2696 for support'
 
-    def __init__(self, parser: configparser.ConfigParser):
-        self._parser = parser
-        self._textureOverrideBlendPattern = re.compile(r"\[\s*TextureOverride(\w+)Blend\s*\]")
-        self._resourceBlendPattern = re.compile(r"\[\s*Resource(\w+)Blend\.[0-9]+\s*\]")
-    
-    @classmethod
-    def getFileLines(cls, iniFile: str) -> List[str]:
-        content = ""
-        with open(iniFile, "r") as f:
-            content = f.readlines()
-        return content
+    _textureOverrideBlendPattern = re.compile(r"\[\s*TextureOverride(\w+)Blend\s*\]")
+    _resourceBlendPattern = re.compile(r"\[\s*Resource(\w+)Blend\.[0-9]+\s*\]")
+    _fixedTextureOverrideBlendPattern = re.compile(r"\[\s*TextureOverrideRaidenShogunRemapBlend\s*\]")
+
+    def __init__(self, file: str):
+        self.file = file
+        self._parser = configparser.ConfigParser()
+
+        self._fileLines = []
+        self._fileTxt = ""
+        self._fileLinesRead = False
+        self._isRaidenFixed = False
+
+    @property
+    def isRaidenFixed(self):
+        return self._isRaidenFixed
+
+    def getFileLines(self) -> List[str]:
+        with open(self.file, "r") as f:
+            self._fileLines = f.readlines()
+
+        self._fileLinesRead = True
+        return self._fileLines
+
+    def _readLines(func):
+        def readLinesWrapper(self, *args, **kwargs):
+            if (not self._fileLinesRead):
+                self.getFileLines()
+            return func(self, *args, **kwargs)
+        return readLinesWrapper
+
+    def _checkRaidenFixed(self, line: str):
+        if (not self._isRaidenFixed and self._fixedTextureOverrideBlendPattern.match(line)):
+            self._isRaidenFixed = True
 
     # retrieves the key-value pairs of a section in the .ini file. Manually parsed the file since ConfigParser
     #   errors out on conditional statements in .ini file for mods. Could later inherit from the parser (RawConfigParser) 
     #   to custom deal with conditionals
-    def getSectionOptions(self, iniFileLines: List[str], section: Union[str, re.Pattern]) -> Dict[str, Dict[str, Any]]:
+    @_readLines
+    def getSectionOptions(self, section: Union[str, re.Pattern]) -> Dict[str, Dict[str, Any]]:
         sectionFilter = None
         if (isinstance(section, str)):
             sectionFilter = lambda line: line == section
@@ -269,7 +313,9 @@ class IniFileService():
         currentSectionName = None
         currentSectionToParse = None
 
-        for line in iniFileLines:
+        for line in self._fileLines:
+            self._checkRaidenFixed(line)
+
             if (sectionFilter(line)):
                 currentSectionToParse = f"{line}"
                 currentSectionName = line.strip().replace("]", "")
@@ -290,11 +336,11 @@ class IniFileService():
 
         return result
 
-    def getTextureOverideBlendDicts(self, iniFileLines: List[str]) -> Dict[str, Dict[str, Any]]:
-        return self.getSectionOptions(iniFileLines, self._textureOverrideBlendPattern)
+    def getTextureOverideBlendDicts(self) -> Dict[str, Dict[str, Any]]:
+        return self.getSectionOptions(self._textureOverrideBlendPattern)
     
-    def getResourceBlendDicts(self, iniFileLines: List[str]) -> Dict[str, Dict[str, Any]]:
-        return self.getSectionOptions(iniFileLines, self._resourceBlendPattern)
+    def getResourceBlendDicts(self) -> Dict[str, Dict[str, Any]]:
+        return self.getSectionOptions(self._resourceBlendPattern)
 
     # get the needed draw value
     def getBlendDrawValue(self, textureOverideKvps: Dict[str, Any]) -> Optional[str]:
@@ -326,8 +372,13 @@ class IniFileService():
     # Disabling the OLD ini
     @classmethod
     def disIni(cls, file: str):
+        baseName = os.path.basename(file)
+
+        if (baseName.endswith(IniExt)):
+            baseName = baseName[:-IniExtLen] + TxtExt
+
         try:
-            os.rename(file, os.path.join(os.path.dirname(file), "DISABLED") + os.path.basename(file))
+            os.rename(file, os.path.join(os.path.dirname(file), "DISABLED") + baseName)
         except FileExistsError:
             pass
 
@@ -423,43 +474,43 @@ class IniFileService():
 
         return addFix
 
-    @classmethod
-    def injectAddition(cls, iniFile: str, addition: str, logger: Optional[Logger] = None, beforeOriginal: bool = True):
-        original = ''
-        with open(iniFile, "r") as f:
-            original = f.read()
+    @_readLines
+    def injectAddition(self, addition: str, logger: Optional[Logger] = None, beforeOriginal: bool = True, keepBackup: bool = True):
+        original = "".join(self._fileLines)
 
-        if (logger is not None):
-            logger.log("Cleaning up and disabling the OLD STINKY ini")  
-        cls.disIni(iniFile)
+        if (keepBackup):
+            if (logger is not None):
+                logger.log("Cleaning up and disabling the OLD STINKY ini")
+
+            self.disIni(self.file)
 
         # writing the fixed file
-        with open(iniFile, "w") as f:
+        with open(self.file, "w") as f:
             if (beforeOriginal):
-                f.write(addition)
+                f.write(f"{addition}\n\n")
 
-            f.write(f"\n\n{original}")
+            f.write(original)
 
             if (not beforeOriginal):
                 f.write(addition)
 
-    @classmethod
-    def fixBase(cls, iniFile: str, remapBlendModel: RemapBlendModel, logger: Optional[Logger] = None):
-        addFix = cls.getBaseFixStr(remapBlendModel.fixedBlendName, remapBlendModel.draw)
-        cls.injectAddition(iniFile, addFix, logger = logger)
+    def fixBase(self, remapBlendModel: RemapBlendModel, logger: Optional[Logger] = None, keepBackup: bool = True):
+        addFix = self.getBaseFixStr(remapBlendModel.fixedBlendName, remapBlendModel.draw)
+        self.injectAddition(addFix, logger = logger, keepBackup = keepBackup)
 
-    @classmethod
-    def fixMerged(cls, iniFile: str, remapBlendModels: List[RemapBlendModel], logger: Optional[Logger] = None):
-        addFix = cls.getMergedFixStr(remapBlendModels[0].fixedBlendName, remapBlendModels)
-        cls.injectAddition(iniFile, f"\n\n{addFix}", logger = logger, beforeOriginal = False)
+    def fixMerged(self, remapBlendModels: List[RemapBlendModel], logger: Optional[Logger] = None, keepBackup: bool = True):
+        addFix = self.getMergedFixStr(remapBlendModels[0].fixedBlendName, remapBlendModels)
+        self.injectAddition(f"\n\n{addFix}", logger = logger, beforeOriginal = False, keepBackup = keepBackup)
 
 
 class RaidenBossFixService():
-    def __init__(self):
-        self._parser = configparser.ConfigParser()
-        self._iniFileService = IniFileService(self._parser)
+    def __init__(self, keepBackups: bool = True):
         self._loggerBasePrefix = ""
         self._logger = Logger()
+        self._keepBackups = keepBackups
+
+    def getFixedBlendFile(self, blendFile: str) -> str:
+        return f"{blendFile.split('Blend.buf')[0]}RemapBlend.buf"
 
     # correcting the blend file
     def _blendCorrection(self, blendFile: str) -> str:
@@ -485,33 +536,40 @@ class RaidenBossFixService():
                 outputindices += struct.pack("<I", index)
             result += outputweights
             result += outputindices
-        FixedBlendName = f"{blendFile.split('Blend.buf')[0]}RemapBlend.buf"
-        with open(FixedBlendName, "wb") as f:
+        fixedBlendFile = self.getFixedBlendFile(blendFile)
+        with open(fixedBlendFile, "wb") as f:
             f.write(result)
         self._logger.log('Blend file correction done')
-        return FixedBlendName
+        return fixedBlendFile
 
     # fix each individual mod containing the assets
     def fixBaseMod(self, path: str = DefaultPath, iniFile: Optional[str] = None, blendFile: Optional[str] = None, files: Optional[List[str]] = None) -> RemapBlendModel:
+        mod = Mod(path = path, files = files)
         if (iniFile is None and blendFile is None):
-            iniFile, blendFile = ModFileService.getBaseModFiles(path = path, files = files)
+            iniFile, blendFile = mod.getBaseModFiles()
         elif (iniFile is None):
-            iniFile = ModFileService.getIni(path = path, files = files)
+            iniFile = mod.getIni()
         elif (blendFile is None):
-            blendFile = ModFileService.getBlend(path = path, files = files)
+            blendFile = mod.getBlend()
 
-        iniLines = self._iniFileService.getFileLines(iniFile)
-        textureOverideBlendDicts = self._iniFileService.getTextureOverideBlendDicts(iniLines)
-        draw = self._iniFileService.getBlendDrawValue(DictTools.getFirstValue(textureOverideBlendDicts))
+        ini = IniFile(iniFile)
+        textureOverideBlendDicts = ini.getTextureOverideBlendDicts()
+        draw = ini.getBlendDrawValue(DictTools.getFirstValue(textureOverideBlendDicts))
 
-        fixedBlendName = self._blendCorrection(blendFile)
+        fixedBlendName = self.getFixedBlendFile(blendFile)
         fixedBlendName = os.path.basename(fixedBlendName).split('.')[0]
-        
+
         remapBlendModel = RemapBlendModel(fixedBlendName, draw, path)
+
+        self._blendCorrection(blendFile)
+
+        if (ini.isRaidenFixed):
+            self._logger.log("ini file already fixed")
+            return remapBlendModel
 
         # writing the fixed file
         self._logger.log("Making the fixed ini file")
-        self._iniFileService.fixBase(iniFile, remapBlendModel, logger = self._logger)
+        ini.fixBase(remapBlendModel, logger = self._logger, keepBackup = self._keepBackups)
 
         return remapBlendModel
 
@@ -522,22 +580,25 @@ class RaidenBossFixService():
         self._logger.prefix = self._loggerBasePrefix
 
         files, dirs = FileService.getFilesAndDirs()
-        topIniFile = ModFileService.getIni(files = files)
+        topMod = Mod(files = files)
+        topIniFile = topMod.getIni()
 
-        if (ModFileService.isMerged(topIniFile)):
+        if (Mod.isMerged(topIniFile)):
             self._logger.log(f"Reading {MergedFile} file for individual mods to modify")
 
             # read the merged.ini for mod folders
-            iniLines = self._iniFileService.getFileLines(topIniFile)
-            resourceBlendDicts = self._iniFileService.getResourceBlendDicts(iniLines)
+            ini = IniFile(topIniFile)
+            resourceBlendDicts = ini.getResourceBlendDicts()
 
-            modFolders = self._iniFileService.getResourceBlendFolderPaths(resourceBlendDicts)
+            modFolders = ini.getResourceBlendFolderPaths(resourceBlendDicts)
+
             remapBlendModelsDict = {}
             remapBlendModels = []
             for dir in modFolders:
                 blendFile =""
                 iniFile = ""
                 dirBaseName = os.path.basename(dir)
+                mod = Mod(path = dir)
 
                 # case where a mod folder is called twice in merged.ini
                 try:
@@ -549,7 +610,7 @@ class RaidenBossFixService():
                     continue
 
                 try:
-                    iniFile, blendFile = ModFileService.getBaseModFiles(path = dir)
+                    iniFile, blendFile = mod.getBaseModFiles()
                 except FileException as e:
                     continue
 
@@ -566,8 +627,13 @@ class RaidenBossFixService():
 
             self._logger.split()
             self._logger.prefix = self._loggerBasePrefix
+
+            if (ini.isRaidenFixed):
+                self._logger.log(f"{MergedFile} file already fixed")
+                return
+
             self._logger.log(f"Making the {MergedFile} file")
-            self._iniFileService.fixMerged(topIniFile, remapBlendModels, logger = self._logger)
+            ini.fixMerged(remapBlendModels, logger = self._logger, keepBackup = self._keepBackups)
         else:
             self.fixBaseMod(iniFile = topIniFile, files = files)
 
@@ -582,5 +648,6 @@ class RaidenBossFixService():
 
 
 # Main Driver Code
-raidenBossFixService = RaidenBossFixService()
+args = argParser.parse_args()
+raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup)
 raidenBossFixService.fix()
