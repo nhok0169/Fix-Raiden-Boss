@@ -27,7 +27,7 @@ https://www.youtube.com/watch?v=29FM0GywcWA
 ### Update for merged mods
 For merged mods, run the script wherever the `merged.ini` file is located.
 
-### Options
+### Command Options
 ```
   -h, --help          show this help message and exit
   -d, --deleteBackup  whether to keep a backup copy of the original .ini files
