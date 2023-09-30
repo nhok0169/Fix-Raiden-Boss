@@ -30,5 +30,5 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 ### Command Options
 ```
   -h, --help          show this help message and exit
-  -d, --deleteBackup  whether to keep a backup copy of the original .ini files
+  -d, --deleteBackup  whether to not keep a backup copy of the original .ini files
 ```
