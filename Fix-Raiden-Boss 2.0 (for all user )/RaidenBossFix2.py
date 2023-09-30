@@ -494,6 +494,8 @@ class IniFile():
             if (not beforeOriginal):
                 f.write(addition)
 
+        self._isRaidenFixed = True
+
     def fixBase(self, remapBlendModel: RemapBlendModel, logger: Optional[Logger] = None, keepBackup: bool = True):
         addFix = self.getBaseFixStr(remapBlendModel.fixedBlendName, remapBlendModel.draw)
         self.injectAddition(addFix, logger = logger, keepBackup = keepBackup)
