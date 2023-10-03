@@ -13,6 +13,7 @@ import struct
 import traceback
 from typing import List, Callable, Optional, Union, Dict, Any
 import argparse
+import ntpath
 
 
 VGRemap = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'60','9':'61','10':'66','11':'67',
@@ -29,8 +30,12 @@ VGRemap = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'
              '111':'71','112':'73','113':'105','114':'113','115':'101','116':'102','117':'103'}
 MaxVGIndex = 117
 
+# change our current working directory to this file, allowing users to run program
+#   by clicking on the script instead of running by CLI
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 DefaultFileType = "file"
-DefaultPath = "."
+DefaultPath = os.getcwd()
 IniExt = ".ini"
 TxtExt = ".txt"
 IniExtLen = len(IniExt)
@@ -199,7 +204,7 @@ class Mod():
 
     def _setupFiles(self):
         if (self._files is None):
-            self._files = FileService.getFiles(path = self.path,)
+            self._files = FileService.getFiles(path = self.path)
 
     @classmethod
     def isMerged(cls, file: str) -> bool:
@@ -249,6 +254,9 @@ class Logger():
     def handleException(self, exception: BaseException):
         message = f"\n{type(exception).__name__}: {exception}\n\n{traceback.format_exc()}"
         self.error(message)
+
+    def waitExit(self):
+        input("\n== Press ENTER to exit ==")
 
 
 # Needed data model to inject into the .ini file
@@ -363,9 +371,13 @@ class IniFile():
         for tuple in resourceTuples:
             resourceDict = tuple[1]
 
+            # normalize by ntpath for linux users
             if (resourceDict[fileNameKey]):
-                folder = os.path.dirname(resourceDict[fileNameKey])
-                modFolders.append(folder)
+                resourcePath = ntpath.normpath(resourceDict[fileNameKey])
+                folderPaths = ntpath.dirname(resourcePath).split(ntpath.sep)
+
+                if (folderPaths):
+                    modFolders.append(folderPaths[-1])
 
         return modFolders
 
@@ -648,8 +660,11 @@ class RaidenBossFixService():
         except BaseException as e:
             self._logger.handleException(e)
 
+        self._logger.waitExit()
+
 
 # Main Driver Code
-args = argParser.parse_args()
-raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup)
-raidenBossFixService.fix()
+if __name__ == "__main__":
+    args = argParser.parse_args()
+    raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup)
+    raidenBossFixService.fix()
