@@ -17,7 +17,7 @@ python RaidenBossFix2.py
 ```
 then enter
 - **RECOMMENDED** that you only run **1 TIME** 
-*(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option)*
+*(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you do not want any new changes added)*
 ### STEP 3:
 - Open the game and enjoy it
 ### VIDEO TUTORIAL AND EXAMPLES:
