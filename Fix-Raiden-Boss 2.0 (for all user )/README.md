@@ -16,7 +16,7 @@
 python RaidenBossFix2.py
 ```
 then enter
-- make sure you only run it 1 time
+- **RECOMMENDED** that you only run **1 TIME** (There are command options to undo your run if needed...)
 ### STEP 3:
 - Open the game and enjoy it
 ### VIDEO TUTORIAL AND EXAMPLES:
@@ -30,5 +30,7 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 ### Command Options
 ```
   -h, --help          show this help message and exit
-  -d, --deleteBackup  whether to not keep a backup copy of the original .ini files
+  -d, --deleteBackup  deletes backup copies of the original .ini files
+  -f, --fixOnly       only fixes the mod without cleaning any previous runs of the script
+  -r, --revert        reverts back previous runs of the script
 ```
