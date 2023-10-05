@@ -21,15 +21,19 @@ then enter
 *(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you only want to undo previous runs without adding any new changes)*
 ### STEP 3:
 - Open the game and enjoy it
-### VIDEO TUTORIAL AND EXAMPLES:
-https://www.youtube.com/watch?v=29FM0GywcWA
 
-[More examples here](../Examples)
-
-### Update for merged mods
+## Update for merged mods
 For merged mods, run the script wherever the `merged.ini` file is located.
 
-### Command Options
+## VIDEO TUTORIAL AND EXAMPLES:
+
+#### Quickstart
+https://www.youtube.com/watch?v=29FM0GywcWA
+
+#### More Features
+[More examples here](../Examples)
+
+## Command Options
 ```
   -h, --help          show this help message and exit
   -d, --deleteBackup  deletes backup copies of the original .ini files
