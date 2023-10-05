@@ -45,6 +45,7 @@ BackupFilePrefix = "DISABLED_RSFixBackup_"
 IniFileType = "*.ini file"
 BlendFileType = "Blend.buf"
 RemapBlendFile = f"RaidenShogunRemap{BlendFileType}"
+IniFileEncoding = "utf-8"
 
 FixOnlyOpt = '--fixOnly'
 RevertOpt = '--revert'
@@ -290,17 +291,17 @@ class IniFile():
     def read(self) -> str:
         self._merged = self.isMerged()
         result = ""
-        with open(self.file, "r") as f:
+        with open(self.file, "r", encoding = IniFileEncoding) as f:
             result = f.read()
         return result
     
     def write(self):
         txtToWrite = "".join(self._fileLines)
-        with open(self.file, "w") as f:
+        with open(self.file, "w", encoding = IniFileEncoding) as f:
             f.write(txtToWrite)
 
     def getFileLines(self) -> List[str]:
-        with open(self.file, "r") as f:
+        with open(self.file, "r", encoding = IniFileEncoding) as f:
             self._fileLines = f.readlines()
 
         self._fileLinesRead = True
@@ -543,7 +544,7 @@ class IniFile():
             self.disIni()
 
         # writing the fixed file
-        with open(self.file, "w") as f:
+        with open(self.file, "w", encoding = IniFileEncoding) as f:
             if (beforeOriginal):
                 f.write(f"{addition}\n\n")
 
@@ -560,7 +561,7 @@ class IniFile():
         fileTxt = re.sub(self._fixRemovalPattern, "", fileTxt)
         fileTxt = fileTxt.strip()
 
-        with open(self.file, "w") as f:
+        with open(self.file, "w", encoding = IniFileEncoding) as f:
             f.write(fileTxt)
 
         self.clearRead()
