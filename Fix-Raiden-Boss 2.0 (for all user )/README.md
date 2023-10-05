@@ -4,7 +4,7 @@
 - Thank [SilentNightSound#7430](https://github.com/SilentNightSound) for the logic rewrite
 - Thank HazrateGolabi#1364 for combine and make final script
 - Thank [Albert Gold#2696](https://github.com/Alex-Au1) for update the code for merged mods
-## requestment : 
+## Requirements 
 - [Python](https://www.python.org/downloads/)
 - [DOWNLOAD](https://github.com/nhok0169/Fix-Raiden-Boss/archive/refs/heads/nhok0169.zip) script on this github
 ## Let's Start !
@@ -17,18 +17,23 @@ python RaidenBossFix2.py
 ```
 then enter
 - **RECOMMENDED** that you only run **1 TIME** 
+
 *(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you only want to undo previous runs without adding any new changes)*
 ### STEP 3:
 - Open the game and enjoy it
-### VIDEO TUTORIAL AND EXAMPLES:
-https://www.youtube.com/watch?v=29FM0GywcWA
 
-[More examples here](../Examples)
-
-### Update for merged mods
+## Update for merged mods
 For merged mods, run the script wherever the `merged.ini` file is located.
 
-### Command Options
+## VIDEO TUTORIAL AND EXAMPLES:
+
+#### Quickstart
+https://www.youtube.com/watch?v=29FM0GywcWA
+
+#### More Features
+[More examples here](../Examples)
+
+## Command Options
 ```
   -h, --help          show this help message and exit
   -d, --deleteBackup  deletes backup copies of the original .ini files
