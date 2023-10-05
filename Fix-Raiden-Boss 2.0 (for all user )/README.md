@@ -4,7 +4,7 @@
 - Thank [SilentNightSound#7430](https://github.com/SilentNightSound) for the logic rewrite
 - Thank HazrateGolabi#1364 for combine and make final script
 - Thank [Albert Gold#2696](https://github.com/Alex-Au1) for update the code for merged mods
-## requestment : 
+## Requirements 
 - [Python](https://www.python.org/downloads/)
 - [DOWNLOAD](https://github.com/nhok0169/Fix-Raiden-Boss/archive/refs/heads/nhok0169.zip) script on this github
 ## Let's Start !
