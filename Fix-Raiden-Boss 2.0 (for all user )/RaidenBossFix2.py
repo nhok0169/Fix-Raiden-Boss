@@ -326,7 +326,7 @@ class IniFile():
     #   errors out on conditional statements in .ini file for mods. Could later inherit from the parser (RawConfigParser) 
     #   to custom deal with conditionals
     @_readLines
-    def getSectionOptions(self, section: Union[str, re.Pattern], postProcessor: Optional[Callable[[int, List[str], str, str], Any]] = None) -> Dict[str, Dict[str, Any]]:
+    def getSectionOptions(self, section: str, postProcessor: Optional[Callable[[int, List[str], str, str], Any]] = None) -> Dict[str, Dict[str, Any]]:
         sectionFilter = None
         if (isinstance(section, str)):
             sectionFilter = lambda line: line == section
@@ -377,7 +377,7 @@ class IniFile():
             return (startInd, endInd)
         return (startInd, endInd + 1)
     
-    def removeSectionOptions(self, section: Union[str, re.Pattern]):
+    def removeSectionOptions(self, section: str):
         rangesToRemove = self.getSectionOptions(section, postProcessor = self._removeSection)
 
         for sectionName in rangesToRemove:
@@ -419,10 +419,8 @@ class IniFile():
             # normalize by ntpath for linux users
             if (resourceDict[fileNameKey]):
                 resourcePath = ntpath.normpath(resourceDict[fileNameKey])
-                folderPaths = ntpath.dirname(resourcePath).split(ntpath.sep)
-
-                if (folderPaths):
-                    modFolders.append(folderPaths[-1])
+                folderPath = ntpath.dirname(resourcePath)
+                modFolders.append(folderPath)
 
         return modFolders
 
@@ -789,32 +787,32 @@ class RaidenBossFixService():
             remapBlendModelsDict = {}
             remapBlendModels = []
             for dir in modFolders:
-                dirBaseName = os.path.basename(dir)
+                dirName = dir.replace(ntpath.sep, os.sep)
 
                 # case where a mod folder is called twice in merged.ini
                 try:
-                    remapBlendModelsDict[dir]
+                    remapBlendModelsDict[dirName]
                 except:
                     pass
                 else:
-                    remapBlendModels.append(remapBlendModelsDict[dir])
+                    remapBlendModels.append(remapBlendModelsDict[dirName])
                     continue
 
                 mod = None
                 try:
-                    mod = Mod(path = dir)
+                    mod = Mod(path = dirName)
                 except FileException as e:
                     continue
 
                 self._logger.split()
-                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirBaseName}"
+                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
 
                 remapBlendModel = self.fixBaseMod(mod)
                 if (self._undoOnly):
                     continue
 
                 remapBlendModels.append(remapBlendModel)
-                remapBlendModelsDict[dir] = remapBlendModel
+                remapBlendModelsDict[dirName] = remapBlendModel
 
             self._logger.split()
             self._logger.prefix = self._loggerBasePrefix
