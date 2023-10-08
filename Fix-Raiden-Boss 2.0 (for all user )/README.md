@@ -10,7 +10,7 @@
 - Thank [Albert Gold#2696](https://github.com/Alex-Au1) for update the code for merged mods
 ## Requirements 
 - [Python](https://www.python.org/downloads/)
-- [DOWNLOAD](https://github.com/nhok0169/Fix-Raiden-Boss/archive/refs/heads/nhok0169.zip) script on this github
+- [DOWNLOAD](https://github.com/Alex-Au1/Fix-Raiden-Boss/releases) script on latest release
 ## Let's Start !
 ### STEP 1:
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
