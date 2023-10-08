@@ -27,10 +27,11 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 
 ## VIDEO TUTORIAL AND EXAMPLES:
 
-#### Quickstart
-https://www.youtube.com/watch?v=29FM0GywcWA
+### Quickstart
+**Individual Mod:** https://www.youtube.com/watch?v=29FM0GywcWA  
+**Merged Mods:** https://www.youtube.com/watch?v=nEyMYIHdrQM
 
-#### More Features
+### More Features
 [More examples here](../Examples)
 
 ## Command Options
