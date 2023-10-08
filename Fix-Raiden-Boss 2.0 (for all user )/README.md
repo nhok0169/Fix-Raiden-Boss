@@ -13,7 +13,7 @@
 - [DOWNLOAD](https://github.com/Alex-Au1/Fix-Raiden-Boss/releases) script on latest release
 ## Let's Start !
 ### STEP 1:
-- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
+- Copy [THIS](https://github.com/Alex-Au1/Fix-Raiden-Boss/releases/download/v3.1.6/RaidenBossFix2.py) script into Raiden Mod Folder 
 ### STEP 2:
 - Double click on the script or [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type :
 ```python
