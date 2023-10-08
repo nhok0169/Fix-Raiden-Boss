@@ -1,4 +1,8 @@
 # FIX RAIDEN BOSS
+<img alt="GitHub release (latest by SemVer and asset)" src="https://img.shields.io/github/downloads/Alex-Au1/Fix-Raiden-Boss/latest/RaidenBossFix2.py?label=Latest%20Release%20Script%20Download">
+
+
+
 <a href=""><img alt="" src="https://cdn.discordapp.com/attachments/1030715335910887425/1060179887933104229/raiden.png?width=838&height=417"></a>
 - Author Ideal [NK#1321](https://discordapp.com/users/277117247523389450)
 - Thank [SilentNightSound#7430](https://github.com/SilentNightSound) for the logic rewrite
