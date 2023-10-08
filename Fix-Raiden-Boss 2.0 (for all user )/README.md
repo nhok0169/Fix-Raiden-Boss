@@ -1,6 +1,5 @@
 # FIX RAIDEN BOSS
-<img alt="GitHub release (latest by SemVer and asset)" src="https://img.shields.io/github/downloads/Alex-Au1/Fix-Raiden-Boss/latest/RaidenBossFix2.py?label=Latest%20Release%20Script%20Download">
-
+<img alt="GitHub release (latest by SemVer and asset including pre-releases)" src="https://img.shields.io/github/downloads-pre/Alex-Au1/Fix-Raiden-Boss/latest/RaidenBossFix2.py?label=Latest%20Release%20Script%20Download&color=rgb(0%2C%20153%2C%2051)">
 
 
 <a href=""><img alt="" src="https://cdn.discordapp.com/attachments/1030715335910887425/1060179887933104229/raiden.png?width=838&height=417"></a>
