@@ -12,5 +12,8 @@ https://www.youtube.com/watch?v=L2emgqQVARU
 ### Fix for Merged Mods by CMD:
 https://www.youtube.com/watch?v=Kn7ygwpxRVU
 
+### Fix Without Keeping DISABLED Backup .ini/txt files
+https://www.youtube.com/watch?v=COWVvKmuKgw
+
 ### Undo/Redo Fix:
 https://www.youtube.com/watch?v=AG4VyvcN5PA
