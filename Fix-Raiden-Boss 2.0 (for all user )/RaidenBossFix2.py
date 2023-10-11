@@ -47,10 +47,11 @@ BlendFileType = "Blend.buf"
 RemapBlendFile = f"RaidenShogunRemap{BlendFileType}"
 IniFileEncoding = "utf-8"
 
+DeleteBackupOpt = '--deleteBackup'
 FixOnlyOpt = '--fixOnly'
 RevertOpt = '--revert'
 argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
-argParser.add_argument('-d', '--deleteBackup', action='store_true', help='deletes backup copies of the original .ini files')
+argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help='deletes backup copies of the original .ini files')
 argParser.add_argument('-f', FixOnlyOpt, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
 argParser.add_argument('-r', RevertOpt, action='store_true', help='reverts back previous runs of the script')
 
@@ -204,20 +205,54 @@ class FileService():
 
 
 class Logger():
+    DefaultHeadingSideLen = 2
+    DefaultHeadingChar = "="
+
     def __init__(self, prefix: str = ""):
         self.prefix = prefix
+        self._headingTxtLen = 0
+        self._headingSideLen = 0
+        self._headingChar = ""
+        self.includePrefix = True
+
+        self._setDefaultHeadingAtts()
+
+    def _setDefaultHeadingAtts(self):
+        self._headingTxtLen = 0
+        self._headingSideLen = self.DefaultHeadingSideLen
+        self._headingChar = self.DefaultHeadingChar
 
     def getStr(self, message: str):
         return f"# {self.prefix} --> {message}"
 
     def log(self, message: str):
-        print(self.getStr(message))
+        if (self.includePrefix):
+            message = self.getStr(message)
+        print(message)
 
-    def split(self) -> str:
+    def split(self):
         self.log("\n")
 
-    def space(self) -> str:
+    def space(self):
         self.log("")
+
+    def openHeading(self, txt: str, sideLen: int = DefaultHeadingSideLen, headingChar = DefaultHeadingChar):
+        self._headingTxtLen = len(txt)
+        self._headingSideLen = sideLen
+        self._headingChar = headingChar
+        
+        side = headingChar * sideLen
+        self.log(f"{side} {txt} {side}")
+
+    def closeHeading(self):
+        side = self._headingChar * self._headingSideLen
+        mid = self._headingChar * (self._headingTxtLen + 2)
+        self.log(f"{side}{mid}{side}")
+
+        self._setDefaultHeadingAtts()
+
+    def bulletPoint(self, txt: str):
+        self.log(f"- {txt}")
 
     def error(self, message: str):
         self.space()
@@ -754,6 +789,25 @@ class RaidenBossFixService():
         self._logger.log("Making the fixed ini file")
         mod.ini.fixBase(remapBlendModel, logger = self._logger, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
         return remapBlendModel
+    
+    def addTips(self):
+        self._logger.includePrefix = False
+
+        if (not self._undoOnly or self._keepBackups):
+            self._logger.split()
+            self._logger.openHeading("Tips", sideLen = 10)
+
+            if (self._keepBackups):
+                self._logger.bulletPoint(f'Hate deleting the "{BackupFilePrefix}" .ini/txt files yourself after running this script? (cuz I know I do!) Run this script again (on CMD) using the {DeleteBackupOpt} option')
+            
+            if (not self._undoOnly):
+                self._logger.bulletPoint(f"Want to undo this script's fix? Run this script again (on CMD) using the {RevertOpt} option")
+
+            self._logger.space()
+            self._logger.log("For more info on command options, run this script (on CMD) using the --help option")
+            self._logger.closeHeading()
+
+        self._logger.includePrefix = True
 
 
     def _fix(self):
@@ -843,6 +897,9 @@ class RaidenBossFixService():
             self._fix()
         except BaseException as e:
             self._logger.handleException(e)
+        else:
+            self._logger.split()
+            self.addTips()
 
         self._logger.waitExit()
 
