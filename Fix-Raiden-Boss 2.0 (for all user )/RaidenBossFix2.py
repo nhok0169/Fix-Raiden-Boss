@@ -60,6 +60,9 @@ class Error(Exception):
     def __init__(self, message: str):
         super().__init__(f"ERROR: {message}")
 
+    def warn(self):
+        return str(self).replace("ERROR", "WARNING")
+
 
 class FileException(Error):
     def __init__(self, message: str, path: str = DefaultPath):
@@ -843,6 +846,9 @@ class RaidenBossFixService():
             for dir in modFolders:
                 dirName = dir.replace(ntpath.sep, os.sep)
 
+                self._logger.split()
+                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
+
                 # case where a mod folder is called twice in merged.ini
                 try:
                     remapBlendModelsDict[dirName]
@@ -850,16 +856,17 @@ class RaidenBossFixService():
                     pass
                 else:
                     remapBlendModels.append(remapBlendModelsDict[dirName])
+                    self._logger.log(f"Mod located at {dirName} has already been fixed")
                     continue
 
                 mod = None
                 try:
                     mod = Mod(path = dirName)
                 except FileException as e:
+                    self._logger.error(f"{type(e).__name__}: {e.warn()}")
+                    self._logger.space()
+                    self._logger.log("Skipping mod...")
                     continue
-
-                self._logger.split()
-                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
 
                 remapBlendModel = self.fixBaseMod(mod)
                 if (self._undoOnly):
