@@ -60,6 +60,9 @@ class Error(Exception):
     def __init__(self, message: str):
         super().__init__(f"ERROR: {message}")
 
+    def warn(self):
+        return str(self).replace("ERROR", "WARNING")
+
 
 class FileException(Error):
     def __init__(self, message: str, path: str = DefaultPath):
@@ -251,8 +254,12 @@ class Logger():
 
         self._setDefaultHeadingAtts()
 
+    @classmethod
+    def getBulletStr(self, txt: str) -> str:
+        return f"- {txt}"
+
     def bulletPoint(self, txt: str):
-        self.log(f"- {txt}")
+        self.log(self.getBulletStr(txt))
 
     def error(self, message: str):
         self.space()
@@ -263,6 +270,13 @@ class Logger():
             self.log(messagePart)
 
         self.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    @classmethod
+    def getWarnStr(self, exception: Error) -> str:
+        return f"{type(exception).__name__}: {exception.warn()}"
+    
+    def warn(self, exception: Error):
+        self.error(self.getWarnStr(exception))
 
     def handleException(self, exception: BaseException):
         message = f"\n{type(exception).__name__}: {exception}\n\n{traceback.format_exc()}"
@@ -724,6 +738,7 @@ class RaidenBossFixService():
         self._keepBackups = keepBackups
         self._fixOnly = fixOnly
         self._undoOnly = undoOnly
+        self._skippedMods: Dict[str, Error] = {}
 
 
     def getFixedBlendFile(self, blendFile: str) -> str:
@@ -810,6 +825,17 @@ class RaidenBossFixService():
         self._logger.includePrefix = True
 
 
+    def reportSkippedMods(self):
+        if (self._skippedMods):
+            message = f"WARNING: The following mods were skipped due to warnings (see log above):\n\n"
+            for dir in self._skippedMods:
+                warnStr = self._skippedMods[dir].warn()
+                message += self._logger.getBulletStr(f"{dir} >>> {warnStr}\n")
+
+            self._logger.error(message)
+            self._logger.space()
+
+
     def _fix(self):
         if (self._fixOnly and self._undoOnly):
             raise ConflictingOptions([FixOnlyOpt, RevertOpt])
@@ -843,6 +869,9 @@ class RaidenBossFixService():
             for dir in modFolders:
                 dirName = dir.replace(ntpath.sep, os.sep)
 
+                self._logger.split()
+                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
+
                 # case where a mod folder is called twice in merged.ini
                 try:
                     remapBlendModelsDict[dirName]
@@ -850,16 +879,19 @@ class RaidenBossFixService():
                     pass
                 else:
                     remapBlendModels.append(remapBlendModelsDict[dirName])
+                    self._logger.log(f"Mod located at {dirName} has already been fixed")
                     continue
 
                 mod = None
                 try:
                     mod = Mod(path = dirName)
                 except FileException as e:
+                    self._logger.warn(e)
+                    self._logger.space()
+                    self._logger.log("Skipping mod...")
+                    
+                    self._skippedMods[dirName] = e
                     continue
-
-                self._logger.split()
-                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
 
                 remapBlendModel = self.fixBaseMod(mod)
                 if (self._undoOnly):
@@ -869,7 +901,9 @@ class RaidenBossFixService():
                 remapBlendModelsDict[dirName] = remapBlendModel
 
             self._logger.split()
-            self._logger.prefix = self._loggerBasePrefix
+            self._logger.prefix = self._loggerBasePrefix 
+
+            self.reportSkippedMods()
 
             if (self._undoOnly):
                 self._logger.log("Finished reverting previous changes")
@@ -899,7 +933,9 @@ class RaidenBossFixService():
             self._logger.handleException(e)
         else:
             self._logger.split()
-            self.addTips()
+
+            if (not self._skippedMods):
+                self.addTips()
 
         self._logger.waitExit()
 
