@@ -738,6 +738,7 @@ class RaidenBossFixService():
         self._keepBackups = keepBackups
         self._fixOnly = fixOnly
         self._undoOnly = undoOnly
+        self._skippedMods: Dict[str, Error] = {}
 
 
     def getFixedBlendFile(self, blendFile: str) -> str:
@@ -824,14 +825,15 @@ class RaidenBossFixService():
         self._logger.includePrefix = True
 
 
-    def reportSkippedMods(self, skippedMods: Dict[str, Error]):
-        message = f"WARNING: The following mods were skipped due to warnings (see log above):\n\n"
-        for dir in skippedMods:
-            warnStr = skippedMods[dir].warn()
-            message += self._logger.getBulletStr(f"{dir} >>> {warnStr}\n")
+    def reportSkippedMods(self):
+        if (self._skippedMods):
+            message = f"WARNING: The following mods were skipped due to warnings (see log above):\n\n"
+            for dir in self._skippedMods:
+                warnStr = self._skippedMods[dir].warn()
+                message += self._logger.getBulletStr(f"{dir} >>> {warnStr}\n")
 
-        self._logger.error(message)
-        self._logger.space()
+            self._logger.error(message)
+            self._logger.space()
 
 
     def _fix(self):
@@ -864,8 +866,6 @@ class RaidenBossFixService():
 
             remapBlendModelsDict = {}
             remapBlendModels = []
-            skippedMods = {}
-
             for dir in modFolders:
                 dirName = dir.replace(ntpath.sep, os.sep)
 
@@ -890,7 +890,7 @@ class RaidenBossFixService():
                     self._logger.space()
                     self._logger.log("Skipping mod...")
                     
-                    skippedMods[dirName] = e
+                    self._skippedMods[dirName] = e
                     continue
 
                 remapBlendModel = self.fixBaseMod(mod)
@@ -903,7 +903,7 @@ class RaidenBossFixService():
             self._logger.split()
             self._logger.prefix = self._loggerBasePrefix 
 
-            self.reportSkippedMods(skippedMods)
+            self.reportSkippedMods()
 
             if (self._undoOnly):
                 self._logger.log("Finished reverting previous changes")
@@ -933,7 +933,9 @@ class RaidenBossFixService():
             self._logger.handleException(e)
         else:
             self._logger.split()
-            self.addTips()
+
+            if (not self._skippedMods):
+                self.addTips()
 
         self._logger.waitExit()
 
