@@ -254,8 +254,12 @@ class Logger():
 
         self._setDefaultHeadingAtts()
 
+    @classmethod
+    def getBulletStr(self, txt: str) -> str:
+        return f"- {txt}"
+
     def bulletPoint(self, txt: str):
-        self.log(f"- {txt}")
+        self.log(self.getBulletStr(txt))
 
     def error(self, message: str):
         self.space()
@@ -266,6 +270,13 @@ class Logger():
             self.log(messagePart)
 
         self.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    @classmethod
+    def getWarnStr(self, exception: Error) -> str:
+        return f"{type(exception).__name__}: {exception.warn()}"
+    
+    def warn(self, exception: Error):
+        self.error(self.getWarnStr(exception))
 
     def handleException(self, exception: BaseException):
         message = f"\n{type(exception).__name__}: {exception}\n\n{traceback.format_exc()}"
@@ -813,6 +824,16 @@ class RaidenBossFixService():
         self._logger.includePrefix = True
 
 
+    def reportSkippedMods(self, skippedMods: Dict[str, Error]):
+        message = f"WARNING: The following mods were skipped due to warnings (see log above):\n\n"
+        for dir in skippedMods:
+            warnStr = skippedMods[dir].warn()
+            message += self._logger.getBulletStr(f"{dir} >>> {warnStr}\n")
+
+        self._logger.error(message)
+        self._logger.space()
+
+
     def _fix(self):
         if (self._fixOnly and self._undoOnly):
             raise ConflictingOptions([FixOnlyOpt, RevertOpt])
@@ -843,6 +864,8 @@ class RaidenBossFixService():
 
             remapBlendModelsDict = {}
             remapBlendModels = []
+            skippedMods = {}
+
             for dir in modFolders:
                 dirName = dir.replace(ntpath.sep, os.sep)
 
@@ -863,9 +886,11 @@ class RaidenBossFixService():
                 try:
                     mod = Mod(path = dirName)
                 except FileException as e:
-                    self._logger.error(f"{type(e).__name__}: {e.warn()}")
+                    self._logger.warn(e)
                     self._logger.space()
                     self._logger.log("Skipping mod...")
+                    
+                    skippedMods[dirName] = e
                     continue
 
                 remapBlendModel = self.fixBaseMod(mod)
@@ -876,7 +901,9 @@ class RaidenBossFixService():
                 remapBlendModelsDict[dirName] = remapBlendModel
 
             self._logger.split()
-            self._logger.prefix = self._loggerBasePrefix
+            self._logger.prefix = self._loggerBasePrefix 
+
+            self.reportSkippedMods(skippedMods)
 
             if (self._undoOnly):
                 self._logger.log("Finished reverting previous changes")
