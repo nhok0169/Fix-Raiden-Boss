@@ -11,7 +11,7 @@ import configparser
 import re
 import struct
 import traceback
-from typing import List, Callable, Optional, Union, Dict, Any
+from typing import List, Callable, Optional, Union, Dict, Any, TypeVar, Hashable
 import argparse
 import ntpath
 
@@ -54,6 +54,8 @@ argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
 argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help='deletes backup copies of the original .ini files')
 argParser.add_argument('-f', FixOnlyOpt, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
 argParser.add_argument('-r', RevertOpt, action='store_true', help='reverts back previous runs of the script')
+
+T = TypeVar('T')
 
 
 class Error(Exception):
@@ -103,6 +105,12 @@ class DictTools():
     @classmethod
     def getFirstValue(cls, dict: Dict[Any, Any]) -> Any:
         return dict[cls.getFirstKey(dict)]
+    
+
+class ListTools():
+    @classmethod
+    def to_dict(cls, lst: List[T], get_id: Callable[[T], Hashable]) -> Dict[Hashable, T]:
+        return {get_id(e): e for e in lst}
 
 
 class FileService():
@@ -286,36 +294,67 @@ class Logger():
         input("\n== Press ENTER to exit ==")
 
 
+# our model objects in MVC
+class Model():
+    def __init__(self, logger: Optional[Logger] = None):
+        self.logger = logger
+
+    def print(self, funcName: str, *args, **kwargs):
+        if (self.logger is not None):
+            func = getattr(self.logger, funcName)
+            return func(*args, **kwargs)
+
+
 # Needed data model to inject into the .ini file
 class RemapBlendModel():
-    def __init__(self, fixedBlendName: str, draw: str, path: str):
+    def __init__(self, fixedBlendName: str, draw: str, path: str, origBlendName: Optional[str] = None):
         self.fixedBlendName = fixedBlendName
         self.draw = draw
         self.path = path
         self.blendPath = os.path.join(self.path, f"{self.fixedBlendName}.buf")
+        self.origBlendName = origBlendName
 
 
-class IniFile():
+# IniFile: Class to handle .ini files
+#
+# Note: We analyse the .ini file using Regex which is NOT the right way to do things
+#   since the modified .ini language that GIMI interprets is a CFG (context free grammer) and NOT a regular language.
+#   
+#   But since we are lazy and don't want make our own compiler with tokenizers, parsing algorithms (eg. SLR(1)), type checking, etc...
+#       this module should handle regular cases of .ini generated using existing scripts (assuming the user does not do anything funny...)
+class IniFile(Model):
     Credit = f'\n; Raiden boss fixed by NK#1321 if you used it for fix your raiden pls give credit for "Nhok0169"\n; Thank nguen#2011 SilentNightSound#7430 HazrateGolabi#1364 and Albert Gold#2696 for support'
 
     _fixHeader = "; --------------- Raiden Boss Fix -----------------"
     _fixFooter = "; -------------------------------------------------"
 
-    _textureOverrideBlendPattern = re.compile(r"\[\s*TextureOverride(\w+)Blend\s*\]")
-    _resourceBlendPattern = re.compile(r"\[\s*Resource((?!RaidenShogunRemap).)*Blend\.[0-9]+\s*\]")
+    # -- regex strings ---
+    _textureOverrideBlendPatternStr = r"\[\s*TextureOverride(\w+)Blend\s*\]"
+    _commandListBlendPatternStr = r"\[\s*CommandListRaidenShogunBlend\s*\]"
+    _resourceBlendPatternStr = r"\[\s*Resource((?!RaidenShogunRemap).)*Blend\.[0-9]+\s*\]"
 
     _fixedTextureOverrideBlendPatternStr = r"\[\s*TextureOverrideRaidenShogunRemapBlend\s*\]"
     _fixedCommandListBlendPatternStr = r"\[\s*CommandListRaidenShogunRemapBlend\s*\]"
-    _fixedMergedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend\.[0-9]+\s*\]"
-    _fixedBaseResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend\s*\]"
+
+    # --------------------
+
+    # -- regex objects ---
+    _textureOverrideBlendPattern = re.compile(_textureOverrideBlendPatternStr)
+    _commandListBlendPattern = re.compile(_commandListBlendPatternStr)
+    _resourceBlendPattern = re.compile(_resourceBlendPatternStr)
 
     _fixedTextureOverrideBlendPattern = re.compile(_fixedTextureOverrideBlendPatternStr)
-
-    _mergedSectionsRemovalPattern = re.compile(f"({_fixedTextureOverrideBlendPatternStr})|({_fixedCommandListBlendPatternStr})|({_fixedMergedResourceBlendPatternStr})")
-    _baseSectionsRemovalPattern = re.compile(f"({_fixedTextureOverrideBlendPatternStr})|({_fixedBaseResourceBlendPatternStr})")
     _fixRemovalPattern = re.compile(f"{_fixHeader}(.|\n)*{_fixFooter}")
 
-    def __init__(self, file: str):
+    _parsePattern = re.compile(f"({_resourceBlendPatternStr})|({_commandListBlendPatternStr})")
+
+    # -------------------
+
+    _ifStructurePattern = re.compile(r"\s*(endif|if|else)")
+    Vb1 = "vb1"
+
+    def __init__(self, file: str, logger: Optional[Logger] = None):
+        super().__init__(logger = logger)
         self.file = file
         self._parser = configparser.ConfigParser()
 
@@ -325,12 +364,25 @@ class IniFile():
         self._isRaidenFixed = False
         self._merged = self.isMerged()
 
+        self._textureOverideBlendDicts: Dict[str, Dict[str, Any]] = {}
+        self._resourceBlendDicts: Dict[str, Dict[str, Any]] = {}
+        self._blendIfTemplate: List[Union[str, int]] = []
+        self._hasblendIfTemplate = False
+
     @property
     def isRaidenFixed(self):
         return self._isRaidenFixed
-
+    
+    @property
+    def merged(self):
+        return self._merged
+    
+    @classmethod
+    def checkMerged(cls, file: str) -> bool:
+        return file.endswith(MergedFile)
+    
     def isMerged(self) -> bool:
-        return self.file.endswith(MergedFile)
+        return self.checkMerged(self.file)
     
     def clearRead(self):
         self._fileLines = []
@@ -367,18 +419,27 @@ class IniFile():
         if (not self._isRaidenFixed and self._fixedTextureOverrideBlendPattern.match(line)):
             self._isRaidenFixed = True
 
-    def _parseSection(self, sectionName: str, srcTxt: str):
+    def _parseSection(self, sectionName: str, srcTxt: str, save: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
         self._parser.read_string(srcTxt)
-        return dict(self._parser[sectionName])
+        result = dict(self._parser[sectionName])
+
+        try:
+            save[sectionName] = result
+        except TypeError:
+            pass
+
+        return result
 
     # retrieves the key-value pairs of a section in the .ini file. Manually parsed the file since ConfigParser
     #   errors out on conditional statements in .ini file for mods. Could later inherit from the parser (RawConfigParser) 
     #   to custom deal with conditionals
     @_readLines
-    def getSectionOptions(self, section: str, postProcessor: Optional[Callable[[int, List[str], str, str], Any]] = None) -> Dict[str, Dict[str, Any]]:
+    def getSectionOptions(self, section: Union[str, Callable[[str], bool]], postProcessor: Optional[Callable[[int, int, List[str], str, str], Any]] = None) -> Dict[str, Dict[str, Any]]:
         sectionFilter = None
         if (isinstance(section, str)):
             sectionFilter = lambda line: line == section
+        elif callable(section):
+            sectionFilter = section
         else:
             sectionFilter = lambda line: section.match(line)
 
@@ -438,40 +499,92 @@ class IniFile():
 
         self._fileLines = filter(lambda line: line != 0, self._fileLines)
 
+    def _processIfTemplate(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str) -> List[Union[str, int]]:
+        ifTemplate = []
+        dummySectionName = "dummySection"
+        currentDummySectionName = f"{dummySectionName}"
+        replaceSection = ""
+        atReplaceSection = False
+
+        for i in range(startInd + 1, endInd):
+            line = fileLines[i]
+            isConditional = bool(self._ifStructurePattern.match(line))
+
+            if (isConditional and not self._hasblendIfTemplate):
+                self._hasblendIfTemplate = True
+
+            if (isConditional and atReplaceSection):
+                currentDummySectionName = f"{dummySectionName}{i}"
+                replaceSection = f"[{currentDummySectionName}]\n{replaceSection}"
+                ifTemplate.append(self._parseSection(currentDummySectionName, replaceSection))
+                replaceSection = ""
+
+            if (isConditional):
+                ifTemplate.append(line)
+                atReplaceSection = False
+                continue
+            
+            replaceSection += line
+            atReplaceSection = True
+
+        # get any remainder replacements in the if..else template
+        if (replaceSection != ""):
+            currentDummySectionName = f"{dummySectionName}END"
+            replaceSection = f"[{currentDummySectionName}]\n{replaceSection}"
+            result = self._parseSection(currentDummySectionName, replaceSection)
+            ifTemplate.append(result)
+
+        self._blendIfTemplate = ifTemplate
+        return ifTemplate
+
+    def _processTextureOverideBlendSection(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str) -> Dict[str, str]:
+        return self._parseSection(sectionName, srcTxt, save = self._textureOverideBlendDicts)
+    
+    def _processResourceBlendSection(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str) -> Dict[str, str]:
+        return self._parseSection(sectionName, srcTxt, save = self._resourceBlendDicts)
+
     def getTextureOverideBlendDicts(self) -> Dict[str, Dict[str, Any]]:
-        return self.getSectionOptions(self._textureOverrideBlendPattern)
+        return self.getSectionOptions(self._textureOverrideBlendPattern, postProcessor = self._processTextureOverideBlendSection)
     
     def getResourceBlendDicts(self) -> Dict[str, Dict[str, Any]]:
-        return self.getSectionOptions(self._resourceBlendPattern)
+        return self.getSectionOptions(self._resourceBlendPattern, postProcessor = self._processResourceBlendSection)
 
     # get the needed draw value
-    def getBlendDrawValue(self, textureOverideKvps: Dict[str, Any]) -> Optional[str]:
+    def getBlendDrawValue(self, textureOverideKvps: Optional[Dict[str, Any]] = None) -> Optional[str]:
+        if (textureOverideKvps is None and self._textureOverideBlendDicts):
+            textureOverideKvps = DictTools.getFirstValue(self._textureOverideBlendDicts)
+
         if textureOverideKvps["draw"]:
             draw: str = textureOverideKvps["draw"]
         return draw
     
-    def getMergedResourceIndex(self, mergedResourceName: str) -> str:
+    @classmethod
+    def getMergedResourceIndex(cls, mergedResourceName: str) -> str:
         return mergedResourceName.split(".")[-1]
 
     # get the sorted order of the mod folders used in the merged.ini
-    def getResourceBlendFolderPaths(self, resourceDicts: Dict[str, Dict[str, Any]]) -> List[str]:
+    def getResourceBlendFolderPaths(self, resourceDicts: Optional[Dict[str, Dict[str, Any]]] = None) -> Dict[str, str]:
         fileNameKey = "filename"
-        modFolders = []
+        modFoldersDict = {}
+
+        if (resourceDicts is None):
+            resourceDicts = self._resourceBlendDicts
 
         # case where the resources are not put in the proper order
         resourceTuples = [(k, v) for k, v in resourceDicts.items()]
         resourceTuples.sort(key = lambda tuple: int(self.getMergedResourceIndex(tuple[0])))
 
         for tuple in resourceTuples:
+            resourceName = tuple[0]
             resourceDict = tuple[1]
 
             # normalize by ntpath for linux users
             if (resourceDict[fileNameKey]):
                 resourcePath = ntpath.normpath(resourceDict[fileNameKey])
                 folderPath = ntpath.dirname(resourcePath)
-                modFolders.append(folderPath)
+                modFoldersDict[resourceName] = folderPath
 
-        return modFolders
+        return modFoldersDict
 
     # Disabling the OLD ini
     def disIni(self):
@@ -539,6 +652,47 @@ class IniFile():
 
         return result
     
+    @classmethod
+    def getFixMapping(cls, blendName: str, draw: int, tabCount: int = 1) -> str:
+        tabs = "\t" * tabCount
+        return f"{tabs}{cls.Vb1} = {blendName}\n{tabs}handling = skip\n{tabs}draw = {draw}"
+    
+    # fills the if..else template in merged.ini to create the command that maps created blend files to their
+    #   corresponding mod
+    def fillRemapCommandIfTemplate(self, commandName: str, remapBlendModelsDict: Dict[str, RemapBlendModel]):
+        addFix = f"[{commandName}]\n"
+        tabCount = 0
+
+        for line in self._blendIfTemplate:
+            if (isinstance(line, str)):
+                addFix += line
+                
+                linePrefix = re.match(r"^[\t]*[^\s]*", line)
+
+                if (linePrefix):
+                    linePrefix = linePrefix.group(0)
+                    tabCount = linePrefix.count("\t")
+
+                    if (linePrefix.find("endif") == -1):
+                        tabCount += 1
+                continue
+
+            if (self.Vb1 in line):
+                blendName = line[self.Vb1]
+                blendInd = self.getMergedResourceIndex(blendName)
+                
+                remapModel = None
+                try:
+                    remapModel = remapBlendModelsDict[blendName]
+                except KeyError:
+                    raise KeyError(f'The blend resource by the name, "{blendName}", does not exist')
+
+                remapBlendName = self.getResourceName(f"{remapModel.fixedBlendName}.{blendInd}")
+
+                addFix += f"{self.getFixMapping(remapBlendName, remapModel.draw, tabCount = tabCount)}\n"
+            
+        return addFix
+    
     # creates the command in merged.ini that maps the created blend files to their corresponding mod
     @classmethod
     def getRemapCommand(cls, commandName: str, remapBlendModels: List[RemapBlendModel]):
@@ -552,42 +706,23 @@ class IniFile():
             if (i):
                 addFix += "else "
 
-            addFix += f"if $swapvar == {i}\n\tvb1 = {cls.getResourceName(model.fixedBlendName)}.{i}\n\thandling = skip\n\tdraw = {model.draw}"
+            blendName = f"{cls.getResourceName(model.fixedBlendName)}.{i}"
+            addFix += f"if $swapvar == {i}\n\t{cls.getFixMapping(blendName, model.draw)}"
 
         addFix += "\nendif"
         return addFix
 
-    # get the needed lines to add to the each individual *.ini file
-    @classmethod
+    # get the needed lines to fix the .ini file
     @_addFixBoilerPlate
-    def getBaseFixStr(cls, fixedBlendName: str, draw: str) -> str:
-        resourceName = cls.getResourceName(fixedBlendName)
-
-        addFix = f"\n\n{cls.getTextureOverride(fixedBlendName)}\nvb1 = {cls.getResourceName(fixedBlendName)}\nhandling = skip\ndraw = {draw} "
-        addFix += f'\n\n{cls.getResource(resourceName, f"{fixedBlendName}.buf")}'
-
-        return addFix
-
-    # get the needed lines to add to the merged.ini file
-    @classmethod
-    @_addFixBoilerPlate
-    def getMergedFixStr(cls, globalBlendName: str, remapBlendModels: List[RemapBlendModel]) -> str:
-        commandName = cls.getCommandName(globalBlendName)
-        addFix = f"\n\n{cls.getTextureOverride(globalBlendName)}"
-        addFix += f"\nrun = {commandName}"
-        addFix += f"\n\n{cls.getRemapCommand(commandName, remapBlendModels)}"
-        addFix += f"\n\n{cls.getResources(remapBlendModels)}"
-
-        return addFix
+    def getFixStr(self, fix: str) -> str:
+        return fix
 
     @_readLines
-    def injectAddition(self, addition: str, logger: Optional[Logger] = None, beforeOriginal: bool = True, keepBackup: bool = True, fixOnly: bool = False):
+    def injectAddition(self, addition: str, beforeOriginal: bool = True, keepBackup: bool = True, fixOnly: bool = False):
         original = "".join(self._fileLines)
 
         if (keepBackup and fixOnly):
-            if (logger is not None):
-                logger.log("Cleaning up and disabling the OLD STINKY ini")
-
+            self.print("log", "Cleaning up and disabling the OLD STINKY ini")
             self.disIni()
 
         # writing the fixed file
@@ -613,49 +748,117 @@ class IniFile():
 
         self.clearRead()
 
-    def removeBaseFix(self):
-        self._removeScriptFix()
-        self.getFileLines()
-        self.removeSectionOptions(self._baseSectionsRemovalPattern)
-        self.write()
-        self.clearRead()
-
-    def removeMergedFix(self):
-        self._removeScriptFix()
-        self.getFileLines()
-        self.removeSectionOptions(self._mergedSectionsRemovalPattern)
-        self.write()
-        self.clearRead()
+    def _removeFix(self):
+        pass
 
     @_readLines
-    def removeFix(self, logger: Optional[Logger] = None, keepBackups: bool = True, fixOnly: bool = False):
-        hasLogger = bool(logger is not None)
+    def removeFix(self, keepBackups: bool = True, fixOnly: bool = False):
         if (keepBackups and not fixOnly):
-            if (hasLogger):
-                logger.log(f"Creating Backup for {os.path.basename(self.file)}")
-
+            self.print("log", f"Creating Backup for {os.path.basename(self.file)}")
             self.disIni()
 
-        if (hasLogger):
-            logger.log(f"Removing any previous changes from this script in {os.path.basename(self.file)}")
+        self.print("log", f"Removing any previous changes from this script in {os.path.basename(self.file)}")
+        self._removeFix()
 
-        if (self._merged):
-            self.removeMergedFix()
-            return
+    def processSection(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str):
+        pass
 
-        self.removeBaseFix()
+    def parse(self):
+        pass
 
-    def fixBase(self, remapBlendModel: RemapBlendModel, logger: Optional[Logger] = None, keepBackup: bool = True, fixOnly: bool = False):
-        addFix = self.getBaseFixStr(remapBlendModel.fixedBlendName, remapBlendModel.draw)
-        self.injectAddition(addFix, logger = logger, keepBackup = keepBackup, fixOnly = fixOnly)
-
-    def fixMerged(self, remapBlendModels: List[RemapBlendModel], logger: Optional[Logger] = None, keepBackup: bool = True, fixOnly: bool = False):
-        addFix = self.getMergedFixStr(remapBlendModels[0].fixedBlendName, remapBlendModels)
-        self.injectAddition(f"\n\n{addFix}", logger = logger, beforeOriginal = False, keepBackup = keepBackup, fixOnly = fixOnly)
+    def fix(self, remapBlendModels: Union[RemapBlendModel, List[RemapBlendModel]], keepBackup: bool = True, fixOnly: bool = False):
+        pass
 
 
-class Mod():
-    def __init__(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False):
+class BaseIniFile(IniFile):
+    _fixedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend\s*\]"
+
+    _removalPattern = re.compile(f"({IniFile._fixedTextureOverrideBlendPatternStr})|({_fixedResourceBlendPatternStr})")
+    _parsePattern = re.compile(f"({IniFile._textureOverrideBlendPatternStr})")
+
+    # get the needed lines to add to the each individual *.ini file
+    def getFixStr(self, fixedBlendName: str, draw: str) -> str:
+        resourceName = self.getResourceName(fixedBlendName)
+
+        addFix = f"\n\n{self.getTextureOverride(fixedBlendName)}\nvb1 = {self.getResourceName(fixedBlendName)}\nhandling = skip\ndraw = {draw}"
+        addFix += f'\n\n{self.getResource(resourceName, f"{fixedBlendName}.buf")}'
+
+        return super().getFixStr(addFix)
+
+    def _removeFix(self):
+        self._removeScriptFix()
+        self.getFileLines()
+        self.removeSectionOptions(self._removalPattern)
+        self.write()
+        self.clearRead()
+
+    def processSection(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str) -> Dict[str, str]:
+        return self._processTextureOverideBlendSection(startInd, endInd, fileLines, sectionName, srcTxt)
+
+    def parse(self):
+        self.getSectionOptions(self._parsePattern, postProcessor = self.processSection)
+
+    def fix(self, remapBlendModel: RemapBlendModel, keepBackup: bool = True, fixOnly: bool = False):
+        addFix = self.getFixStr(remapBlendModel.fixedBlendName, remapBlendModel.draw)
+        self.injectAddition(addFix, keepBackup = keepBackup, fixOnly = fixOnly)
+
+
+class MergedIniFile(IniFile):
+    _fixedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend\.[0-9]+\s*\]"
+
+    _removalPattern = re.compile(f"({IniFile._fixedTextureOverrideBlendPatternStr})|({IniFile._fixedCommandListBlendPatternStr})|({_fixedResourceBlendPatternStr})")
+    _parsePattern = re.compile(f"({IniFile._resourceBlendPatternStr})|({IniFile._commandListBlendPatternStr})")
+
+    # get the needed lines to add to the merged.ini file
+    def getFixStr(self, globalBlendName: str, remapBlendModels: List[RemapBlendModel], remapBlendModelsDict: Dict[str, RemapBlendModel]) -> str:
+        commandName = self.getCommandName(globalBlendName)
+        remapBlendCommand = ""
+
+        if (self._hasblendIfTemplate):
+            self.print("log", "Filling if..else template in mapping function")
+            remapBlendCommand = self.fillRemapCommandIfTemplate(commandName, remapBlendModelsDict)
+        else:
+            self.print("log", "Creating mapping function")
+            remapBlendCommand = self.getRemapCommand(commandName, remapBlendModels)
+
+        addFix = f"\n\n{self.getTextureOverride(globalBlendName)}"
+        addFix += f"\nrun = {commandName}"
+        addFix += f"\n\n{remapBlendCommand}"
+        addFix += f"\n\n{self.getResources(remapBlendModels)}"
+
+        return super().getFixStr(addFix)
+    
+    def _removeFix(self):
+        self._removeScriptFix()
+        self.getFileLines()
+        self.removeSectionOptions(self._removalPattern)
+        self.write()
+        self.clearRead()
+
+    def processSection(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str) -> Dict[str, str]:
+        result = None
+        bracketSectionName = f"[{sectionName}]"
+        
+        if (self._resourceBlendPattern.match(bracketSectionName)):
+            result = self._processResourceBlendSection(startInd, endInd, fileLines, sectionName, srcTxt)
+        elif (self._commandListBlendPattern.match(bracketSectionName)):
+            result = self._processIfTemplate(startInd, endInd, fileLines, sectionName, srcTxt)
+
+        return result
+    
+    def parse(self):
+        self.getSectionOptions(self._parsePattern, postProcessor = self.processSection)
+
+    def fix(self, remapBlendModels: List[RemapBlendModel], keepBackup: bool = True, fixOnly: bool = False):
+        remapBlendModelsDict = ListTools.to_dict(remapBlendModels, lambda e: e.origBlendName)
+
+        addFix = self.getFixStr(remapBlendModels[0].fixedBlendName, remapBlendModels, remapBlendModelsDict)
+        self.injectAddition(f"\n\n{addFix}", beforeOriginal = False, keepBackup = keepBackup, fixOnly = fixOnly)
+
+
+class Mod(Model):
+    def __init__(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False, logger: Optional[Logger] = None):
+        super().__init__(logger = logger)
         self.path = path
         self.isTopMod = isTopMod
         self._files = files
@@ -668,7 +871,10 @@ class Mod():
             self.ini, self.blend = self.getBaseModFiles()
             self.backupIni, self.remapBlend = self.getOptionalFiles()
 
-        self.ini = IniFile(self.ini)
+        if (IniFile.checkMerged(self.ini)):
+            self.ini = MergedIniFile(self.ini, logger = logger)
+        else:
+            self.ini = BaseIniFile(self.ini, logger = logger)
 
     @property
     def files(self):
@@ -713,22 +919,17 @@ class Mod():
 
         return FileService.getSingleFiles(path = self.path, filters = filters, files = self._files, optional = True)
     
-    def removeBackupIni(self, logger: Optional[Logger] = None):
+    def removeBackupIni(self):
         if (self.backupIni is not None):
-            if (logger is not None):
-                logger.log(f"Removing the backup ini, {os.path.basename(self.backupIni)}")
-
+            self.print("log", f"Removing the backup ini, {os.path.basename(self.backupIni)}")
             os.remove(self.backupIni)
 
-    def removeFix(self, logger: Optional[Logger] = None, keepBackups: bool = True, fixOnly: bool = False):
-        hasLogger = bool(logger is not None)
-
+    def removeFix(self, keepBackups: bool = True, fixOnly: bool = False):
         if (self.remapBlend is not None):
-            if (hasLogger):
-                logger.log(f"Removing previous {RemapBlendFile}")
+            self.print("log", f"Removing previous {RemapBlendFile}")
             os.remove(self.remapBlend)
 
-        self.ini.removeFix(logger = logger, keepBackups = keepBackups, fixOnly = fixOnly)
+        self.ini.removeFix(keepBackups = keepBackups, fixOnly = fixOnly)
 
 
 class RaidenBossFixService():
@@ -778,17 +979,18 @@ class RaidenBossFixService():
     def fixBaseMod(self, mod: Mod) -> Optional[RemapBlendModel]:
         # remove any backups
         if (not self._keepBackups):
-            mod.removeBackupIni(logger = self._logger)
+            mod.removeBackupIni()
 
         # undo any previous fixes
         if (not self._fixOnly):
-            mod.removeFix(logger = self._logger, keepBackups = self._keepBackups)
+            mod.removeFix(keepBackups = self._keepBackups)
 
         if (self._undoOnly):
             return
 
-        textureOverideBlendDicts = mod.ini.getTextureOverideBlendDicts()
-        draw = mod.ini.getBlendDrawValue(DictTools.getFirstValue(textureOverideBlendDicts))
+        # parse the .ini file
+        mod.ini.parse()
+        draw = mod.ini.getBlendDrawValue()
 
         fixedBlendName = self.getFixedBlendFile(mod.blend)
         fixedBlendName = os.path.basename(fixedBlendName).split('.')[0]
@@ -802,7 +1004,7 @@ class RaidenBossFixService():
 
         # writing the fixed file
         self._logger.log("Making the fixed ini file")
-        mod.ini.fixBase(remapBlendModel, logger = self._logger, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
+        mod.ini.fix(remapBlendModel, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
         return remapBlendModel
     
     def addTips(self):
@@ -845,28 +1047,30 @@ class RaidenBossFixService():
         self._logger.prefix = self._loggerBasePrefix
 
         files, dirs = FileService.getFilesAndDirs()
-        topMod = Mod(files = files, isTopMod = True)
+        topMod = Mod(files = files, isTopMod = True, logger = self._logger)
         topIni = topMod.ini
 
-        if (topIni.isMerged()):
+        if (topIni.merged):
             self._logger.log("Fixing Merged Mod")
             self._logger.log(f"Reading {MergedFile} file for individual mods to modify")
 
             # read the merged.ini for mod folders
-            resourceBlendDicts = topIni.getResourceBlendDicts()
-            modFolders = topIni.getResourceBlendFolderPaths(resourceBlendDicts)
+            topIni.parse()
+            modFolders = topIni.getResourceBlendFolderPaths()
 
             # remove any backups
             if (not self._keepBackups):
-                topMod.removeBackupIni(logger = self._logger)
+                topMod.removeBackupIni()
 
             # undo any previous fixes
             if (not self._fixOnly):
-                topMod.removeFix(logger = self._logger, keepBackups = self._keepBackups)
+                topMod.removeFix(keepBackups = self._keepBackups)
 
             remapBlendModelsDict = {}
             remapBlendModels = []
-            for dir in modFolders:
+
+            for resourceName in modFolders:
+                dir = modFolders[resourceName]
                 dirName = dir.replace(ntpath.sep, os.sep)
 
                 self._logger.split()
@@ -884,7 +1088,7 @@ class RaidenBossFixService():
 
                 mod = None
                 try:
-                    mod = Mod(path = dirName)
+                    mod = Mod(path = dirName, logger = self._logger)
                 except FileException as e:
                     self._logger.warn(e)
                     self._logger.space()
@@ -894,6 +1098,8 @@ class RaidenBossFixService():
                     continue
 
                 remapBlendModel = self.fixBaseMod(mod)
+                remapBlendModel.origBlendName = resourceName
+
                 if (self._undoOnly):
                     continue
 
@@ -918,7 +1124,7 @@ class RaidenBossFixService():
                 return
 
             self._logger.log(f"Making the {MergedFile} file")
-            topIni.fixMerged(remapBlendModels, logger = self._logger, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
+            topIni.fix(remapBlendModels, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
         else:
             self._logger.log("Fixing Single Mod")
             self.fixBaseMod(topMod)
