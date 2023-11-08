@@ -31,7 +31,13 @@ jobs:
         ls
     - name: Navigate to Package Directory
       run: >- 
-        cd 'Fix-Raiden-Boss 2.0 (for all user )'
+        cd *2*
+    - name: Check Path
+      run: >-
+        pwd
+    - name: Check Children
+      run: >-
+        ls
     - name: Install pypa/build
       run: >-
         python3 -m
