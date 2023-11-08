@@ -48,7 +48,7 @@ then enter
 *( you can now run the program anywhere without copying a script! )*
 
 ### STEP 2:
-go to your mod folder and in [cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) type:
+[open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) in your mod folder and type:
 ```python
 python -m FixRaidenBoss2
 ```
