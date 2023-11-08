@@ -20,7 +20,7 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 **Mega Merged Mods:** https://www.youtube.com/watch?v=08co5ct7zeg  
 
 ### More Features
-[More examples here](../Examples)
+[More examples here](https://github.com/nhok0169/Fix-Raiden-Boss/tree/nhok0169/Examples)
 
 ## How to Run
 - Choose your pick of which way to run the script:
