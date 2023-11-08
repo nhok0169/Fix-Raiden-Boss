@@ -64,7 +64,7 @@ then enter
 ### STEP 2:
 [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type
 ```python
-python FixRaidenBoss2
+python FixRaidenBoss2.py
 ```
 then enter
 
