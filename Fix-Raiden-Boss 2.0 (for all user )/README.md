@@ -1,4 +1,5 @@
 # FIX RAIDEN BOSS
+<img alt="PyPI - Version" src="https://img.shields.io/pypi/v/FixRaidenBoss2"> <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/FixRaidenBoss2">
 <a href=""><img alt="" src="https://cdn.discordapp.com/attachments/1030715335910887425/1060179887933104229/raiden.png?width=838&height=417"></a>
 - Author Ideal [NK#1321](https://discordapp.com/users/277117247523389450)
 - Thank [SilentNightSound#7430](https://github.com/SilentNightSound) for the logic rewrite
@@ -29,18 +30,15 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 
 ### Quickstart
 **Individual Mod:** https://www.youtube.com/watch?v=29FM0GywcWA  
-**Merged Mods:** https://www.youtube.com/watch?v=nEyMYIHdrQM  
-**Mega Merged Mods:** https://www.youtube.com/watch?v=08co5ct7zeg  
+**Merged Mods:** https://www.youtube.com/watch?v=nEyMYIHdrQM
 
 ### More Features
 [More examples here](../Examples)
 
 ## Command Options
 ```
-  -h, --help           show this help message and exit
-  -d, --deleteBackup   deletes backup copies of the original .ini files
-  -f, --fixOnly        only fixes the mod without cleaning any previous runs of the script
-  -r, --revert         reverts back previous runs of the script
-  -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod
-                       instead of choosing which file you want to use
+  -h, --help          show this help message and exit
+  -d, --deleteBackup  deletes backup copies of the original .ini files
+  -f, --fixOnly       only fixes the mod without cleaning any previous runs of the script
+  -r, --revert        reverts back previous runs of the script
 ```
