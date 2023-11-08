@@ -30,7 +30,7 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 
 ## Let's Start !
 ### STEP 1:
-- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
+- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into Raiden Mod Folder 
 ### STEP 2:
 - Double click on the script
   
@@ -56,7 +56,7 @@ then enter
 
 ## Run on CMD With a Script
 ### STEP 1:
-- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
+- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into Raiden Mod Folder 
 
 ### STEP 2:
 [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type
