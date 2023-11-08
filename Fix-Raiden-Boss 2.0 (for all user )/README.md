@@ -8,7 +8,19 @@
 - Thank [Albert Gold#2696](https://github.com/Alex-Au1) for update the code for merged mods
 ## Requirements 
 - [Python](https://www.python.org/downloads/)
-- [DOWNLOAD](https://github.com/nhok0169/Fix-Raiden-Boss/archive/refs/heads/nhok0169.zip) script on this github
+
+## Update for merged mods
+For merged mods, run the script wherever the `merged.ini` file is located.
+
+## VIDEO TUTORIAL AND EXAMPLES:
+
+### Quickstart
+**Individual Mod:** https://www.youtube.com/watch?v=29FM0GywcWA  
+**Merged Mods:** https://www.youtube.com/watch?v=nEyMYIHdrQM  
+**Mega Merged Mods:** https://www.youtube.com/watch?v=08co5ct7zeg  
+
+### More Features
+[More examples here](../Examples)
 
 ## How to Run
 - Choose your pick of which way to run the script:
@@ -26,19 +38,6 @@
 *(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you only want to undo previous runs without adding any new changes)*
 ### STEP 3:
 - Open the game and enjoy it
-
-## Update for merged mods
-For merged mods, run the script wherever the `merged.ini` file is located.
-
-## VIDEO TUTORIAL AND EXAMPLES:
-
-### Quickstart
-**Individual Mod:** https://www.youtube.com/watch?v=29FM0GywcWA  
-**Merged Mods:** https://www.youtube.com/watch?v=nEyMYIHdrQM  
-**Mega Merged Mods:** https://www.youtube.com/watch?v=08co5ct7zeg  
-
-### More Features
-[More examples here](../Examples)
 
 ## Run on CMD Without a Script
 ### STEP 1:
