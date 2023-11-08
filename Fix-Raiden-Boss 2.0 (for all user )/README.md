@@ -26,7 +26,7 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 - Choose your pick of which way to run the script:
 
   1. [Quickstart!](#lets-start-)  &nbsp;&nbsp;(for beginners)
-  2. [CMD WITHOUT a Script](#run-on-cmd-with-a-script) &nbsp;&nbsp; (recommended if you run by CMD)
+  2. [CMD WITHOUT a Script](#run-on-cmd-without-a-script) &nbsp;&nbsp; (recommended if you run by CMD)
   3. [CMD with a Script](#run-on-cmd-with-a-script) &nbsp;&nbsp; (the convention that other GIMI scripts follow)
 
 ## Let's Start !
