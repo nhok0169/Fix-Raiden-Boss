@@ -10,10 +10,10 @@
 - [DOWNLOAD](https://github.com/nhok0169/Fix-Raiden-Boss/archive/refs/heads/nhok0169.zip) script on this github
 
 ## How to Run
-- choose your pick of which way to run the script:
+- Choose your pick of which way to run the script:
   1. [Quickstart!](#lets-start-)
   2. [CMD without a Script](#run-on-cmd-with-a-script)
-  3. [CMD With a Script](#run-on-cmd-with-a-script)
+  3. [CMD With a Script](#run-on-cmd-with-a-script)  
 
 ## Let's Start !
 ### STEP 1:
