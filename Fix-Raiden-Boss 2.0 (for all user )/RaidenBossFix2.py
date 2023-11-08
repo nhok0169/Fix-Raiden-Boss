@@ -1010,7 +1010,7 @@ class RaidenBossFixService():
         return fixedBlendFile
 
     # fix each individual mod containing the assets
-    def fixBaseMod(self, mod: Mod) -> Optional[RemapBlendModel]:
+    def fixBaseMod(self, mod: Mod, origBlendName: Optional[str] = None) -> Optional[RemapBlendModel]:
         # remove any backups
         if (not self._keepBackups):
             mod.removeBackupIni()
@@ -1029,7 +1029,7 @@ class RaidenBossFixService():
         fixedBlendName = self.getFixedBlendFile(mod.blend)
         fixedBlendName = os.path.basename(fixedBlendName).split('.')[0]
 
-        remapBlendModel = RemapBlendModel(fixedBlendName, draw, mod.path)
+        remapBlendModel = RemapBlendModel(fixedBlendName, draw, mod.path, origBlendName = origBlendName)
 
         self._blendCorrection(mod.blend)
         if (mod.ini.isRaidenFixed):
@@ -1208,8 +1208,7 @@ class RaidenBossFixService():
                     self._skippedMods[dirName] = e
                     continue
 
-                remapBlendModel = self.fixBaseMod(mod)
-                remapBlendModel.origBlendName = resourceName
+                remapBlendModel = self.fixBaseMod(mod, origBlendName = resourceName)
 
                 if (self._undoOnly):
                     continue
