@@ -32,7 +32,8 @@ MaxVGIndex = 117
 
 # change our current working directory to this file, allowing users to run program
 #   by clicking on the script instead of running by CLI
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+if __name__ == "__main__":
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 DefaultFileType = "file"
 DefaultPath = os.getcwd()
@@ -1256,8 +1257,11 @@ class RaidenBossFixService():
         self._logger.waitExit()
 
 
-# Main Driver Code
-if __name__ == "__main__":
+def run_main():
     args = argParser.parse_args()
     raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, undoOnly = args.revert, disableDups = not args.manualDisable)
     raidenBossFixService.fix()
+
+# Main Driver Code
+if __name__ == "__main__":
+    run_main()
