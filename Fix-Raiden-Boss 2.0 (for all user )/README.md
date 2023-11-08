@@ -52,6 +52,9 @@ python -m FixRaidenBoss2
 ```
 then enter
 
+### STEP 3:
+- Open the game and enjoy it
+
 ## Run on CMD With a Script
 ### STEP 1:
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into Raiden Mod Folder 
@@ -62,6 +65,9 @@ then enter
 python FixRaidenBoss2
 ```
 then enter
+
+### STEP 3:
+- Open the game and enjoy it
 
 ## Command Options
 ```
