@@ -8,17 +8,20 @@
 ## Requirements 
 - [Python](https://www.python.org/downloads/)
 - [DOWNLOAD](https://github.com/nhok0169/Fix-Raiden-Boss/archive/refs/heads/nhok0169.zip) script on this github
+
+## How to Run
+- choose your pick of which way to run the script:
+  1. [Quickstart!](#lets-start-)
+  2. [CMD without a Script](#run-on-cmd-with-a-script)
+  3. [CMD With a Script](#run-on-cmd-with-a-script)
+
 ## Let's Start !
 ### STEP 1:
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
 ### STEP 2:
-- Double click on the script or [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type :
-```python
-python RaidenBossFix2.py
-```
-then enter
-- **RECOMMENDED** that you only run **1 TIME** 
-
+- Double click on the script
+  
+- **RECOMMENDED** that you only run **1 TIME**  
 *(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you only want to undo previous runs without adding any new changes)*
 ### STEP 3:
 - Open the game and enjoy it
@@ -34,6 +37,32 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 
 ### More Features
 [More examples here](../Examples)
+
+## Run on CMD Without a Script
+### STEP 1:
+[open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type :
+```python
+python -m pip install -U FixRaidenBoss2
+```
+then enter
+
+### STEP 2:
+go to your mod folder and type:
+```python
+python -m FixRaidenBoss2
+```
+then enter
+
+## Run on CMD With a Script
+### STEP 1:
+- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
+
+### STEP 2:
+go to your mod folder and type:
+```python
+python FixRaidenBoss2
+```
+then enter
 
 ## Command Options
 ```
