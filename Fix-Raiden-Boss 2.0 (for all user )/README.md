@@ -48,7 +48,7 @@ python -m pip install -U FixRaidenBoss2
 then enter
 
 ### STEP 2:
-go to your mod folder and type:
+go to your mod folder and in [cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) type:
 ```python
 python -m FixRaidenBoss2
 ```
