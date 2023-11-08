@@ -54,6 +54,7 @@ argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
 argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help='deletes backup copies of the original .ini files')
 argParser.add_argument('-f', FixOnlyOpt, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
 argParser.add_argument('-r', RevertOpt, action='store_true', help='reverts back previous runs of the script')
+argParser.add_argument('-m', '--manualDisable', action='store_true', help=f'goes into an error when duplicate {IniExt} or {BlendFileType} are found in a mod instead of choosing which file you want to use')
 
 T = TypeVar('T')
 
@@ -75,7 +76,9 @@ class FileException(Error):
 
 
 class DuplicateFileException(FileException):
-    def __init__(self, fileType: str = DefaultFileType, path: str = DefaultPath):
+    def __init__(self, files: List[str], fileType: str = DefaultFileType, path: str = DefaultPath):
+        self.files = files
+        self.fileType = fileType
         message = f"Ensure only one {fileType} exists"
         super().__init__(message, path = path)
 
@@ -201,7 +204,7 @@ class FileService():
             if (not optional and not filesLen):
                 raise MissingFileException(fileType = fileType, path = path)
             elif (not optional and filesLen > 1):
-                raise DuplicateFileException(fileType = fileType, path = path)
+                raise DuplicateFileException(fileTypeFiles, fileType = fileType, path = path)
             
             if (fileTypeFiles):
                 result.append(fileTypeFiles[0])
@@ -213,6 +216,34 @@ class FileService():
             return result[0]
         
         return result
+    
+    @classmethod
+    def rename(cls, oldFile: str, newFile: str):
+        try:
+            os.rename(oldFile, newFile)
+        except FileExistsError:
+            os.remove(newFile)
+            os.rename(oldFile, newFile)
+
+    @classmethod
+    def changeExt(cls, file: str, newExt: str):
+        dotPos = file.rfind(".")
+
+        if (not newExt.startswith(".")):
+            newExt = f".{newExt}"
+
+        if (dotPos != -1):
+            file = file[:dotPos] + newExt
+
+        return file
+
+    @classmethod
+    def disableFile(cls, file: str):
+        baseName = os.path.basename(file)
+        baseName = FileService.changeExt(baseName, TxtExt)
+
+        backupFile = os.path.join(os.path.dirname(file), BackupFilePrefix) + baseName
+        FileService.rename(file, backupFile)
 
 
 class Logger():
@@ -265,9 +296,22 @@ class Logger():
     @classmethod
     def getBulletStr(self, txt: str) -> str:
         return f"- {txt}"
+    
+    @classmethod
+    def getNumberedStr(self, txt: str, num: int) -> str:
+        return f"{num}. {txt}"
 
     def bulletPoint(self, txt: str):
         self.log(self.getBulletStr(txt))
+
+    def list(self, lst: List[str], transform: Optional[Callable[[str], str]] = None):
+        if (transform is None):
+            transform = lambda txt: txt
+
+        lstLen = len(lst)
+        for i in range(lstLen):
+            newTxt = transform(lst[i])
+            self.log(self.getNumberedStr(newTxt, i + 1))
 
     def error(self, message: str):
         self.space()
@@ -588,18 +632,7 @@ class IniFile(Model):
 
     # Disabling the OLD ini
     def disIni(self):
-        baseName = os.path.basename(self.file)
-
-        if (baseName.endswith(IniExt)):
-            baseName = baseName[:-IniExtLen] + TxtExt
-
-        backupFile = os.path.join(os.path.dirname(self.file), BackupFilePrefix) + baseName
-
-        try:
-            os.rename(self.file, backupFile)
-        except FileExistsError:
-            os.remove(backupFile)
-            os.rename(self.file, backupFile)
+        FileService.disableFile(self.file)
 
     @classmethod
     def getFixHeader(cls) -> str:
@@ -684,8 +717,8 @@ class IniFile(Model):
                 remapModel = None
                 try:
                     remapModel = remapBlendModelsDict[blendName]
-                except KeyError:
-                    raise KeyError(f'The blend resource by the name, "{blendName}", does not exist')
+                except KeyError as e:
+                    raise KeyError(f'The blend resource by the name, "{blendName}", does not exist') from e
 
                 remapBlendName = self.getResourceName(f"{remapModel.fixedBlendName}.{blendInd}")
 
@@ -933,12 +966,13 @@ class Mod(Model):
 
 
 class RaidenBossFixService():
-    def __init__(self, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False):
+    def __init__(self, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, disableDups: bool = True):
         self._loggerBasePrefix = ""
         self._logger = Logger()
         self._keepBackups = keepBackups
         self._fixOnly = fixOnly
         self._undoOnly = undoOnly
+        self._disableDups = disableDups
         self._skippedMods: Dict[str, Error] = {}
 
 
@@ -1037,6 +1071,83 @@ class RaidenBossFixService():
             self._logger.error(message)
             self._logger.space()
 
+    def disableDuplicateFiles(self, fileType: str, files: List[str], folderPath: str):
+        if (self._disableDups):
+            filesLen = len(files)
+            baseFiles = list(map(os.path.basename, files))
+            baseFilesSet = set(baseFiles)
+
+            self._logger.includePrefix = False
+            
+            self._logger.space()
+
+            choiceStr = None
+            validInput = False
+            selected = None
+
+            while (not validInput):
+                if (choiceStr is not None):
+                    self._logger.space()
+                    self._logger.log("Invalid input")
+                    self._logger.closeHeading()
+                    self._logger.space()
+
+                self._logger.openHeading(f"Duplicate {fileType} Detected")
+
+                self._logger.space()
+                self._logger.log(f"Choose which file you want to use for the mod at {folderPath}")
+
+                self._logger.space()
+                self._logger.list(baseFiles)
+
+                self._logger.space()
+                choiceStr = input(f"[enter a number from 1-{filesLen} or enter the file name]:\n")
+
+                try:
+                    selected = int(choiceStr)
+                except:
+                    pass
+                else:
+                    if (selected >= 1 and selected <= filesLen):
+                        validInput = True
+                        break
+
+                if (choiceStr in baseFilesSet):
+                    selected = choiceStr
+                    validInput = True
+
+            if (isinstance(selected, int)):
+                selected = baseFiles[selected - 1]
+
+            self._logger.space()
+            self._logger.log(f"Chosen file to use: {selected}")
+            self._logger.log("Disabling all the other files")
+
+            files = filter(lambda file: (os.path.basename(file) != selected), files)
+            for file in files:
+                FileService.disableFile(file)
+
+            self._logger.closeHeading()
+            self._logger.space()
+            self._logger.includePrefix = True
+
+    def createMod(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False):
+        if (not self._disableDups):
+            return Mod(path = path, files = files, isTopMod = isTopMod, logger = self._logger)
+        
+        mod = None
+        while (mod is None):
+            try:
+                mod = Mod(path = path, files = files, isTopMod = isTopMod, logger = self._logger)
+            except DuplicateFileException as e:
+                self.disableDuplicateFiles(e.fileType, e.files, path)
+
+            if (mod is None):
+                self._logger.space()
+                self._logger.log("Retrying reading mod")
+                files = None
+
+        return mod
 
     def _fix(self):
         if (self._fixOnly and self._undoOnly):
@@ -1047,7 +1158,7 @@ class RaidenBossFixService():
         self._logger.prefix = self._loggerBasePrefix
 
         files, dirs = FileService.getFilesAndDirs()
-        topMod = Mod(files = files, isTopMod = True, logger = self._logger)
+        topMod = self.createMod(files = files, isTopMod = True)
         topIni = topMod.ini
 
         if (topIni.merged):
@@ -1088,7 +1199,7 @@ class RaidenBossFixService():
 
                 mod = None
                 try:
-                    mod = Mod(path = dirName, logger = self._logger)
+                    mod = self.createMod(path = dirName)
                 except FileException as e:
                     self._logger.warn(e)
                     self._logger.space()
@@ -1149,5 +1260,5 @@ class RaidenBossFixService():
 # Main Driver Code
 if __name__ == "__main__":
     args = argParser.parse_args()
-    raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, undoOnly = args.revert)
+    raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, undoOnly = args.revert, disableDups = not args.manualDisable)
     raidenBossFixService.fix()
