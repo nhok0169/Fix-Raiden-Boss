@@ -41,5 +41,6 @@ For merged mods, run the script wherever the `merged.ini` file is located.
   -d, --deleteBackup   deletes backup copies of the original .ini files
   -f, --fixOnly        only fixes the mod without cleaning any previous runs of the script
   -r, --revert         reverts back previous runs of the script
-  -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod instead of choosing which file you want to use
+  -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod
+                       instead of choosing which file you want to use
 ```
