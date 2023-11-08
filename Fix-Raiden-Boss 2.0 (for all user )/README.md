@@ -24,18 +24,16 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 
 ## How to Run
 - Choose your pick of which way to run the script:
-  1. [Quickstart!](#lets-start-)
-  2. [CMD without a Script](#run-on-cmd-with-a-script)
-  3. [CMD With a Script](#run-on-cmd-with-a-script)  
+
+  1. [Quickstart!](#lets-start-)  &nbsp;&nbsp;(for beginners)
+  2. [CMD WITHOUT a Script](#run-on-cmd-with-a-script) &nbsp;&nbsp; (recommended if you run by CMD)
+  3. [CMD with a Script](#run-on-cmd-with-a-script) &nbsp;&nbsp; (the convention that other GIMI scripts follow)
 
 ## Let's Start !
 ### STEP 1:
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into Raiden Mod Folder 
 ### STEP 2:
 - Double click on the script
-  
-- **RECOMMENDED** that you only run **1 TIME**  
-*(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you only want to undo previous runs without adding any new changes)*
 ### STEP 3:
 - Open the game and enjoy it
 
