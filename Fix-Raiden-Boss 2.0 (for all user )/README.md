@@ -60,7 +60,7 @@ then enter
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/RaidenBossFix2.py) script into Raiden Mod Folder 
 
 ### STEP 2:
-go to your mod folder and type:
+[open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type
 ```python
 python FixRaidenBoss2
 ```
