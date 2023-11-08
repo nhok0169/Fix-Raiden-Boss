@@ -42,7 +42,7 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 
 ## Run on CMD Without a Script
 ### STEP 1:
-[open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type :
+Download the module by [opening cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and typing :
 ```python
 python -m pip install -U FixRaidenBoss2
 ```
