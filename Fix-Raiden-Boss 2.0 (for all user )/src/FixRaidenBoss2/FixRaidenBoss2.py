@@ -1300,7 +1300,7 @@ class RaidenBossFixService():
 def run_main():
     args = argParser.parse_args()
     raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, 
-                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDuplicates)
+                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDups)
     raidenBossFixService.fix()
 
 # Main Driver Code
