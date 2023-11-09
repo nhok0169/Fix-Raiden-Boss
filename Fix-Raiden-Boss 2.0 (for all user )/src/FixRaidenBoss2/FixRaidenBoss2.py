@@ -1076,13 +1076,13 @@ class RaidenBossFixService():
             self._logger.openHeading("Tips", sideLen = 10)
 
             if (self._keepBackups):
-                self._logger.bulletPoint(f'Hate deleting the "{BackupFilePrefix}" .ini/txt files yourself after running this script? (cuz I know I do!) Run this script again (on CMD) using the {DeleteBackupOpt} option')
+                self._logger.bulletPoint(f'Hate deleting the "{BackupFilePrefix}" {IniExt}/{TxtExt} files yourself after running this script? (cuz I know I do!) Run this script again (on CMD) using the {DeleteBackupOpt} option')
             
+            if (not self._purgeDups):
+                self._logger.bulletPoint(f'Hate deleting the "{DuplicateFilePrefix}" {IniExt}/{TxtExt} files yourself after disabling the duplicate {IniExt}/{BlendFileType} files? Run this script again (on CMD) using the {PurgeDupsOpt} option')
+
             if (not self._undoOnly):
                 self._logger.bulletPoint(f"Want to undo this script's fix? Run this script again (on CMD) using the {RevertOpt} option")
-
-            if (not self._purgeDups):
-                self._logger.bulletPoint(f"Hate deleting unused duplicate {IniExt} or {BlendFileType} files after disabling them? Run this script again (on CMD) using the {PurgeDupsOpt} option")
 
             self._logger.space()
             self._logger.log("For more info on command options, run this script (on CMD) using the --help option")
