@@ -42,6 +42,7 @@ TxtExt = ".txt"
 IniExtLen = len(IniExt)
 MergedFile = f"merged{IniExt}"
 BackupFilePrefix = "DISABLED_RSFixBackup_"
+DuplicateFilePrefix = "DISABLED_RSDup_"
 
 IniFileType = "*.ini file"
 BlendFileType = "Blend.buf"
@@ -51,11 +52,13 @@ IniFileEncoding = "utf-8"
 DeleteBackupOpt = '--deleteBackup'
 FixOnlyOpt = '--fixOnly'
 RevertOpt = '--revert'
+PurgeDupsOpt = '--purgeDuplicates'
 argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
-argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help='deletes backup copies of the original .ini files')
+argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help=f'deletes backup copies of the original {IniExt} files')
 argParser.add_argument('-f', FixOnlyOpt, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
 argParser.add_argument('-r', RevertOpt, action='store_true', help='reverts back previous runs of the script')
 argParser.add_argument('-m', '--manualDisable', action='store_true', help=f'goes into an error when duplicate {IniExt} or {BlendFileType} are found in a mod instead of choosing which file you want to use')
+argParser.add_argument('-p', PurgeDupsOpt, action='store_true', help=f'deletes unused duplicate {IniExt} or {BlendFileType} instead of keeping a disabled backup copy of those files')
 
 T = TypeVar('T')
 
@@ -239,11 +242,11 @@ class FileService():
         return file
 
     @classmethod
-    def disableFile(cls, file: str):
+    def disableFile(cls, file: str, filePrefix: str = BackupFilePrefix):
         baseName = os.path.basename(file)
         baseName = FileService.changeExt(baseName, TxtExt)
 
-        backupFile = os.path.join(os.path.dirname(file), BackupFilePrefix) + baseName
+        backupFile = os.path.join(os.path.dirname(file), filePrefix) + baseName
         FileService.rename(file, backupFile)
 
 
@@ -900,10 +903,10 @@ class Mod(Model):
 
         if (self.isTopMod):
             self.ini = self.getBaseModFiles()
-            self.backupIni, self.remapBlend, self.blend = self.getOptionalFiles()
+            self.remapBlend, self.blend, self.backupInis, self.backupDups = self.getOptionalFiles()
         else:
             self.ini, self.blend = self.getBaseModFiles()
-            self.backupIni, self.remapBlend = self.getOptionalFiles()
+            self.remapBlend, self.backupInis, self.backupDups = self.getOptionalFiles()
 
         if (IniFile.checkMerged(self.ini)):
             self.ini = MergedIniFile(self.ini, logger = logger)
@@ -939,6 +942,10 @@ class Mod(Model):
     def isBackupIni(cls, file: str) -> bool:
         return BackupFilePrefix in file and file.endswith(TxtExt)
     
+    @classmethod
+    def isBackupDupFile(cls, file: str) -> bool:
+        return DuplicateFilePrefix in file and file.endswith(TxtExt)
+    
     def getBaseModFiles(self) -> List[str]:
         filters = {IniFileType: self.isIni}
         if (not self.isTopMod):
@@ -947,16 +954,31 @@ class Mod(Model):
         return FileService.getSingleFiles(path = self.path, filters = filters, files = self._files)
     
     def getOptionalFiles(self) -> List[Optional[str]]:
-        filters = {"Backup Ini": self.isBackupIni, "Remap Blend": self.isRemapBlend}
+        SingleFileFilters = {"Remap Blend": self.isRemapBlend}
         if (self.isTopMod):
-            filters[BlendFileType] = self.isBlend
+            SingleFileFilters[BlendFileType] = self.isBlend
 
-        return FileService.getSingleFiles(path = self.path, filters = filters, files = self._files, optional = True)
+        MultiFileFilters = [self.isBackupIni, self.isBackupDupFile]
+
+        singleFiles = FileService.getSingleFiles(path = self.path, filters = SingleFileFilters, files = self._files, optional = True)
+        multiFiles = FileService.getFiles(path = self.path, filters = MultiFileFilters, files = self._files)
+
+        result = singleFiles
+        if (not isinstance(result, list)):
+            result = [result]
+
+        result += multiFiles
+        return result
     
-    def removeBackupIni(self):
-        if (self.backupIni is not None):
-            self.print("log", f"Removing the backup ini, {os.path.basename(self.backupIni)}")
-            os.remove(self.backupIni)
+    def removeBackupInis(self):
+        for file in self.backupInis:
+            self.print("log", f"Removing the backup ini, {os.path.basename(file)}")
+            os.remove(file)
+
+    def removeBackupDups(self):
+        for file in self.backupDups:
+            self.print("log", f"Removing the unused duplicate file, {os.path.basename(file)}")
+            os.remove(file)
 
     def removeFix(self, keepBackups: bool = True, fixOnly: bool = False):
         if (self.remapBlend is not None):
@@ -967,13 +989,14 @@ class Mod(Model):
 
 
 class RaidenBossFixService():
-    def __init__(self, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, disableDups: bool = True):
+    def __init__(self, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, disableDups: bool = True, purgeDups: bool = False):
         self._loggerBasePrefix = ""
         self._logger = Logger()
         self._keepBackups = keepBackups
         self._fixOnly = fixOnly
         self._undoOnly = undoOnly
         self._disableDups = disableDups
+        self._purgeDups = purgeDups
         self._skippedMods: Dict[str, Error] = {}
 
 
@@ -1014,7 +1037,10 @@ class RaidenBossFixService():
     def fixBaseMod(self, mod: Mod, origBlendName: Optional[str] = None) -> Optional[RemapBlendModel]:
         # remove any backups
         if (not self._keepBackups):
-            mod.removeBackupIni()
+            mod.removeBackupInis()
+
+        if (self._purgeDups):
+            mod.removeBackupDups()
 
         # undo any previous fixes
         if (not self._fixOnly):
@@ -1054,6 +1080,9 @@ class RaidenBossFixService():
             
             if (not self._undoOnly):
                 self._logger.bulletPoint(f"Want to undo this script's fix? Run this script again (on CMD) using the {RevertOpt} option")
+
+            if (not self._purgeDups):
+                self._logger.bulletPoint(f"Hate deleting unused duplicate {IniExt} or {BlendFileType} files after disabling them? Run this script again (on CMD) using the {PurgeDupsOpt} option")
 
             self._logger.space()
             self._logger.log("For more info on command options, run this script (on CMD) using the --help option")
@@ -1122,11 +1151,19 @@ class RaidenBossFixService():
 
             self._logger.space()
             self._logger.log(f"Chosen file to use: {selected}")
-            self._logger.log("Disabling all the other files")
+
+            if (self._purgeDups):
+                self._logger.log("Deleting all the other files")
+            else:
+                self._logger.log("Disabling all the other files")
 
             files = filter(lambda file: (os.path.basename(file) != selected), files)
             for file in files:
-                FileService.disableFile(file)
+                if (self._purgeDups):
+                    os.remove(file)
+                    continue
+
+                FileService.disableFile(file, filePrefix = DuplicateFilePrefix)
 
             self._logger.closeHeading()
             self._logger.space()
@@ -1172,7 +1209,10 @@ class RaidenBossFixService():
 
             # remove any backups
             if (not self._keepBackups):
-                topMod.removeBackupIni()
+                topMod.removeBackupInis()
+
+            if (self._purgeDups):
+                topMod.removeBackupDups()
 
             # undo any previous fixes
             if (not self._fixOnly):
@@ -1259,7 +1299,8 @@ class RaidenBossFixService():
 
 def run_main():
     args = argParser.parse_args()
-    raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, undoOnly = args.revert, disableDups = not args.manualDisable)
+    raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, 
+                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDuplicates)
     raidenBossFixService.fix()
 
 # Main Driver Code
