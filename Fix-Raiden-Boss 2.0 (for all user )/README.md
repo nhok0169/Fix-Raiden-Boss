@@ -20,50 +20,56 @@ For merged mods, run the script wherever the `merged.ini` file is located.
 **Mega Merged Mods:** https://www.youtube.com/watch?v=08co5ct7zeg  
 
 ### More Features
-[More examples here](../Examples)
+[More examples here](https://github.com/nhok0169/Fix-Raiden-Boss/tree/nhok0169/Examples)
 
 ## How to Run
 - Choose your pick of which way to run the script:
-  1. [Quickstart!](#lets-start-)
-  2. [CMD without a Script](#run-on-cmd-with-a-script)
-  3. [CMD With a Script](#run-on-cmd-with-a-script)  
+
+  1. [Quickstart!](#lets-start-)  &nbsp;&nbsp;(for beginners)
+  2. [CMD WITHOUT a Script](#run-on-cmd-without-a-script) &nbsp;&nbsp; (recommended if you run by CMD)
+  3. [CMD with a Script](#run-on-cmd-with-a-script) &nbsp;&nbsp; (the convention that other GIMI scripts follow)
 
 ## Let's Start !
 ### STEP 1:
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into Raiden Mod Folder 
 ### STEP 2:
 - Double click on the script
-  
-- **RECOMMENDED** that you only run **1 TIME**  
-*(By default, the script undos changes from previous runs before adding new changes or you can explicitely add the `--revert` option if you only want to undo previous runs without adding any new changes)*
 ### STEP 3:
 - Open the game and enjoy it
 
 ## Run on CMD Without a Script
 ### STEP 1:
-Download the module by [opening cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and typing :
+- Install the module onto your computer by [opening cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and typing :
 ```python
 python -m pip install -U FixRaidenBoss2
 ```
 then enter
 
+*( you can now run the program anywhere without copying a script! )*
+
 ### STEP 2:
-go to your mod folder and in [cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) type:
+- [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) in your mod folder and type:
 ```python
 python -m FixRaidenBoss2
 ```
 then enter
+
+### STEP 3:
+- Open the game and enjoy it
 
 ## Run on CMD With a Script
 ### STEP 1:
 - Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into Raiden Mod Folder 
 
 ### STEP 2:
-[open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type
+- [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type
 ```python
-python FixRaidenBoss2
+python FixRaidenBoss2.py
 ```
 then enter
+
+### STEP 3:
+- Open the game and enjoy it
 
 ## Command Options
 ```
