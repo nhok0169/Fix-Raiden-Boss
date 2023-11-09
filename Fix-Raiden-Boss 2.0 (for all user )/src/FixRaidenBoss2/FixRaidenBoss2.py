@@ -52,7 +52,7 @@ IniFileEncoding = "utf-8"
 DeleteBackupOpt = '--deleteBackup'
 FixOnlyOpt = '--fixOnly'
 RevertOpt = '--revert'
-PurgeDupsOpt = '--purgeDuplicates'
+PurgeDupsOpt = '--purgeDups'
 argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
 argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help=f'deletes backup copies of the original {IniExt} files')
 argParser.add_argument('-f', FixOnlyOpt, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
