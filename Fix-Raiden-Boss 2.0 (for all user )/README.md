@@ -79,4 +79,6 @@ then enter
   -r, --revert         reverts back previous runs of the script
   -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod
                        instead of choosing which file you want to use
+  -p, --purgeDups      deletes unused duplicate .ini or Blend.buf instead of keeping a disabled
+                       backup copy of those files
 ```
