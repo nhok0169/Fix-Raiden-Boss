@@ -1,6 +1,7 @@
 # FIX RAIDEN BOSS
-[![PyPI](https://img.shields.io/pypi/v/FixRaidenBoss2)](https://pypi.org/project/FixRaidenBoss2/)
 [![PyPI](https://img.shields.io/pypi/pyversions/FixRaidenBoss2)](https://www.python.org/downloads/)
+[![PyPI](https://img.shields.io/pypi/v/FixRaidenBoss2)](https://pypi.org/project/FixRaidenBoss2/)
+[![PyPI](https://img.shields.io/pypi/dm/FixRaidenBoss2?label=pypi%20downloads)](https://pypi.org/project/FixRaidenBoss2/)
 <a href=""><img alt="" src="https://cdn.discordapp.com/attachments/1030715335910887425/1060179887933104229/raiden.png?width=838&height=417"></a>
 - Author Ideal [NK#1321](https://discordapp.com/users/277117247523389450)
 - Thank [SilentNightSound#7430](https://github.com/SilentNightSound) for the logic rewrite
@@ -79,4 +80,6 @@ then enter
   -r, --revert         reverts back previous runs of the script
   -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod
                        instead of choosing which file you want to use
+  -p, --purgeDups      deletes unused duplicate .ini or Blend.buf instead of keeping a disabled
+                       backup copy of those files
 ```
