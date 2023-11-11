@@ -1,13 +1,13 @@
-name: "Bug Report"
-description: "File a bug report"
-title: "[ version of genshin ] [version of gimi] [version of raidenboss fix] error
-  detail"
+name: Bug Report
+description: File a bug report
+title: "[ version of genshin ] [version of gimi] [version of raidenboss fix] error detail"
 labels: ["bug"]
 body:
-  - type: checkboxes
+  - type: markdown
     attributes:
-      label: DO NOT REMOVE OR SKIP THE ISSUE TEMPLATE
- - type: checkboxes
+      value: |
+        ### DO NOT REMOVE OR SKIP THE ISSUE TEMPLATE
+  - type: checkboxes
     id: checklist
     attributes:
       label: Checklist
@@ -17,6 +17,8 @@ body:
         - label: I have searched [issues on Github](https://github.com/nhok0169/Fix-Raiden-Boss/issues) including closed ones and [issues on the mod site](https://gamebanana.com/tuts/15633) for similar issues. DO NOT post duplicates.
           required: true
         - label: I included the entire log [(as a screenshot or text)](https://gist.github.com/NawalJAhmed/2168f7659c08b6a033e7f6daf8db69a6) of my run of the fix
+          required: true
+        - label: I included the `merged.ini` file if I am using merged mods or I included the whatever generated `.ini` file if I am using individual mods
           required: true
   - type: textarea
     id: description
