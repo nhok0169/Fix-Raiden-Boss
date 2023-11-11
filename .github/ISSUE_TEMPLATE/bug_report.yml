@@ -7,7 +7,6 @@ body:
   - type: checkboxes
     attributes:
       label: DO NOT REMOVE OR SKIP THE ISSUE TEMPLATE
-(inspired by issues [from yt-dlp](https://github.com/yt-dlp/yt-dlp/issues/) )
  - type: checkboxes
     id: checklist
     attributes:
