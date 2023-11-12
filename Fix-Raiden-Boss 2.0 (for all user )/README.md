@@ -102,7 +102,7 @@ print("The Raiden Mod is fixed!")
 <br>
 
 <details>
-<summary>Result</summary>
+<summary>Example Result</summary>
 <br>
 
 ```
@@ -110,5 +110,6 @@ Creating log file, RSFixLog.txt
 The Raiden Mod is fixed!
 ```
 </details>
+<br>
 
 More info [here](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py)
