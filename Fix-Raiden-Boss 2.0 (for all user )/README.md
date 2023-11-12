@@ -99,10 +99,12 @@ raidenBossFixService.fix()
 
 print("The Raiden Mod is fixed!")
 ```
+<br>
 
 <details>
 <summary>Result</summary>
 <br>
+
 ```
 Creating log file, RSFixLog.txt
 The Raiden Mod is fixed!
