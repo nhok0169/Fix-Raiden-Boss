@@ -75,11 +75,38 @@ then enter
 ## Command Options
 ```
   -h, --help           show this help message and exit
+  -s str, --src str    The path to the Raiden mod folder. If this option is not specified, then will use the current
+                       directory as the mod folder.
   -d, --deleteBackup   deletes backup copies of the original .ini files
   -f, --fixOnly        only fixes the mod without cleaning any previous runs of the script
   -r, --revert         reverts back previous runs of the script
-  -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod
-                       instead of choosing which file you want to use
-  -p, --purgeDups      deletes unused duplicate .ini or Blend.buf instead of keeping a disabled
-                       backup copy of those files
+  -m, --manualDisable  goes into an error when duplicate .ini or Blend.buf are found in a mod instead of choosing
+                       which file you want to use
+  -p, --purgeDups      deletes unused duplicate .ini or Blend.buf instead of keeping a disabled backup copy of those
+                       files
+  -l, --log            Logs the printed out log into the RSFixLog.txt file
 ```
+
+## API Usage
+
+Tool developpers can now include the fix within their code.
+
+```python
+import FixRaidenBoss2 as FRB
+
+raidenBossFixService = FRB.RaidenBossFixService(path = r"my raiden folder path", log = True, verbose = False)
+raidenBossFixService.fix()
+
+print("The Raiden Mod is fixed!")
+```
+
+<details>
+<summary>Result</summary>
+<br>
+```
+Creating log file, RSFixLog.txt
+The Raiden Mod is fixed!
+```
+</details>
+
+More info [here](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py)

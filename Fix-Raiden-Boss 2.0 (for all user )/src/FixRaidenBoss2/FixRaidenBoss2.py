@@ -43,6 +43,7 @@ IniExtLen = len(IniExt)
 MergedFile = f"merged{IniExt}"
 BackupFilePrefix = "DISABLED_RSFixBackup_"
 DuplicateFilePrefix = "DISABLED_RSDup_"
+LogFile = f"RSFixLog{TxtExt}"
 
 IniFileType = "*.ini file"
 BlendFileType = "Blend.buf"
@@ -53,12 +54,14 @@ DeleteBackupOpt = '--deleteBackup'
 FixOnlyOpt = '--fixOnly'
 RevertOpt = '--revert'
 PurgeDupsOpt = '--purgeDups'
-argParser = argparse.ArgumentParser(description='Fixes Raiden Boss')
+argParser = argparse.ArgumentParser(description='Fixes Raiden Boss Phase 1 for all types of mods', formatter_class=argparse.MetavarTypeHelpFormatter)
+argParser.add_argument('-s', '--src', action='store', type=str, help="The path to the Raiden mod folder. If this option is not specified, then will use the current directory as the mod folder.")
 argParser.add_argument('-d', DeleteBackupOpt, action='store_true', help=f'deletes backup copies of the original {IniExt} files')
 argParser.add_argument('-f', FixOnlyOpt, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
 argParser.add_argument('-r', RevertOpt, action='store_true', help='reverts back previous runs of the script')
 argParser.add_argument('-m', '--manualDisable', action='store_true', help=f'goes into an error when duplicate {IniExt} or {BlendFileType} are found in a mod instead of choosing which file you want to use')
 argParser.add_argument('-p', PurgeDupsOpt, action='store_true', help=f'deletes unused duplicate {IniExt} or {BlendFileType} instead of keeping a disabled backup copy of those files')
+argParser.add_argument('-l', '--log', action='store_true', help=f'Logs the printed out log into a seperate {TxtExt} file')
 
 T = TypeVar('T')
 
@@ -249,31 +252,57 @@ class FileService():
         backupFile = os.path.join(os.path.dirname(file), filePrefix) + baseName
         FileService.rename(file, backupFile)
 
+    @classmethod
+    def parseOSPath(cls, path: str):
+        result = ntpath.normpath(path)
+        result = cls.ntPathToPosix(result)
+        return result
+
+    @classmethod
+    def ntPathToPosix(cls, path: str) -> str:
+        return path.replace(ntpath.sep, os.sep)
+
 
 class Logger():
     DefaultHeadingSideLen = 2
     DefaultHeadingChar = "="
 
-    def __init__(self, prefix: str = ""):
+    def __init__(self, prefix: str = "", logTxt: bool = False, verbose: bool = True):
         self.prefix = prefix
         self._headingTxtLen = 0
         self._headingSideLen = 0
         self._headingChar = ""
         self.includePrefix = True
+        self.verbose = verbose
+        self.logTxt = logTxt
+        self._loggedTxt = ""
 
         self._setDefaultHeadingAtts()
+
+    @property
+    def loggedTxt(self):
+        return self._loggedTxt
 
     def _setDefaultHeadingAtts(self):
         self._headingTxtLen = 0
         self._headingSideLen = self.DefaultHeadingSideLen
         self._headingChar = self.DefaultHeadingChar
 
+    def _addLogTxt(self, txt: str):
+        if (self.logTxt):
+            self._loggedTxt += f"{txt}\n"
+
     def getStr(self, message: str):
         return f"# {self.prefix} --> {message}"
 
     def log(self, message: str):
+        if (not self.verbose):
+            return
+
         if (self.includePrefix):
             message = self.getStr(message)
+
+        self._addLogTxt(message)
         print(message)
 
     def split(self):
@@ -319,6 +348,9 @@ class Logger():
 
     def error(self, message: str):
         self.space()
+
+        prevVerbose = self.verbose
+        self.verbose = True
         self.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         messageList = message.split("\n")
@@ -326,6 +358,7 @@ class Logger():
             self.log(messagePart)
 
         self.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        self.verbose = prevVerbose
 
     @classmethod
     def getWarnStr(self, exception: Error) -> str:
@@ -338,8 +371,21 @@ class Logger():
         message = f"\n{type(exception).__name__}: {exception}\n\n{traceback.format_exc()}"
         self.error(message)
 
+    def input(self, desc: str) -> str:
+        if (self.includePrefix):
+            desc = self.getStr(desc)
+
+        self._addLogTxt(desc)
+        result = input(desc)
+        self._addLogTxt(f"Input: {result}")
+
+        return result
+
     def waitExit(self):
-        input("\n== Press ENTER to exit ==")
+        prevIncludePrefix = self.includePrefix
+        self.includePrefix = False
+        self.input("\n== Press ENTER to exit ==")
+        self.includePrefix = prevIncludePrefix 
 
 
 # our model objects in MVC
@@ -989,29 +1035,58 @@ class Mod(Model):
 
 
 class RaidenBossFixService():
-    def __init__(self, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, disableDups: bool = True, purgeDups: bool = False):
+    def __init__(self, path: Optional[str] = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, 
+                 disableDups: bool = True, purgeDups: bool = False, log: bool = False, verbose: bool = True):
+        self.log = log
         self._loggerBasePrefix = ""
-        self._logger = Logger()
-        self._keepBackups = keepBackups
-        self._fixOnly = fixOnly
-        self._undoOnly = undoOnly
-        self._disableDups = disableDups
-        self._purgeDups = purgeDups
+        self.logger = Logger(logTxt = log, verbose = verbose)
+        self._path = path
+        self.keepBackups = keepBackups
+        self.fixOnly = fixOnly
+        self.undoOnly = undoOnly
+        self.disableDups = disableDups
+        self.purgeDups = purgeDups
+        self.verbose = verbose
         self._skippedMods: Dict[str, Error] = {}
+        self._logFile = FileService.parseOSPath(ntpath.join(DefaultPath, LogFile))
+        self._pathIsCwd = False
 
+        self._setupModPath()
+
+    @property
+    def pathIsCwd(self):
+        return self._pathIsCwd
+    
+    @property
+    def path(self):
+        return self._path
+    
+    @path.setter
+    def path(self, newPath: str):
+        self._path = newPath
+        self._setupModPath()
+        self._skippedMods = {}
+    
+    def _setupModPath(self):
+        self._pathIsCwd = False
+        if (self._path is None):
+            self._path = DefaultPath
+            self._pathIsCwd = True
+        else:
+            self._path = FileService.parseOSPath(self._path)
 
     def getFixedBlendFile(self, blendFile: str) -> str:
         return f"{blendFile.split('Blend.buf')[0]}RemapBlend.buf"
 
     # correcting the blend file
     def _blendCorrection(self, blendFile: str) -> str:
-        self._logger.log("Correcting the blend file")
+        self.logger.log("Correcting the blend file")
 
         with open(blendFile, "rb") as f:
             blendData = f.read()
 
         if len(blendData)%32 != 0:
-            self._logger.log()
+            self.logger.log()
             raise BlendFileNotRecognized(blendFile)
 
         result = bytearray()
@@ -1030,23 +1105,23 @@ class RaidenBossFixService():
         fixedBlendFile = self.getFixedBlendFile(blendFile)
         with open(fixedBlendFile, "wb") as f:
             f.write(result)
-        self._logger.log('Blend file correction done')
+        self.logger.log('Blend file correction done')
         return fixedBlendFile
 
     # fix each individual mod containing the assets
     def fixBaseMod(self, mod: Mod, origBlendName: Optional[str] = None) -> Optional[RemapBlendModel]:
         # remove any backups
-        if (not self._keepBackups):
+        if (not self.keepBackups):
             mod.removeBackupInis()
 
-        if (self._purgeDups):
+        if (self.purgeDups):
             mod.removeBackupDups()
 
         # undo any previous fixes
-        if (not self._fixOnly):
-            mod.removeFix(keepBackups = self._keepBackups)
+        if (not self.fixOnly):
+            mod.removeFix(keepBackups = self.keepBackups)
 
-        if (self._undoOnly):
+        if (self.undoOnly):
             return
 
         # parse the .ini file
@@ -1060,35 +1135,35 @@ class RaidenBossFixService():
 
         self._blendCorrection(mod.blend)
         if (mod.ini.isRaidenFixed):
-            self._logger.log("ini file already fixed")
+            self.logger.log("ini file already fixed")
             return remapBlendModel
 
         # writing the fixed file
-        self._logger.log("Making the fixed ini file")
-        mod.ini.fix(remapBlendModel, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
+        self.logger.log("Making the fixed ini file")
+        mod.ini.fix(remapBlendModel, keepBackup = self.keepBackups, fixOnly = self.fixOnly)
         return remapBlendModel
     
     def addTips(self):
-        self._logger.includePrefix = False
+        self.logger.includePrefix = False
 
-        if (not self._undoOnly or self._keepBackups):
-            self._logger.split()
-            self._logger.openHeading("Tips", sideLen = 10)
+        if (not self.undoOnly or self.keepBackups):
+            self.logger.split()
+            self.logger.openHeading("Tips", sideLen = 10)
 
-            if (self._keepBackups):
-                self._logger.bulletPoint(f'Hate deleting the "{BackupFilePrefix}" {IniExt}/{TxtExt} files yourself after running this script? (cuz I know I do!) Run this script again (on CMD) using the {DeleteBackupOpt} option')
+            if (self.keepBackups):
+                self.logger.bulletPoint(f'Hate deleting the "{BackupFilePrefix}" {IniExt}/{TxtExt} files yourself after running this script? (cuz I know I do!) Run this script again (on CMD) using the {DeleteBackupOpt} option')
             
-            if (not self._purgeDups):
-                self._logger.bulletPoint(f'Hate deleting the "{DuplicateFilePrefix}" {IniExt}/{TxtExt} files yourself after disabling the duplicate {IniExt}/{BlendFileType} files? Run this script again (on CMD) using the {PurgeDupsOpt} option')
+            if (not self.purgeDups):
+                self.logger.bulletPoint(f'Hate deleting the "{DuplicateFilePrefix}" {IniExt}/{TxtExt} files yourself after disabling the duplicate {IniExt}/{BlendFileType} files? Run this script again (on CMD) using the {PurgeDupsOpt} option')
 
-            if (not self._undoOnly):
-                self._logger.bulletPoint(f"Want to undo this script's fix? Run this script again (on CMD) using the {RevertOpt} option")
+            if (not self.undoOnly):
+                self.logger.bulletPoint(f"Want to undo this script's fix? Run this script again (on CMD) using the {RevertOpt} option")
 
-            self._logger.space()
-            self._logger.log("For more info on command options, run this script (on CMD) using the --help option")
-            self._logger.closeHeading()
+            self.logger.space()
+            self.logger.log("For more info on command options, run this script (on CMD) using the --help option")
+            self.logger.closeHeading()
 
-        self._logger.includePrefix = True
+        self.logger.includePrefix = True
 
 
     def reportSkippedMods(self):
@@ -1096,20 +1171,37 @@ class RaidenBossFixService():
             message = f"WARNING: The following mods were skipped due to warnings (see log above):\n\n"
             for dir in self._skippedMods:
                 warnStr = self._skippedMods[dir].warn()
-                message += self._logger.getBulletStr(f"{dir} >>> {warnStr}\n")
+                message += self.logger.getBulletStr(f"{dir} >>> {warnStr}\n")
 
-            self._logger.error(message)
-            self._logger.space()
+            self.logger.error(message)
+            self.logger.space()
+
+    def createLog(self):
+        if (not self.log):
+            return
+
+        self.logger.includePrefix = False
+        self.logger.space()
+
+        self.logger.verbose = True
+        self.logger.log(f"Creating log file, {LogFile}")
+
+        self.logger.includePrefix = True
+        self.logger.verbose = self.verbose
+
+        with open(self._logFile, "w", encoding = IniFileEncoding) as f:
+            f.write(self.logger.loggedTxt)
+
 
     def disableDuplicateFiles(self, fileType: str, files: List[str], folderPath: str):
-        if (self._disableDups):
+        if (self.disableDups):
             filesLen = len(files)
             baseFiles = list(map(os.path.basename, files))
             baseFilesSet = set(baseFiles)
 
-            self._logger.includePrefix = False
+            self.logger.includePrefix = False
             
-            self._logger.space()
+            self.logger.space()
 
             choiceStr = None
             validInput = False
@@ -1117,21 +1209,21 @@ class RaidenBossFixService():
 
             while (not validInput):
                 if (choiceStr is not None):
-                    self._logger.space()
-                    self._logger.log("Invalid input")
-                    self._logger.closeHeading()
-                    self._logger.space()
+                    self.logger.space()
+                    self.logger.log("Invalid input")
+                    self.logger.closeHeading()
+                    self.logger.space()
 
-                self._logger.openHeading(f"Duplicate {fileType} Detected")
+                self.logger.openHeading(f"Duplicate {fileType} Detected")
 
-                self._logger.space()
-                self._logger.log(f"Choose which file you want to use for the mod at {folderPath}")
+                self.logger.space()
+                self.logger.log(f"Choose which file you want to use for the mod at {folderPath}")
 
-                self._logger.space()
-                self._logger.list(baseFiles)
+                self.logger.space()
+                self.logger.list(baseFiles)
 
-                self._logger.space()
-                choiceStr = input(f"[enter a number from 1-{filesLen} or enter the file name]:\n")
+                self.logger.space()
+                choiceStr = self.logger.input(f"[enter a number from 1-{filesLen} or enter the file name]:\n")
 
                 try:
                     selected = int(choiceStr)
@@ -1149,84 +1241,90 @@ class RaidenBossFixService():
             if (isinstance(selected, int)):
                 selected = baseFiles[selected - 1]
 
-            self._logger.space()
-            self._logger.log(f"Chosen file to use: {selected}")
+            self.logger.space()
+            self.logger.log(f"Chosen file to use: {selected}")
 
-            if (self._purgeDups):
-                self._logger.log("Deleting all the other files")
+            if (self.purgeDups):
+                self.logger.log("Deleting all the other files")
             else:
-                self._logger.log("Disabling all the other files")
+                self.logger.log("Disabling all the other files")
 
             files = filter(lambda file: (os.path.basename(file) != selected), files)
             for file in files:
-                if (self._purgeDups):
+                if (self.purgeDups):
                     os.remove(file)
                     continue
 
                 FileService.disableFile(file, filePrefix = DuplicateFilePrefix)
 
-            self._logger.closeHeading()
-            self._logger.space()
-            self._logger.includePrefix = True
+            self.logger.closeHeading()
+            self.logger.space()
+            self.logger.includePrefix = True
 
     def createMod(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False):
-        if (not self._disableDups):
-            return Mod(path = path, files = files, isTopMod = isTopMod, logger = self._logger)
+        if (not self.disableDups):
+            return Mod(path = path, files = files, isTopMod = isTopMod, logger = self.logger)
         
         mod = None
         while (mod is None):
             try:
-                mod = Mod(path = path, files = files, isTopMod = isTopMod, logger = self._logger)
+                mod = Mod(path = path, files = files, isTopMod = isTopMod, logger = self.logger)
             except DuplicateFileException as e:
                 self.disableDuplicateFiles(e.fileType, e.files, path)
 
             if (mod is None):
-                self._logger.space()
-                self._logger.log("Retrying reading mod")
+                self.logger.space()
+                self.logger.log("Retrying reading mod")
                 files = None
 
         return mod
 
     def _fix(self):
-        if (self._fixOnly and self._undoOnly):
+        if (self.fixOnly and self.undoOnly):
             raise ConflictingOptions([FixOnlyOpt, RevertOpt])
 
-        modFolder = os.path.basename(os.getcwd())
-        self._loggerBasePrefix = modFolder
-        self._logger.prefix = self._loggerBasePrefix
+        modFolder = os.path.basename(self._path)
 
-        files, dirs = FileService.getFilesAndDirs()
-        topMod = self.createMod(files = files, isTopMod = True)
+        self._loggerBasePrefix = os.path.basename(modFolder)
+        self.logger.prefix = os.path.basename(DefaultPath)
+        files, dirs = FileService.getFilesAndDirs(path = self._path)
+
+        self.logger.prefix = self._loggerBasePrefix
+        topMod = self.createMod(path = self._path, files = files, isTopMod = True)
         topIni = topMod.ini
 
         if (topIni.merged):
-            self._logger.log("Fixing Merged Mod")
-            self._logger.log(f"Reading {MergedFile} file for individual mods to modify")
+            self.logger.log("Fixing Merged Mod")
+            self.logger.log(f"Reading {MergedFile} file for individual mods to modify")
 
             # read the merged.ini for mod folders
             topIni.parse()
             modFolders = topIni.getResourceBlendFolderPaths()
 
             # remove any backups
-            if (not self._keepBackups):
+            if (not self.keepBackups):
                 topMod.removeBackupInis()
 
-            if (self._purgeDups):
+            if (self.purgeDups):
                 topMod.removeBackupDups()
 
             # undo any previous fixes
-            if (not self._fixOnly):
-                topMod.removeFix(keepBackups = self._keepBackups)
+            if (not self.fixOnly):
+                topMod.removeFix(keepBackups = self.keepBackups)
 
             remapBlendModelsDict = {}
             remapBlendModels = []
 
             for resourceName in modFolders:
                 dir = modFolders[resourceName]
-                dirName = dir.replace(ntpath.sep, os.sep)
+                dirName = FileService.ntPathToPosix(dir)
 
-                self._logger.split()
-                self._logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
+                dirPath = dirName
+                if (not self._pathIsCwd):
+                    dirPath = FileService.parseOSPath(ntpath.join(self._path, dir))
+
+                self.logger.split()
+                self.logger.prefix = f"{self._loggerBasePrefix} --> {dirName.replace(os.sep, ' --> ')}"
 
                 # case where a mod folder is called twice in merged.ini
                 try:
@@ -1235,74 +1333,74 @@ class RaidenBossFixService():
                     pass
                 else:
                     remapBlendModels.append(remapBlendModelsDict[dirName])
-                    self._logger.log(f"Mod located at {dirName} has already been fixed")
+                    self.logger.log(f"Mod located at {dirName} has already been fixed")
                     continue
 
                 mod = None
                 try:
-                    mod = self.createMod(path = dirName)
+                    mod = self.createMod(path = dirPath)
                 except FileException as e:
-                    self._logger.warn(e)
-                    self._logger.space()
-                    self._logger.log("Skipping mod...")
+                    self.logger.warn(e)
+                    self.logger.space()
+                    self.logger.log("Skipping mod...")
                     
                     self._skippedMods[dirName] = e
                     continue
 
                 remapBlendModel = self.fixBaseMod(mod, origBlendName = resourceName)
 
-                if (self._undoOnly):
+                if (self.undoOnly):
                     continue
 
                 remapBlendModels.append(remapBlendModel)
                 remapBlendModelsDict[dirName] = remapBlendModel
 
-            self._logger.split()
-            self._logger.prefix = self._loggerBasePrefix 
+            self.logger.split()
+            self.logger.prefix = self._loggerBasePrefix 
 
             self.reportSkippedMods()
 
-            if (self._undoOnly):
-                self._logger.log("Finished reverting previous changes")
+            if (self.undoOnly):
+                self.logger.log("Finished reverting previous changes")
                 return
 
             if (not remapBlendModels):
-                self._logger.log("No mods found for the merged mod or all mods have already been converted")
+                self.logger.log("No mods found for the merged mod or all mods have already been converted")
                 return
 
             if (topIni.isRaidenFixed):
-                self._logger.log(f"{MergedFile} file already fixed")
+                self.logger.log(f"{MergedFile} file already fixed")
                 return
 
-            self._logger.log(f"Making the {MergedFile} file")
-            topIni.fix(remapBlendModels, keepBackup = self._keepBackups, fixOnly = self._fixOnly)
+            self.logger.log(f"Making the {MergedFile} file")
+            topIni.fix(remapBlendModels, keepBackup = self.keepBackups, fixOnly = self.fixOnly)
         else:
-            self._logger.log("Fixing Single Mod")
+            self.logger.log("Fixing Single Mod")
             self.fixBaseMod(topMod)
 
-        self._logger.log("ENJOY")
-
+        self.logger.log("ENJOY")
 
     def fix(self):
         try:
             self._fix()
         except BaseException as e:
-            self._logger.handleException(e)
+            self.logger.handleException(e)
         else:
-            self._logger.split()
+            self.logger.split()
 
             if (not self._skippedMods):
                 self.addTips()
 
-        self._logger.waitExit()
+        self.createLog()
 
 
-def run_main():
+def main():
     args = argParser.parse_args()
-    raidenBossFixService = RaidenBossFixService(keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, 
-                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDups)
+    raidenBossFixService = RaidenBossFixService(path = args.src, keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, 
+                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDups, log = args.log, verbose = True)
     raidenBossFixService.fix()
+    raidenBossFixService.logger.waitExit()
 
 # Main Driver Code
 if __name__ == "__main__":
-    run_main()
+    main()
