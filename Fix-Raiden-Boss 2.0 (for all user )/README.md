@@ -91,6 +91,7 @@ then enter
 
 Tool developpers can now include the fix within their code.
 
+### Example of Successfull Run
 ```python
 import FixRaidenBoss2 as FRB
 
@@ -108,6 +109,33 @@ print("The Raiden Mod is fixed!")
 ```
 Creating log file, RSFixLog.txt
 The Raiden Mod is fixed!
+```
+</details>
+<br>
+
+### Example of Handling Errors
+```python
+import FixRaidenBoss2 as FRB
+
+raidenBossFixService = FRB.RaidenBossFixService(path = r"my raiden folder path that contains a duplicate .ini file", log = True, verbose = False)
+
+print("Starting to fix mod...")
+try:
+    raidenBossFixService.fix()
+except FRB.DuplicateFileException as e:
+    print("The fix failed because there is a duplicate .ini file... :(")
+else:
+    print("The Raiden Mod is fixed!")
+```
+<br>
+
+<details>
+<summary>Example Result</summary>
+<br>
+
+```
+Starting to fix mod...
+The fix failed because there is a duplicate .ini file... :(
 ```
 </details>
 <br>
