@@ -1036,7 +1036,7 @@ class Mod(Model):
 
 class RaidenBossFixService():
     def __init__(self, path: Optional[str] = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, 
-                 disableDups: bool = True, purgeDups: bool = False, log: bool = False, verbose: bool = True):
+                 disableDups: bool = False, purgeDups: bool = False, log: bool = False, verbose: bool = True, handleExceptions: bool = False):
         self.log = log
         self._loggerBasePrefix = ""
         self.logger = Logger(logTxt = log, verbose = verbose)
@@ -1047,6 +1047,7 @@ class RaidenBossFixService():
         self.disableDups = disableDups
         self.purgeDups = purgeDups
         self.verbose = verbose
+        self.handleExceptions = handleExceptions
         self._skippedMods: Dict[str, Error] = {}
         self._logFile = FileService.parseOSPath(ntpath.join(DefaultPath, LogFile))
         self._pathIsCwd = False
@@ -1384,7 +1385,10 @@ class RaidenBossFixService():
         try:
             self._fix()
         except BaseException as e:
-            self.logger.handleException(e)
+            if (self.handleExceptions):
+                self.logger.handleException(e)
+            else:
+                raise e from e
         else:
             self.logger.split()
 
@@ -1397,7 +1401,8 @@ class RaidenBossFixService():
 def main():
     args = argParser.parse_args()
     raidenBossFixService = RaidenBossFixService(path = args.src, keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, 
-                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDups, log = args.log, verbose = True)
+                                                undoOnly = args.revert, disableDups = not args.manualDisable, purgeDups = args.purgeDups, 
+                                                log = args.log, verbose = True, handleExceptions = True)
     raidenBossFixService.fix()
     raidenBossFixService.logger.waitExit()
 
