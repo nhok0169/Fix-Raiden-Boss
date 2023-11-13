@@ -91,7 +91,7 @@ then enter
 
 Tool developpers can now include the fix within their code.
 
-### Example of Successfull Run
+### Example of Successful Run
 ```python
 import FixRaidenBoss2 as FRB
 
