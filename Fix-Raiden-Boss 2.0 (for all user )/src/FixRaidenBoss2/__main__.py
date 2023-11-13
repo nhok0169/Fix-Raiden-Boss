@@ -1,4 +1,4 @@
-import FixRaidenBoss2
+from .FixRaidenBoss2 import main
 
 if __name__ == '__main__':
-    FixRaidenBoss2.main()
+    main()
