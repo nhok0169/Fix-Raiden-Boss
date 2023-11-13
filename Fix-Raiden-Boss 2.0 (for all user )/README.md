@@ -91,6 +91,15 @@ then enter
 
 Tool developpers can now include the fix within their code.
 
+<br>
+
+*Make sure you first install the module by typing into [cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd):*
+```bash
+python -m pip install -U FixRaidenBoss2
+```
+
+<br>
+
 ### Example of Successful Run
 ```python
 import FixRaidenBoss2 as FRB
