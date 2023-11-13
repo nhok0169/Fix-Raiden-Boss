@@ -1388,6 +1388,7 @@ class RaidenBossFixService():
             if (self.handleExceptions):
                 self.logger.handleException(e)
             else:
+                self.createLog()
                 raise e from e
         else:
             self.logger.split()

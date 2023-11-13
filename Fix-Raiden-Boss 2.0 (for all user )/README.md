@@ -135,6 +135,7 @@ else:
 
 ```
 Starting to fix mod...
+Creating log file, RSFixLog.txt
 The fix failed because there is a duplicate .ini file... :(
 ```
 </details>
