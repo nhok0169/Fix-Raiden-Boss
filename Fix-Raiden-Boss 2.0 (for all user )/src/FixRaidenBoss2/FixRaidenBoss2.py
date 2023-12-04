@@ -11,7 +11,7 @@ import configparser
 import re
 import struct
 import traceback
-from typing import List, Callable, Optional, Union, Dict, Any, TypeVar, Hashable
+from typing import List, Callable, Optional, Union, Dict, Any, TypeVar, Hashable, Tuple
 import argparse
 import ntpath
 
@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
 DefaultFileType = "file"
 DefaultPath = os.getcwd()
+CurrentDir = "."
 IniExt = ".ini"
 TxtExt = ".txt"
 IniExtLen = len(IniExt)
@@ -93,6 +94,7 @@ class DuplicateFileException(FileException):
 class MissingFileException(FileException):
     def __init__(self, fileType: str = DefaultFileType, path: str = DefaultPath):
         message = f"Unable to find {fileType}. Ensure it is in the folder"
+        self.fileType = fileType
         super().__init__(message, path = path)
 
 
@@ -346,19 +348,26 @@ class Logger():
             newTxt = transform(lst[i])
             self.log(self.getNumberedStr(newTxt, i + 1))
 
-    def error(self, message: str):
-        self.space()
-
-        prevVerbose = self.verbose
-        self.verbose = True
-        self.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    def box(self, message: str, header: str):
+        self.log(header)
 
         messageList = message.split("\n")
         for messagePart in messageList:
             self.log(messagePart)
 
-        self.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        self.log(header)
+
+    def error(self, message: str):
+        self.space()
+        prevVerbose = self.verbose
+        self.verbose = True
+
+        self.box(message, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         self.verbose = prevVerbose
+
+    def note(self, message: str):
+        self.space()
+        self.box(f"Note: {message}", "*****************************")
 
     @classmethod
     def getWarnStr(self, exception: Error) -> str:
@@ -422,13 +431,19 @@ class IniFile(Model):
     _fixHeader = "; --------------- Raiden Boss Fix -----------------"
     _fixFooter = "; -------------------------------------------------"
 
-    # -- regex strings ---
-    _textureOverrideBlendPatternStr = r"\[\s*TextureOverride(\w+)Blend\s*\]"
-    _commandListBlendPatternStr = r"\[\s*CommandListRaidenShogunBlend\s*\]"
-    _resourceBlendPatternStr = r"\[\s*Resource((?!RaidenShogunRemap).)*Blend\.[0-9]+\s*\]"
+    Vb1 = "vb1"
+    Draw = "draw"
+    Resource = "Resource"
+    Blend = "Blend"
+    RemapBlend = f"Remap{Blend}"
 
-    _fixedTextureOverrideBlendPatternStr = r"\[\s*TextureOverrideRaidenShogunRemapBlend\s*\]"
-    _fixedCommandListBlendPatternStr = r"\[\s*CommandListRaidenShogunRemapBlend\s*\]"
+    # -- regex strings ---
+    _textureOverrideBlendPatternStr = r"\[\s*TextureOverride(\w+)" + Blend + r"\s*\]"
+    _commandListBlendPatternStr = r"\[\s*CommandListRaidenShogun" + Blend + r"\s*\]"
+    _resourceBlendPatternStr = r"\[\s*" + Resource + r"((?!RaidenShogunRemap).)*" + Blend + r"\.[0-9]+\s*\]"
+
+    _fixedTextureOverrideBlendPatternStr = r"\[\s*TextureOverrideRaidenShogun" + RemapBlend + r"\s*\]"
+    _fixedCommandListBlendPatternStr = r"\[\s*CommandListRaidenShogun" + RemapBlend + r"\s*\]"
 
     # --------------------
 
@@ -440,12 +455,11 @@ class IniFile(Model):
     _fixedTextureOverrideBlendPattern = re.compile(_fixedTextureOverrideBlendPatternStr)
     _fixRemovalPattern = re.compile(f"{_fixHeader}(.|\n)*{_fixFooter}")
 
-    _parsePattern = re.compile(f"({_resourceBlendPatternStr})|({_commandListBlendPatternStr})")
+    _numEndPattern = re.compile(f"\.[0-9]+\s*$")
 
     # -------------------
 
     _ifStructurePattern = re.compile(r"\s*(endif|if|else)")
-    Vb1 = "vb1"
 
     def __init__(self, file: str, logger: Optional[Logger] = None):
         super().__init__(logger = logger)
@@ -460,7 +474,7 @@ class IniFile(Model):
 
         self._textureOverideBlendDicts: Dict[str, Dict[str, Any]] = {}
         self._resourceBlendDicts: Dict[str, Dict[str, Any]] = {}
-        self._blendIfTemplate: List[Union[str, int]] = []
+        self._blendIfTemplate: List[Union[str, Dict[str, Any]]] = []
         self._hasblendIfTemplate = False
 
     @property
@@ -648,13 +662,26 @@ class IniFile(Model):
         if (textureOverideKvps is None and self._textureOverideBlendDicts):
             textureOverideKvps = DictTools.getFirstValue(self._textureOverideBlendDicts)
 
-        if textureOverideKvps["draw"]:
-            draw: str = textureOverideKvps["draw"]
+        if textureOverideKvps[self.Draw]:
+            draw: str = textureOverideKvps[self.Draw]
         return draw
     
     @classmethod
+    def getSectionRegexStr(cls, sectionName: str) -> str:
+        return r"\[\s*" + sectionName + r"\s*\]"
+    
+    @classmethod
     def getMergedResourceIndex(cls, mergedResourceName: str) -> str:
-        return mergedResourceName.split(".")[-1]
+        return mergedResourceName.rsplit(".", 1)[-1]
+    
+    def _getResourceSortKey(self, resourceTuple: Tuple[str, Any]) -> int:
+        result = -1
+        try:
+            result = int(self.getMergedResourceIndex(resourceTuple[0]))
+        except:
+            pass
+
+        return result
 
     # get the sorted order of the mod folders used in the merged.ini
     def getResourceBlendFolderPaths(self, resourceDicts: Optional[Dict[str, Dict[str, Any]]] = None) -> Dict[str, str]:
@@ -666,7 +693,7 @@ class IniFile(Model):
 
         # case where the resources are not put in the proper order
         resourceTuples = [(k, v) for k, v in resourceDicts.items()]
-        resourceTuples.sort(key = lambda tuple: int(self.getMergedResourceIndex(tuple[0])))
+        resourceTuples.sort(key = self._getResourceSortKey)
 
         for tuple in resourceTuples:
             resourceName = tuple[0]
@@ -712,7 +739,22 @@ class IniFile(Model):
     
     @classmethod
     def getResourceName(self, name: str) -> str:
-        return f"Resource{name}"
+        return f"{self.Resource}{name}"
+
+    @classmethod
+    def getRemapResourceName(cls, name: str) -> str:
+        nameParts = name.rsplit(cls.Blend, 1)
+        namePartsLen = len(nameParts)
+
+        if (namePartsLen > 1):
+            name = cls.RemapBlend.join(nameParts)
+        else:
+            name += cls.RemapBlend
+        
+        if (not name.startswith(cls.Resource)):
+            name = cls.getResourceName(name)
+
+        return name
     
     @classmethod
     def getResource(self, resourceName: str, filePath: str):
@@ -726,7 +768,7 @@ class IniFile(Model):
         remapBlendModelsLen = len(remapBlendModels)
         for i in range(remapBlendModelsLen):
             model = remapBlendModels[i]
-            resourceName = f"{cls.getResourceName(model.fixedBlendName)}.{i}"
+            resourceName = cls.getRemapResourceName(model.origBlendName)
 
             if (i):
                 result += "\n\n"
@@ -738,8 +780,14 @@ class IniFile(Model):
     @classmethod
     def getFixMapping(cls, blendName: str, draw: int, tabCount: int = 1) -> str:
         tabs = "\t" * tabCount
-        return f"{tabs}{cls.Vb1} = {blendName}\n{tabs}handling = skip\n{tabs}draw = {draw}"
+        return f"{tabs}{cls.Vb1} = {blendName}\n{tabs}handling = skip\n{tabs}{cls.Draw} = {draw}"
+
+    def _isIfTemplateResource(self, ifTemplateClauseDict: Dict[str, Any]) -> bool:
+        return self.Vb1 in ifTemplateClauseDict
     
+    def _getIfTemplateResourceName(self, ifTemplateClauseDict: Dict[str, Any]) -> Any:
+        return ifTemplateClauseDict[self.Vb1]
+
     # fills the if..else template in merged.ini to create the command that maps created blend files to their
     #   corresponding mod
     def fillRemapCommandIfTemplate(self, commandName: str, remapBlendModelsDict: Dict[str, RemapBlendModel]):
@@ -760,19 +808,17 @@ class IniFile(Model):
                         tabCount += 1
                 continue
 
-            if (self.Vb1 in line):
-                blendName = line[self.Vb1]
-                blendInd = self.getMergedResourceIndex(blendName)
-                
+            if (self._isIfTemplateResource(line)):
+                blendName = self._getIfTemplateResourceName(line)
+                resourceBlendName = self.getRemapResourceName(blendName)
+
                 remapModel = None
                 try:
                     remapModel = remapBlendModelsDict[blendName]
                 except KeyError as e:
                     raise KeyError(f'The blend resource by the name, "{blendName}", does not exist') from e
 
-                remapBlendName = self.getResourceName(f"{remapModel.fixedBlendName}.{blendInd}")
-
-                addFix += f"{self.getFixMapping(remapBlendName, remapModel.draw, tabCount = tabCount)}\n"
+                addFix += f"{self.getFixMapping(resourceBlendName, remapModel.draw, tabCount = tabCount)}\n"
             
         return addFix
     
@@ -789,8 +835,8 @@ class IniFile(Model):
             if (i):
                 addFix += "else "
 
-            blendName = f"{cls.getResourceName(model.fixedBlendName)}.{i}"
-            addFix += f"if $swapvar == {i}\n\t{cls.getFixMapping(blendName, model.draw)}"
+            blendName = f"{cls.getRemapResourceName(model.origBlendName)}"
+            addFix += f"if $swapvar == {i}\n{cls.getFixMapping(blendName, model.draw)}"
 
         addFix += "\nendif"
         return addFix
@@ -854,7 +900,7 @@ class IniFile(Model):
 
 
 class BaseIniFile(IniFile):
-    _fixedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend\s*\]"
+    _fixedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend.*\]"
 
     _removalPattern = re.compile(f"({IniFile._fixedTextureOverrideBlendPatternStr})|({_fixedResourceBlendPatternStr})")
     _parsePattern = re.compile(f"({IniFile._textureOverrideBlendPatternStr})")
@@ -863,7 +909,7 @@ class BaseIniFile(IniFile):
     def getFixStr(self, fixedBlendName: str, draw: str) -> str:
         resourceName = self.getResourceName(fixedBlendName)
 
-        addFix = f"\n\n{self.getTextureOverride(fixedBlendName)}\nvb1 = {self.getResourceName(fixedBlendName)}\nhandling = skip\ndraw = {draw}"
+        addFix = f"\n\n{self.getTextureOverride(fixedBlendName)}\n{IniFile.Vb1} = {self.getResourceName(fixedBlendName)}\nhandling = skip\n{IniFile.Draw} = {draw}"
         addFix += f'\n\n{self.getResource(resourceName, f"{fixedBlendName}.buf")}'
 
         return super().getFixStr(addFix)
@@ -887,10 +933,12 @@ class BaseIniFile(IniFile):
 
 
 class MergedIniFile(IniFile):
-    _fixedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend\.[0-9]+\s*\]"
-
+    _fixedResourceBlendPatternStr = r"\[\s*ResourceRaidenShogunRemapBlend.*\]"
     _removalPattern = re.compile(f"({IniFile._fixedTextureOverrideBlendPatternStr})|({IniFile._fixedCommandListBlendPatternStr})|({_fixedResourceBlendPatternStr})")
-    _parsePattern = re.compile(f"({IniFile._resourceBlendPatternStr})|({IniFile._commandListBlendPatternStr})")
+
+    def __init__(self, file: str, logger: Optional[Logger] = None):
+        super().__init__(file, logger = logger)
+        self.blendDrawValues: Dict[str, int] = {}
 
     # get the needed lines to add to the merged.ini file
     def getFixStr(self, globalBlendName: str, remapBlendModels: List[RemapBlendModel], remapBlendModelsDict: Dict[str, RemapBlendModel]) -> str:
@@ -917,20 +965,40 @@ class MergedIniFile(IniFile):
         self.removeSectionOptions(self._removalPattern)
         self.write()
         self.clearRead()
-
-    def processSection(self, startInd: int, endInd: int, fileLines: List[str], sectionName: str, srcTxt: str) -> Dict[str, str]:
-        result = None
-        bracketSectionName = f"[{sectionName}]"
-        
-        if (self._resourceBlendPattern.match(bracketSectionName)):
-            result = self._processResourceBlendSection(startInd, endInd, fileLines, sectionName, srcTxt)
-        elif (self._commandListBlendPattern.match(bracketSectionName)):
-            result = self._processIfTemplate(startInd, endInd, fileLines, sectionName, srcTxt)
-
-        return result
     
+    # parse(): Parses the merged.ini file for any info needing to keep track of
+    # Note: We use 2 passes to parse the merged.ini file
+    #   Pass 1: reads in the required dependencies from [CommandListRaidenShogunBlend]
+    #   Pass 2: read the file locations of the required dependencies
+    # Can't read in 1 pass (eg. case where [CommandListRaidenShogunBlend] comes after the resource dependencies in the .ini file)
     def parse(self):
-        self.getSectionOptions(self._parsePattern, postProcessor = self.processSection)
+        self.getSectionOptions(IniFile._commandListBlendPattern, postProcessor = self._processIfTemplate)
+
+        nonStandardResourceBlends: Dict[str, str] = {}
+        resourceBlendPatternStr = f"({IniFile._resourceBlendPatternStr})"
+
+        # keep track of any info for needed dependencies that do not fit the naming convention from the mod merging script
+        for line in self._blendIfTemplate:
+            if (isinstance(line, str) or not self._isIfTemplateResource(line)):
+                continue
+
+            blendName = self._getIfTemplateResourceName(line)
+            
+            # retrive the draw values of a particular mod so we do not necessarily need to get the value from the
+            #   mods's .ini file
+            if (IniFile.Draw in line):
+                self.blendDrawValues[blendName] = line[IniFile.Draw]
+
+            if (IniFile._resourceBlendPattern.match(f"[{blendName}]") or blendName in nonStandardResourceBlends):
+                continue
+
+            resourceRegex = self.getSectionRegexStr(blendName)
+            nonStandardResourceBlends[blendName] = resourceRegex
+            resourceBlendPatternStr += f"|({resourceRegex})"
+
+        # read in all the needed dependencies
+        resouceBlendPattern = re.compile(resourceBlendPatternStr)
+        self.getSectionOptions(resouceBlendPattern, postProcessor = self._processResourceBlendSection)
 
     def fix(self, remapBlendModels: List[RemapBlendModel], keepBackup: bool = True, fixOnly: bool = False):
         remapBlendModelsDict = ListTools.to_dict(remapBlendModels, lambda e: e.origBlendName)
@@ -940,23 +1008,28 @@ class MergedIniFile(IniFile):
 
 
 class Mod(Model):
-    def __init__(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False, logger: Optional[Logger] = None):
+    def __init__(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False, logger: Optional[Logger] = None, blendDraw: Optional[str] = None):
         super().__init__(logger = logger)
         self.path = path
         self.isTopMod = isTopMod
         self._files = files
+        self.blendDraw = blendDraw
         self._setupFiles()
 
         if (self.isTopMod):
             self.ini = self.getBaseModFiles()
             self.remapBlend, self.blend, self.backupInis, self.backupDups = self.getOptionalFiles()
-        else:
+        elif (self.blendDraw is None):
             self.ini, self.blend = self.getBaseModFiles()
             self.remapBlend, self.backupInis, self.backupDups = self.getOptionalFiles()
-
-        if (IniFile.checkMerged(self.ini)):
-            self.ini = MergedIniFile(self.ini, logger = logger)
         else:
+            self.blend = self.getBaseModFiles()
+            self.remapBlend, self.ini, self.backupInis, self.backupDups = self.getOptionalFiles()
+
+        hasIniFile = bool(self.ini is not None)
+        if (hasIniFile and IniFile.checkMerged(self.ini)):
+            self.ini = MergedIniFile(self.ini, logger = logger)
+        elif (hasIniFile):
             self.ini = BaseIniFile(self.ini, logger = logger)
 
     @property
@@ -992,8 +1065,16 @@ class Mod(Model):
     def isBackupDupFile(cls, file: str) -> bool:
         return DuplicateFilePrefix in file and file.endswith(TxtExt)
     
+    def getBlendDrawValue(self, flush: bool = False) -> str:
+        if (flush and self.ini is not None):
+            self.blendDraw = self.ini.getBlendDrawValue()
+        return self.blendDraw
+    
     def getBaseModFiles(self) -> List[str]:
-        filters = {IniFileType: self.isIni}
+        filters = {}
+        if (self.blendDraw is None):
+            filters[IniFileType] = self.isIni
+
         if (not self.isTopMod):
             filters[BlendFileType] =  self.isBlend
 
@@ -1003,6 +1084,8 @@ class Mod(Model):
         SingleFileFilters = {"Remap Blend": self.isRemapBlend}
         if (self.isTopMod):
             SingleFileFilters[BlendFileType] = self.isBlend
+        elif (self.blendDraw is not None):
+            SingleFileFilters[IniFileType] = self.isIni
 
         MultiFileFilters = [self.isBackupIni, self.isBackupDupFile]
 
@@ -1031,7 +1114,8 @@ class Mod(Model):
             self.print("log", f"Removing previous {RemapBlendFile}")
             os.remove(self.remapBlend)
 
-        self.ini.removeFix(keepBackups = keepBackups, fixOnly = fixOnly)
+        if (self.ini is not None):
+            self.ini.removeFix(keepBackups = keepBackups, fixOnly = fixOnly)
 
 
 class RaidenBossFixService():
@@ -1126,15 +1210,20 @@ class RaidenBossFixService():
             return
 
         # parse the .ini file
-        mod.ini.parse()
-        draw = mod.ini.getBlendDrawValue()
+        if (mod.ini is not None):
+            mod.ini.parse()
 
+        draw = mod.getBlendDrawValue(flush = True)
         fixedBlendName = self.getFixedBlendFile(mod.blend)
         fixedBlendName = os.path.basename(fixedBlendName).split('.')[0]
 
-        remapBlendModel = RemapBlendModel(fixedBlendName, draw, mod.path, origBlendName = origBlendName)
-
+        remapBlendPath = ntpath.relpath(mod.path, self._path)
+        remapBlendModel = RemapBlendModel(fixedBlendName, draw, remapBlendPath, origBlendName = origBlendName)
         self._blendCorrection(mod.blend)
+        if (mod.ini is None):
+            self.logger.note(f"No {IniFileType} for the mod was provided, so we use info provided by the {MergedFile}")
+            return remapBlendModel
+        
         if (mod.ini.isRaidenFixed):
             self.logger.log("ini file already fixed")
             return remapBlendModel
@@ -1262,14 +1351,14 @@ class RaidenBossFixService():
             self.logger.space()
             self.logger.includePrefix = True
 
-    def createMod(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False):
+    def createMod(self, path: str = DefaultPath, files: Optional[List[str]] = None, isTopMod: bool = False, blendDraw: Optional[int] = None):
         if (not self.disableDups):
-            return Mod(path = path, files = files, isTopMod = isTopMod, logger = self.logger)
+            return Mod(path = path, files = files, isTopMod = isTopMod, logger = self.logger, blendDraw = blendDraw)
         
         mod = None
         while (mod is None):
             try:
-                mod = Mod(path = path, files = files, isTopMod = isTopMod, logger = self.logger)
+                mod = Mod(path = path, files = files, isTopMod = isTopMod, logger = self.logger, blendDraw = blendDraw)
             except DuplicateFileException as e:
                 self.disableDuplicateFiles(e.fileType, e.files, path)
 
@@ -1338,8 +1427,14 @@ class RaidenBossFixService():
                     continue
 
                 mod = None
+                modBlendDraw = None
                 try:
-                    mod = self.createMod(path = dirPath)
+                    modBlendDraw = topMod.ini.blendDrawValues[resourceName]
+                except KeyError:
+                    pass
+
+                try:
+                    mod = self.createMod(path = dirPath, blendDraw = modBlendDraw)
                 except FileException as e:
                     self.logger.warn(e)
                     self.logger.space()
