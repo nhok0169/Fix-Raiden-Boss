@@ -40,6 +40,7 @@ DefaultPath = os.getcwd()
 CurrentDir = "."
 IniExt = ".ini"
 TxtExt = ".txt"
+BufExt = ".buf"
 IniExtLen = len(IniExt)
 MergedFile = f"merged{IniExt}"
 BackupFilePrefix = "DISABLED_RSFixBackup_"
@@ -47,8 +48,8 @@ DuplicateFilePrefix = "DISABLED_RSDup_"
 LogFile = f"RSFixLog{TxtExt}"
 
 IniFileType = "*.ini file"
-BlendFileType = "Blend.buf"
-RemapBlendFile = f"RaidenShogunRemap{BlendFileType}"
+BlendFileType = f"Blend{BufExt}"
+RemapBlendFile = f"Remap{BlendFileType}"
 IniFileEncoding = "utf-8"
 
 DeleteBackupOpt = '--deleteBackup'
@@ -763,13 +764,11 @@ class IniFile(Model):
 
     @classmethod
     def getFixedBlendFile(cls, blendFile: str) -> str:
-        blendSuffixPos = blendFile.rfind('Blend.buf')
+        blendFile = blendFile.rsplit(".", 1)[0]
+        blendFolder = os.path.dirname(blendFile)
+        blendBaseName = os.path.basename(blendFile)
         
-        result = blendFile
-        if (blendSuffixPos != -1):
-            result = blendFile[:blendSuffixPos]
-        
-        return f"{result}RemapBlend.buf"
+        return os.path.join(blendFolder, f"{cls.getRemapName(blendBaseName)}.buf")
 
     def getFixedBlendName(cls, blendFile: str) -> str:
         fixedBlendFile = cls.getFixedBlendFile(blendFile)
@@ -823,9 +822,9 @@ class IniFile(Model):
             return self.removeResourceName(self.remapBlendModels[0].fixedBlendName)
 
         return f"RaidenShogun{self.Blend}"
-
+    
     @classmethod
-    def getRemapResourceName(cls, name: str) -> str:
+    def getRemapName(cls, name: str) -> str:
         nameParts = name.rsplit(cls.Blend, 1)
         namePartsLen = len(nameParts)
 
@@ -833,7 +832,12 @@ class IniFile(Model):
             name = cls.RemapBlend.join(nameParts)
         else:
             name += cls.RemapBlend
-        
+
+        return name
+
+    @classmethod
+    def getRemapResourceName(cls, name: str) -> str:
+        name = cls.getRemapName(name)
         if (not name.startswith(cls.Resource)):
             name = cls.getResourceName(name)
 
@@ -1131,14 +1135,11 @@ class Mod(Model):
         self.blendDraw = blendDraw
         self._setupFiles()
 
-        if (self.isTopMod):
-            self.ini = self.getBaseModFiles()
-            self.remapBlend, self.backupInis, self.backupDups = self.getOptionalFiles()
-        elif (self.blendDraw is None):
+        if (self.isTopMod or self.blendDraw is None):
             self.ini = self.getBaseModFiles()
             self.remapBlend, self.backupInis, self.backupDups = self.getOptionalFiles()
         else:
-            self.remapBlend, self.ini, self.backupInis, self.backupDups = self.getOptionalFiles()
+            self.ini, self.remapBlend, self.backupInis, self.backupDups = self.getOptionalFiles()
 
         hasIniFile = bool(self.ini is not None)
         if (hasIniFile):
@@ -1168,7 +1169,14 @@ class Mod(Model):
     
     @classmethod
     def isRemapBlend(cls, file: str) -> bool:
-        return file.endswith(RemapBlendFile)
+        baseName = os.path.basename(file)
+        if (not baseName.endswith(BufExt)):
+            return False
+
+        baseName = baseName.rsplit(".", 1)[0]
+        baseNameParts = baseName.rsplit("RemapBlend", 1)
+
+        return (len(baseNameParts) > 1)
     
     @classmethod
     def isBlend(cls, file: str) -> bool:
@@ -1195,13 +1203,15 @@ class Mod(Model):
         return FileService.getSingleFiles(path = self.path, filters = filters, files = self._files)
     
     def getOptionalFiles(self) -> List[Optional[str]]:
-        SingleFileFilters = {"Remap Blend": self.isRemapBlend}
+        SingleFileFilters = {}
         if (self.blendDraw is not None):
             SingleFileFilters[IniFileType] = self.isIni
 
-        MultiFileFilters = [self.isBackupIni, self.isBackupDupFile]
+        MultiFileFilters = [self.isRemapBlend, self.isBackupIni, self.isBackupDupFile]
 
-        singleFiles = FileService.getSingleFiles(path = self.path, filters = SingleFileFilters, files = self._files, optional = True)
+        singleFiles = []
+        if (SingleFileFilters):
+            singleFiles = FileService.getSingleFiles(path = self.path, filters = SingleFileFilters, files = self._files, optional = True)
         multiFiles = FileService.getFiles(path = self.path, filters = MultiFileFilters, files = self._files)
 
         result = singleFiles
@@ -1223,8 +1233,9 @@ class Mod(Model):
 
     def removeFix(self, keepBackups: bool = True, fixOnly: bool = False):
         if (self.remapBlend is not None):
-            self.print("log", f"Removing previous {RemapBlendFile}")
-            os.remove(self.remapBlend)
+            for remapBlend in self.remapBlend:
+                self.print("log", f"Removing previous {RemapBlendFile} at {os.path.basename(remapBlend)}")
+                os.remove(remapBlend)
 
         if (self.ini is not None):
             self.ini.removeFix(keepBackups = keepBackups, fixOnly = fixOnly)
