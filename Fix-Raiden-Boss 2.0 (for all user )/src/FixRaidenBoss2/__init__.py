@@ -1,3 +1,3 @@
-from .FixRaidenBoss2 import RaidenBossFixService, IniFile, FileService, Logger, RemapBlendModel, IfTemplate, Error, FileException, MissingFileException, DuplicateFileException, BlendFileNotRecognized, ConflictingOptions
+from .FixRaidenBoss2 import RaidenBossFixService, Mod, IniFile, FileService, Logger, RemapBlendModel, IfTemplate, Error, FileException, MissingFileException, DuplicateFileException, BlendFileNotRecognized, ConflictingOptions
 
-__all__ = ["RaidenBossFixService", "IniFile", "FileService", "Logger", "RemapBlendModel", "IfTemplate", "Error", "FileException", "MissingFileException", "DuplicateFileException", "BlendFileNotRecognized", "ConflictingOptions"]
+__all__ = ["RaidenBossFixService", "Mod", "IniFile", "FileService", "Logger", "RemapBlendModel", "IfTemplate", "Error", "FileException", "MissingFileException", "DuplicateFileException", "BlendFileNotRecognized", "ConflictingOptions"]

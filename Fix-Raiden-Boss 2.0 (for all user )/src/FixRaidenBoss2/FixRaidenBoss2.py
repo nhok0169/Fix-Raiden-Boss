@@ -1293,7 +1293,7 @@ class Mod(Model):
 
     # correcting the blend file
     @classmethod
-    def _blendCorrection(self, blendFile: str, fixedBlendFile: str) -> str:
+    def blendCorrection(self, blendFile: str, fixedBlendFile: str) -> str:
         with open(blendFile, "rb") as f:
             blendData = f.read()
 
@@ -1346,7 +1346,7 @@ class Mod(Model):
                     
                     blendsFound += 1
                     try:
-                        self._blendCorrection(origFullPath, fixedFullPath)
+                        self.blendCorrection(origFullPath, fixedFullPath)
                     except BaseException as e:
                         blendsSkipped[fixedFullPath] = e 
                         self.print("handleException", e)
