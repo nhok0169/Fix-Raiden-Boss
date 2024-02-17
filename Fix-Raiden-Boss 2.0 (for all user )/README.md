@@ -8,7 +8,7 @@
 - Thank HazrateGolabi#1364 for combine and make final script
 - Thank [Albert Gold#2696](https://github.com/Alex-Au1) for update the code for merged mods
 ## Requirements 
-- [Python](https://www.python.org/downloads/)
+- [Python (version 3.6 and up)](https://www.python.org/downloads/)
 
 ## VIDEO TUTORIAL AND EXAMPLES:
 
@@ -29,9 +29,9 @@
 
 ## Let's Start !
 ### STEP 1:
-- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into GIMI's `Mod` folder or your Raiden Mod folder.
+- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script in your Raiden Mod folder or GIMI's `Mod` folder.
 
-*Use the `--all` option to read all .ini files encountered or make sure the `.ini` files contain the section named `[TextureOverrideRaidenShogunBlend]`*
+*Make sure the `.ini` files contain the section named `[TextureOverrideRaidenShogunBlend]` or use the `--all` option to read all .ini files the program encounters*
 ### STEP 2:
 - Double click on the script
 ### STEP 3:
@@ -48,19 +48,19 @@ then enter
 *( you can now run the program anywhere without copying a script! )*
 
 ### STEP 2:
-- [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) in your mod folder or GIMI's `Mod` folder and type:
+- [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) in your Raiden Mod folder or GIMI's `Mod` folder and type:
 ```python
 python -m FixRaidenBoss2
 ```
 then enter
 
-*Use the `--all` option to read all .ini files encountered or make sure the `.ini` files contain the section named `[TextureOverrideRaidenShogunBlend]`*
+*Make sure the `.ini` files contain the section named `[TextureOverrideRaidenShogunBlend]` or use the `--all` option to read all .ini files the program encounters*
 ### STEP 3:
 - Open the game and enjoy it
 
 ## Run on CMD With a Script
 ### STEP 1:
-- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script into GIMI's `Mod` folder or your Raiden Mod folder  
+- Copy [THIS](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) script in your Raiden Mod folder or GIMI's `Mod` folder  
 
 ### STEP 2:
 - [open cmd](https://www.google.com/search?q=how+to+open+cmd+in+a+folder&oq=how+to+open+cmd) and type
@@ -69,7 +69,7 @@ python FixRaidenBoss2.py
 ```
 then enter
 
-*Use the `--all` option to read all .ini files encountered or make sure the `.ini` files contain the section named `[TextureOverrideRaidenShogunBlend]`*
+*Make sure the `.ini` files contain the section named `[TextureOverrideRaidenShogunBlend]` or use the `--all` option to read all .ini files the program encounters*
 ### STEP 3:
 - Open the game and enjoy it
 
