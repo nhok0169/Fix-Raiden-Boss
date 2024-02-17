@@ -101,6 +101,15 @@ python -m pip install -U FixRaidenBoss2
 
 <br>
 
+### Example of Only Fixing the Blend.buf file
+```python
+import FixRaidenBoss2 as FRB
+
+FRB.Mod.blendCorrection("RaidenShogunBlend.buf", "RaidenShogunRemapBlend.buf")
+```
+
+<br>
+
 ### Example of Successful Run
 ```python
 import FixRaidenBoss2 as FRB
