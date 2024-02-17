@@ -908,15 +908,9 @@ class IniFile(Model):
     def getFixMapping(cls, blendName: str, draw: int, tabCount: int = 1) -> str:
         tabs = "\t" * tabCount
         return f"{tabs}{cls.Vb1} = {blendName}\n{tabs}handling = skip\n{tabs}{cls.Draw} = {draw}"
-    
-    def _isIfTemplateHash(self, ifTemplatePart: Dict[str, Any]) -> bool:
-        return self.Hash in ifTemplatePart
 
     def _isIfTemplateResource(self, ifTemplatePart: Dict[str, Any]) -> bool:
         return self.Vb1 in ifTemplatePart
-    
-    def _isIfTemplateHandling(self, ifTemplatePart: Dict[str, Any]) -> bool:
-        return self.Handling in ifTemplatePart
     
     def _isIfTemplateDraw(self, ifTemplatePart: Dict[str, Any]) -> bool:
         return self.Draw in ifTemplatePart
@@ -927,50 +921,73 @@ class IniFile(Model):
     def _getIfTemplateResourceName(self, ifTemplatePart: Dict[str, Any]) -> Any:
         return ifTemplatePart[self.Vb1]
     
-    def _getIfTemplateDraw(self, ifTemplatePart: Dict[str, Any]) -> Any:
-        return ifTemplatePart[self.Draw]
-    
     def _getIfTemplateSubCommand(self, ifTemplatePart: Dict[str, Any]) -> Any:
         return ifTemplatePart[self.Run]
     
     # fills the attributes for the sections related to the texture override blend
-    def fillTextureOverrideRemapBlend(self, sectionName: str, part: Union[str, Dict[str, Any]], partIndex: int, tabCount: int, origSectionName: str):
+    def fillTextureOverrideRemapBlend(self, sectionName: str, part: Dict[str, Any], partIndex: int, tabCount: int, origSectionName: str):
         addFix = ""
-        # filling in the hash
-        if (self._isIfTemplateHash(part)):
-            addFix += f"{self.addTabs('hash = fe5c0180', tabCount = tabCount)}\n"
 
-        # filling in the vb1 resource
-        if (self._isIfTemplateResource(part)):
-            blendName = self._getIfTemplateResourceName(part)
-            remapModel = self.remapBlendModelsDict[blendName]
-            fixStr = f'{self.Vb1} = {remapModel.fixedBlendName}'
-            addFix += f"{self.addTabs(fixStr, tabCount = tabCount)}\n"
+        for varName in part:
+            varValue = part[varName]
 
-        # filling in the handling
-        if (self._isIfTemplateHandling(part)):
-            fixStr = f'{self.Handling} = skip'
-            addFix += f"{self.addTabs(fixStr, tabCount = tabCount)}\n"
+            # filling in the subcommand
+            addFix += self.fillSubCommand(varName, varValue, tabCount)
 
-        # filling in the draw value
-        if (self._isIfTemplateDraw(part)):
-            draw = self._getIfTemplateDraw(part)
-            fixStr = f'{self.Draw} = {draw}'
-            addFix += f"{self.addTabs(fixStr, tabCount = tabCount)}\n"
+            # filling in the hash
+            if (varName == self.Hash):
+                addFix += f"{self.addTabs('hash = fe5c0180', tabCount = tabCount)}\n"
+
+            # filling in the vb1 resource
+            elif (varName == self.Vb1):
+                blendName = self._getIfTemplateResourceName(part)
+                remapModel = self.remapBlendModelsDict[blendName]
+                fixStr = f'{self.Vb1} = {remapModel.fixedBlendName}'
+                addFix += f"{self.addTabs(fixStr, tabCount = tabCount)}\n"
+
+            # filling in the handling
+            elif (varName == self.Handling):
+                fixStr = f'{self.Handling} = skip'
+                addFix += f"{self.addTabs(fixStr, tabCount = tabCount)}\n"
+
+            # filling in the draw value
+            elif (varName == self.Draw):
+                fixStr = f'{self.Draw} = {varValue}'
+                addFix += f"{self.addTabs(fixStr, tabCount = tabCount)}\n"
 
         return addFix
     
     # fill the attributes for the sections related to the resources
-    def fillRemapResource(self, sectionName: str, part: Union[str, Dict[str, Any]], partIndex: int, tabCount: int, origSectionName: str):
+    def fillRemapResource(self, sectionName: str, part: Dict[str, Any], partIndex: int, tabCount: int, origSectionName: str):
         addFix = ""
-        if ("filename" in part):
-            remapModel = self.remapBlendModelsDict[origSectionName]
-            fixedBlendFile = remapModel.fixedBlendPaths[partIndex]
-            resourceStr = f"type = Buffer\nstride = 32\nfilename = {fixedBlendFile}"
-            addFix += f"{self.addTabs(resourceStr)}\n"
+        fileAdded = False
+
+        for varName in part:
+            varValue = part[varName]
+
+            # filling in the subcommand
+            addFix += self.fillSubCommand(varName, varValue, tabCount)
+
+            # add in the file only once
+            if (not fileAdded and "filename" in part):
+                remapModel = self.remapBlendModelsDict[origSectionName]
+                fixedBlendFile = remapModel.fixedBlendPaths[partIndex]
+                resourceStr = f"type = Buffer\nstride = 32\nfilename = {fixedBlendFile}"
+                addFix += f"{self.addTabs(resourceStr)}\n"
+
+                fileAdded = True
 
         return addFix
 
+    # fills any called subcommands
+    def fillSubCommand(self, varName: str, varValue: str, tabCount: int):
+        addFix = ""
+        if (varName == self.Run):
+            subCommandStr = f"{self.Run} = {self._blendCommandsRemapNames[varValue]}"
+            addFix += f"{self.addTabs(subCommandStr, tabCount = tabCount)}\n"
+
+        return addFix
+    
     # fills the if..else template in the .ini for each section
     def fillIfTemplate(self, sectionName: str, ifTemplate: IfTemplate, fillFunc: Callable[[str, Union[str, Dict[str, Any]], int, int, str], str], origSectionName: Optional[str] = None):
         addFix = f"[{sectionName}]\n"
@@ -996,12 +1013,6 @@ class IniFile(Model):
             
             # add in the content within the if..else statements
             addFix += fillFunc(sectionName, part, partIndex, tabCount, origSectionName)
-            
-            # add in any called sub commands
-            if (self._isIfTemplateSubCommand(part)):
-                subCommand = self._getIfTemplateSubCommand(part)
-                subCommandStr = f"{self.Run} = {self._blendCommandsRemapNames[subCommand]}"
-                addFix += f"{self.addTabs(subCommandStr, tabCount = tabCount)}\n"
 
             partIndex += 1
             
