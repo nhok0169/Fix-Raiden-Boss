@@ -582,7 +582,7 @@ class IniFile(Model):
     _textureOverrideBlendPattern = re.compile(_textureOverrideBlendPatternStr)
     _fixedTextureOverrideBlendPattern = re.compile(_fixedTextureOverrideBlendPatternStr)
     _fixRemovalPattern = re.compile(f"{_fixHeader}(.|\n)*{_fixFooter}")
-    _removalPattern = re.compile(f"({_fixedTextureOverrideBlendPatternStr})|(\[(\s|\w)*" + RemapBlend + r"(\s|\w)*\])")
+    _removalPattern = re.compile(f"({_fixedTextureOverrideBlendPatternStr})|(\[.*" + RemapBlend + r".*\])")
 
     # -------------------
 
