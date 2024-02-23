@@ -24,4 +24,4 @@ python:
    install:
    - requirements: docs/requirements.txt
    - method: pip
-     path: .
+     path: Fix-Raiden-Boss 2.0 (for all user )
