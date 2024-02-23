@@ -24,5 +24,6 @@ sphinx:
 # Optionally declare the Python requsirements required to build your docs
 python:
    install:
+    - requirements: docs/requirements.txt
     - method: pip
       path: Fix-Raiden-Boss 2.0 (for all user )
