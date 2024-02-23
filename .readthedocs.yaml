@@ -25,5 +25,3 @@ sphinx:
 python:
    install:
    - requirements: docs/requirements.txt
-   - method: pip
-     path: Fix-Raiden-Boss 2.0 (for all user )
