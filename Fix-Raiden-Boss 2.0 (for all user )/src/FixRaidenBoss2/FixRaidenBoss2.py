@@ -1370,6 +1370,59 @@ class Mod(Model):
 
 
 class RaidenBossFixService():
+    """
+    The overall class for fixing the Raiden Shogun Boss for Raiden Shogun mods
+
+    Attributes
+    ----------
+    path: Optional[:class:`str`]
+        The file location of where to run the fix. If this attribute is set to ``None``, then will run the fix
+            from wherever this class is called
+
+        **Default**: ``None``
+
+    keepBackups: :class:`bool`
+        Whether to keep backup versions of any IniFileTypes that the script fixes
+
+        **Default**: ``True``
+
+    fixOnly: :class:`bool`
+        Whether to only fix the mods without removing any previous changes this fix script may have made
+
+        .. warning::
+            if this is set to ``True`` and :attr:`undoOnly` is also set to ``True``, then the fix will not run and will throw a :class:`ConflictingOptions` exception
+
+        **Default**: ``False``
+
+    undoOnly: :class:`bool`
+        Whether to only undo the fixes previously made by the fix
+
+        .. warning::
+            if this is set to ``True`` and :attr:`fixOnly` is also set to ``True``, then the fix will not run and will throw a :class:`ConflictingOptions` exception
+
+        **Default**: ``True``
+
+    readAllInis: :class:`bool`
+        Whether to read all the IniFileTypes that the fix encounters
+
+        **Default**: ``False``
+
+    log: :class:`bool`
+        Whether to log the run of the fix in a seperate text file
+
+        **Default**: ``False``
+
+    verbose: :class:`bool`
+        Whether to print the progress for fixing mods
+
+        **Default**: ``True``
+
+    handleExceptions :class:`bool`
+        When an exception is caught, whether to silently stop running the fix
+
+        **Default**: ``False``
+    """
+
     def __init__(self, path: Optional[str] = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, 
                  readAllInis: bool = False, log: bool = False, verbose: bool = True, handleExceptions: bool = False):
         self.log = log
@@ -1399,10 +1452,24 @@ class RaidenBossFixService():
 
     @property
     def pathIsCwd(self):
+        """
+        Whether the filepath that the program runs from is the current directory where this module is loaded
+
+        :type: :class:`bool`
+        """
+
         return self._pathIsCwd
     
     @property
-    def path(self):
+    def path(self) -> str:
+        """
+        The filepath of where the fix is running from
+
+        :getter: Returns the path of where the fix is running
+        :setter: Sets the path for where the fix runs
+        :type: :class:`str`
+        """
+
         return self._path
     
     @path.setter
@@ -1412,6 +1479,10 @@ class RaidenBossFixService():
         self._skippedMods = {}
     
     def _setupModPath(self):
+        """
+        Sets the filepath of where the fix will run from
+        """
+
         self._pathIsCwd = False
         if (self._path is None):
             self._path = DefaultPath
@@ -1421,12 +1492,36 @@ class RaidenBossFixService():
         self._path = FileService.parseOSPath(self._path)
         self._path = os.path.abspath(self._path)
         self._pathIsCwd = (self._path == DefaultPath)
-
-    def getFixedBlendFile(self, blendFile: str) -> str:
-        return f"{blendFile.split('Blend.buf')[0]}RemapBlend.buf"
     
     # fixes an ini file in a mod
-    def fixIni(self, ini: IniFile, mod: Mod, fixedRemapBlends: Dict[str, RemapBlendModel]):
+    def fixIni(self, ini: IniFile, mod: Mod, fixedRemapBlends: Dict[str, RemapBlendModel]) -> bool:
+        """
+        Fixes an individual .ini file for a particular mod
+
+        .. note:: 
+            For more info about how we define a 'mod', go to :class:`Mod`
+
+        Parameters
+        ----------
+        ini: :class:`IniFile`
+            The .ini file to fix
+
+        mod: :class:`Mod`
+            The mod being fixed
+
+        fixedRemapBlends: Dict[:class:`str`, :class:`RemapBlendModel`]
+            All of the RemapBlend.buf files that have already been fixed.
+            :raw-html:`<br />`
+            :raw-html:`<br />`
+            The keys are the absolute filepath to the fixed RemapBlend.buf file and the values contains the data related
+            to the fixed RemapBlend.buf file
+
+        Returns
+        -------
+        :class:`bool`
+            Whether the particular .ini file has been fixed
+        """
+
         # check if the .ini is for a raiden mod
         if (ini is None or not ini.isRaidenIni):
             return False
@@ -1457,6 +1552,29 @@ class RaidenBossFixService():
 
     # fixes a mod
     def fixMod(self, mod: Mod, fixedRemapBlends: Dict[str, RemapBlendModel]) -> bool:
+        """
+        Fixes a particular mod
+
+        .. note:: 
+            For more info about how we define a 'mod', go to :class:`Mod`
+
+        Parameters
+        ----------
+        mod: :class:`~FixRaidenBoss2.Mod`
+            The mod being fixed
+
+        fixedRemapBlends: Dict[:class:`str`, :class:`~FixRaidenBoss2.RemapBlendModel`]
+            all of the RemapBlend.buf files that have already been fixed.
+            :raw-html:`<br />` :raw-html:`<br />`
+            The keys are the absolute filepath to the fixed RemapBlend.buf files and the values contains the data related
+            to the fixed RemapBlend.buf file
+
+        Returns
+        -------
+        :class:`bool`
+            Whether the particular mod has been fixed
+        """
+
         # remove any backups
         if (not self.keepBackups):
             mod.removeBackupInis()
@@ -1487,6 +1605,10 @@ class RaidenBossFixService():
         return result
     
     def addTips(self):
+        """
+        Prints out any useful tips for the user to know
+        """
+
         self.logger.includePrefix = False
 
         if (not self.undoOnly or self.keepBackups):
@@ -1510,6 +1632,25 @@ class RaidenBossFixService():
 
 
     def reportSkippedAsset(self, assetName: str, assetDict: Dict[str, BaseException], warnStrFunc: Callable[[str], str]):
+        """
+        Prints out the exception message for why a particular .ini file or Blend.buf file has been skipped
+
+        Parameters
+        ----------
+        assetName: :class:`~str`
+            The name for the type of asset (files, folders, mods, etc...) that was skipped
+
+        assetDict: Dict[:class:`str`, :class:`BaseException`]
+            Locations of where exceptions have occured for the particular asset
+
+            The keys are the absolute folder paths to where the exception occured
+
+        wantStrFunc: Callable[[:class:`str`], :class:`str`]
+            Function for how we want to print out the warning for each exception
+
+            takes in the folder location of where the exception occured as a parameter
+        """
+
         if (assetDict):
             message = f"WARNING: The following {assetName} were skipped due to warnings (see log above):\n\n"
             for dir in assetDict:
@@ -1519,6 +1660,15 @@ class RaidenBossFixService():
             self.logger.space()
 
     def warnSkippedBlends(self, modPath: str):
+        """
+        Prints out all of the Blend.buf files that were skipped due to exceptions
+
+        Parameters
+        ----------
+        modPath: :class:`~str`
+            The absolute path to a particular folder
+        """
+
         relModPath = FileService.getRelPath(modPath, self._path)
         message = f"Mod: {relModPath}\n"
         blendWarnings = self.skippedBlends[modPath]
@@ -1531,6 +1681,13 @@ class RaidenBossFixService():
         return message
 
     def reportSkippedMods(self):
+        """
+        Prints out all of the mods that were skipped due to exceptions
+
+        .. note:: 
+            For more info about how we define a 'mod', go to :class:`Mod`
+        """
+
         self.reportSkippedAsset("mods", self._skippedMods, lambda dir: self.logger.getBulletStr(f"{dir} >>> {self._skippedMods[dir]}\n"))
         self.reportSkippedAsset(f"{BlendFileType} files", self.skippedBlends, lambda dir: self.warnSkippedBlends(dir))
 
@@ -1566,6 +1723,10 @@ class RaidenBossFixService():
         self.logger.closeHeading()
 
     def createLog(self):
+        """
+        creates a log text file that contains all the text printed on the command line
+        """
+
         if (not self.log):
             return
 
@@ -1581,11 +1742,44 @@ class RaidenBossFixService():
         with open(self._logFile, "w", encoding = IniFileEncoding) as f:
             f.write(self.logger.loggedTxt)
 
-    def createMod(self, path: str = DefaultPath, files: Optional[List[str]] = None):
+    def createMod(self, path: str = DefaultPath, files: Optional[List[str]] = None) -> Mod:
+        """
+        Creates a mod
+
+        .. note:: 
+            For more info about how we define a 'mod', go to :class:`Mod`
+
+        Parameters
+        ----------
+        path: :class:`~str`
+            The absolute path to the mod folder
+
+        files: Optional[List[:class:`str`]]
+            The direct children files to the mod folder (does not include files located in a folder within the mod folder).
+
+            If this parameter is set to `None`, then the module will search the folders for you
+
+        Returns
+        -------
+        :class:`~FixRaidenBoss2.Mod`
+            The mod that has been created
+        """
+
         mod = Mod(path = path, files = files, logger = self.logger)
         return mod
 
     def _fix(self):
+        """
+        The overall logic for fixing a bunch of mods
+
+        For finding out which folders may contain mods, this function:
+            #. recursively searches all folders from where the :attr:`FixRaidenBossService.path` is located
+            #. for every .ini file in a valid mod and every Blend.buf file encountered that is encountered, recursively search all the folders from where the .ini file or Blend.buf file is located
+
+        .. note:: 
+            For more info about how we define a 'mod', go to :class:`Mod`
+        """
+
         if (self.fixOnly and self.undoOnly):
             raise ConflictingOptions([FixOnlyOpt, RevertOpt])
 
@@ -1665,6 +1859,12 @@ class RaidenBossFixService():
 
 
     def fix(self):
+        """
+        Fixes a bunch of mods
+
+        see :meth:`_fix` for more info
+        """
+        
         try:
             self._fix()
         except BaseException as e:
