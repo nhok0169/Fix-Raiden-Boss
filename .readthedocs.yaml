@@ -13,7 +13,7 @@ build:
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
-   configuration: Fix-Raiden-Boss 2.0 (for all user )/docs/conf.py
+   configuration: docs/conf.py
 
 # If using Sphinx, optionally build your docs in additional formats such as PDF
 # formats:
@@ -22,6 +22,6 @@ sphinx:
 # Optionally declare the Python requsirements required to build your docs
 python:
    install:
-   - requirements: Fix-Raiden-Boss 2.0 (for all user )/docs/requirements.txt
+   - requirements: docs/requirements.txt
    - method: pip
      path: Fix-Raiden-Boss 2.0 (for all user )
