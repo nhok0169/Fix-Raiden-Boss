@@ -1,15 +1,2 @@
-Sphinx
-sphinx-jinja2-compat
-sphinx-panels
-sphinx-prompt
-sphinx-rtd-theme
-sphinx-tabs
-sphinx-toolbox
-sphinx_autodoc_typehints
-sphinxcontrib-applehelp
-sphinxcontrib-devhelp
-sphinxcontrib-htmlhelp
-sphinxcontrib-jsmath
-sphinxcontrib-napoleon
-sphinxcontrib-qthelp
-sphinxcontrib-serializinghtml
+Sphinx==5.3.0
+sphinx-rtd-theme==1.1.1
