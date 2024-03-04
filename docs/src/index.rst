@@ -13,6 +13,11 @@ Welcome to FixRaidenBoss2's documentation!
     :alt: Pypi Downloads
     :target: https://pypi.org/project/FixRaidenBoss2/
 
+
+.. image:: ./_static/images/raiden.jpg
+    :alt: Fix Raiden Boss
+    :scale: 50 %
+
 FixRaidenBoss2 is a library that helps fix Raiden Shogun Boss Phase 1 for all types of mods
 
 Requirements
@@ -26,16 +31,26 @@ Getting Started
 
 - **Tutorial**: :doc:`tutorial`
 - **Examples**: Lot of examples are available `here <https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Examples>`_
+- **Command Options**: :doc:`commandOpts`
 
 .. toctree::
+  :caption: Script Fix
   :hidden:
 
   tutorial
+  commandOpts
 
-References
-----------
+API
+---
+
+- **Setup**: :doc:`apiSetup`
+- **Simple Examples**: :doc:`apiExamples`
+- **API Reference**: :doc:`api`
 
 .. toctree::
-  :maxdepth: 1
+  :caption: API
+  :hidden:
 
+  apiSetup
+  apiExamples
   api
