@@ -12,6 +12,13 @@
 ## Requirements 
 - [Python (version 3.6 and up)](https://www.python.org/downloads/)
 
+## API Documentation
+If you are a **tool developper** who wants to use the fix in your own code, visit the documentation here:
+
+https://fix-raiden-boss.readthedocs.io/en/latest/
+
+<br>
+
 ## VIDEO TUTORIAL AND EXAMPLES:
 
 ### Quickstart
@@ -109,7 +116,7 @@ python -m pip install -U FixRaidenBoss2
 ```
 <br>
 
-### Preview of using the API
+### API Examples
 
 See the documentation for more detailed [examples](https://fix-raiden-boss.readthedocs.io/en/latest/apiExamples.html) on how to use the API.
 
