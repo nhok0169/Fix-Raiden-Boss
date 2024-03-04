@@ -3659,9 +3659,6 @@ class RaidenBossFixService():
     skippedBlendsCount: :class:`int`
         The count for how many Blend.buf files got skipped
 
-    inisFound: :class:`int`
-        How many .ini files were found from the found mods
-
     inisFixed: Set[:class:`str`]
         The absolute paths to the fixed .ini files
 
@@ -3693,7 +3690,6 @@ class RaidenBossFixService():
         self.blendsFixed: Set[str] = set()
         self.skippedBlends: Dict[str, Dict[str, BaseException]] = {}
         self.skippedBlendsCount = 0
-        self.inisFound = 0
         self.inisFixed = set()
         self.inisSkipped: Dict[str, BaseException] = {}
 
@@ -3844,6 +3840,7 @@ class RaidenBossFixService():
             mod.removeFix(self.blendsFixed, self.inisFixed, keepBackups = self.keepBackups)
 
         result = False
+        firstIniException = None
         inisLen = len(mod.inis)
 
         for i in range(inisLen):
@@ -3856,6 +3853,9 @@ class RaidenBossFixService():
                 self.logger.handleException(e)
                 self.inisSkipped[ini.file] = e 
 
+                if (firstIniException is None):
+                    firstIniException = e
+
             result = (result or iniIsFixed)
 
             if (not iniIsFixed):
@@ -3866,6 +3866,9 @@ class RaidenBossFixService():
             iniFullPath = FileService.absPathOfRelPath(ini.file, mod.path)
             self.inisFixed.add(iniFullPath)
         
+        if (firstIniException is not None):
+            self.skippedMods[mod.path] = firstIniException
+
         return result
     
     def addTips(self):
@@ -3962,7 +3965,8 @@ class RaidenBossFixService():
         fixedBlends = len(self.blendsFixed)
         skippedBlends = self.blendsFound - fixedBlends
         fixedInis = len(self.inisFixed)
-        skippedInis = self.inisFound - fixedInis
+        skippedInis = len(self.inisSkipped)
+        foundInis = fixedInis + skippedInis
 
         self.logger.openHeading("Summary", sideLen = 10)
         self.logger.space()
@@ -3972,7 +3976,7 @@ class RaidenBossFixService():
         iniFixMsg = ""
         if (not self.undoOnly):
             modFixMsg = f"Out of {foundMods} found mods, fixed {self.modsFixed} mods and skipped {skippedMods} mods"
-            iniFixMsg = f"Out of the {self.inisFound} {IniFileType}s within the found mods, fixed {fixedInis} {IniFileType}s and skipped {skippedInis} {IniFileType} files"
+            iniFixMsg = f"Out of the {foundInis} {IniFileType}s within the found mods, fixed {fixedInis} {IniFileType}s and skipped {skippedInis} {IniFileType} files"
             blendFixMsg = f"Out of the {self.blendsFound} {BlendFileType} files within the found mods, fixed {fixedBlends} {BlendFileType} files and skipped {skippedBlends} {BlendFileType} files"
         else:
             modFixMsg = f"Out of {foundMods} found mods, remove fix from {self.modsFixed} mods and skipped {skippedMods} mods"
@@ -4112,7 +4116,6 @@ class RaidenBossFixService():
                 visitingDirs.add(dir)
 
             # increment the count of mods found
-            self.inisFound += len(mod.inis)
             if (fixedMod):
                 self.modsFixed += 1
 
