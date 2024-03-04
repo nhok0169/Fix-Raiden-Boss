@@ -13,11 +13,8 @@
 - [Python (version 3.6 and up)](https://www.python.org/downloads/)
 
 ## API Documentation
-If you are a **tool developper** who wants to use the fix in your own code, visit the documentation here:
-
-https://fix-raiden-boss.readthedocs.io/en/latest/
-
-<br>
+If you are a **tool developer** who wants to use the fix in **your own code**, visit the documentation here:
+- https://fix-raiden-boss.readthedocs.io/en/latest/
 
 ## VIDEO TUTORIAL AND EXAMPLES:
 
