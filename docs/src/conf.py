@@ -6,7 +6,7 @@ import os, sys, re
 # -- Project information
 
 project = 'FixRaidenBoss2'
-copyright = '2024, nhok0169'
+copyright = '2024, nhok0169, Albert Gold'
 author = 'nhok0169, Albert Gold'
 
 # read the version from the pyproject.toml from the project's pypi library
@@ -44,6 +44,8 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.autosectionlabel',
+    "sphinx_design",
     'attributetable',
 ]
 
@@ -72,7 +74,7 @@ html_context = {
     "display_github": True,
     "github_user": "nhok0169",
     "github_repo": "Fix-Raiden-Boss",
-    "github_version": "master/docs/source/",
+    "github_version": "master",
 }
 
 # These folders are copied to the documentation's HTML output

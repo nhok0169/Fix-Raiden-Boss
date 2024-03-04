@@ -26,6 +26,8 @@
 .method > dt{
     width: 100%;
     border-left: 4px solid #6ab0de !important;
+    margin: 0px 0 30px 0 !important;
+    padding: 12px 6px !important;
 }
   
 .topNav {
@@ -47,9 +49,23 @@
     height: 24px;
 }
 
+.contactLinkIcon {
+    font-size: 24px;
+    color: white;
+}
+
+.contactLinkIcon:visited {
+    color: #6ab0de;
+}
+
 .contactLinksContainer {
     position: absolute;
     top: 25%;
     width: 100%;
     padding: 0 20px 0 0;
+}
+
+.field-list > dt, .field-list > dd {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
 }
