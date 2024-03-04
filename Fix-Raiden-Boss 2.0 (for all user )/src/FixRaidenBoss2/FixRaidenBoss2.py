@@ -2510,7 +2510,7 @@ class IniFile(Model):
 
             # filling in the hash
             if (varName == self.Hash):
-                addFix += f"{linePrefix}hash = fe5c0180'\n"
+                addFix += f"{linePrefix}hash = fe5c0180\n"
 
             # filling in the vb1 resource
             elif (varName == self.Vb1):
