@@ -13,6 +13,10 @@ Welcome to FixRaidenBoss2's documentation!
     :alt: Pypi Downloads
     :target: https://pypi.org/project/FixRaidenBoss2/
 
+.. image:: https://readthedocs.org/projects/fix-raiden-boss/badge/?version=latest
+    :target: https://fix-raiden-boss.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 
 .. image:: ./_static/images/raiden.jpg
     :alt: Fix Raiden Boss
