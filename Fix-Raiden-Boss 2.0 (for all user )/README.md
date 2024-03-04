@@ -2,7 +2,9 @@
 [![PyPI](https://img.shields.io/pypi/pyversions/FixRaidenBoss2)](https://www.python.org/downloads/)
 [![PyPI](https://img.shields.io/pypi/v/FixRaidenBoss2)](https://pypi.org/project/FixRaidenBoss2/)
 [![PyPI](https://img.shields.io/pypi/dm/FixRaidenBoss2?label=pypi%20downloads)](https://pypi.org/project/FixRaidenBoss2/)
-<a href=""><img alt="" src="https://cdn.discordapp.com/attachments/1030715335910887425/1060179887933104229/raiden.png?width=838&height=417"></a>
+[![Documentation Status](https://readthedocs.org/projects/fix-raiden-boss/badge/?version=latest)](https://fix-raiden-boss.readthedocs.io/en/latest/?badge=latest)
+
+<a href=""><img alt="" src="https://github.com/nhok0169/Fix-Raiden-Boss/blob/create-api-docs/docs/src/_static/images/raiden.jpg" style="width:750px; height: auto;"></a>
 - Author Ideal [NK#1321](https://discordapp.com/users/277117247523389450)
 - Thank [SilentNightSound#7430](https://github.com/SilentNightSound) for the logic rewrite
 - Thank HazrateGolabi#1364 for combine and make final script
@@ -90,7 +92,14 @@ then enter
 
 ## API Usage
 
-Tool developpers can now include the fix within their code.
+Tool developpers can now include the fix within their code!
+
+### API Documentation
+For more info about how to use the API, visit the documentation at https://fix-raiden-boss.readthedocs.io/en/latest/
+
+<br>
+
+### API Setup
 
 <br>
 
@@ -98,19 +107,16 @@ Tool developpers can now include the fix within their code.
 ```bash
 python -m pip install -U FixRaidenBoss2
 ```
+<br>
+
+### Preview of using the API
+
+See the documentation for more detailed [examples](https://fix-raiden-boss.readthedocs.io/en/latest/apiExamples.html) on how to use the API.
 
 <br>
 
-### Example of Only Fixing the Blend.buf file
-```python
-import FixRaidenBoss2 as FRB
+Below is a ***preview*** that gives a feel of using the API
 
-FRB.Mod.blendCorrection("RaidenShogunBlend.buf", "RaidenShogunRemapBlend.buf")
-```
-
-<br>
-
-### Example of Successful Run
 ```python
 import FixRaidenBoss2 as FRB
 
@@ -131,33 +137,3 @@ The Raiden Mod is fixed!
 ```
 </details>
 <br>
-
-### Example of Handling Errors
-```python
-import FixRaidenBoss2 as FRB
-
-raidenBossFixService = FRB.RaidenBossFixService(path = r"my raiden folder path that contains a duplicate .ini file", log = True, verbose = False)
-
-print("Starting to fix mod...")
-try:
-    raidenBossFixService.fix()
-except FRB.DuplicateFileException as e:
-    print("The fix failed because there is a duplicate .ini file... :(")
-else:
-    print("The Raiden Mod is fixed!")
-```
-<br>
-
-<details>
-<summary>Example Result</summary>
-<br>
-
-```
-Starting to fix mod...
-Creating log file, RSFixLog.txt
-The fix failed because there is a duplicate .ini file... :(
-```
-</details>
-<br>
-
-More info [here](https://github.com/nhok0169/Fix-Raiden-Boss/blob/nhok0169/Fix-Raiden-Boss%202.0%20(for%20all%20user%20)/src/FixRaidenBoss2/FixRaidenBoss2.py) (docs coming out soon...)
