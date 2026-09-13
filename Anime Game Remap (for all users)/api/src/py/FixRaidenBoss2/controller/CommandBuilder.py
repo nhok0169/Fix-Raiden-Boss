@@ -57,6 +57,11 @@ class CommandBuilder():
     def _addArguments(self):
         self._argParser.add_argument(ShortCommandOpts.Src.value, CommandOpts.Src.value, action='store', type=str, help="The starting path to run this fix. If this option is not specified, then will run the fix from the current directory.")
         self._argParser.add_argument(ShortCommandOpts.Version.value, CommandOpts.Version.value, action='store', type=str, help="The game version we want the fix to be compatible with. If this option is not specified, then will use the latest game version")
+
+        # The other half of the fix table's key, and a separate option because it is a separate
+        # selection -- the usual case is an old mod fixed with the newest fix, which one option
+        # feeding both cannot say.
+        self._argParser.add_argument(ShortCommandOpts.FromVersion.value, CommandOpts.FromVersion.value, action='store', type=str, help=f"The game version the mods being fixed were made for. This picks how the mods are read -- which hashes/indices they are looked up by -- where {CommandOpts.Version.value} picks the fix that is written. If this option is not specified, then will read the mods as the latest game version")
         self._argParser.add_argument(ShortCommandOpts.DeleteBackup.value, CommandOpts.DeleteBackup.value, action='store_true', help=f'deletes backup copies of the original {FileExt.Ini.value} files')
         self._argParser.add_argument(ShortCommandOpts.FixOnly.value, CommandOpts.FixOnly.value, action='store_true', help='only fixes the mod without cleaning any previous runs of the script')
         self._argParser.add_argument(ShortCommandOpts.Revert.value, CommandOpts.Revert.value, action='store_true', help='Undo the previous runs of the script')

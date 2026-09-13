@@ -163,7 +163,28 @@ namespace AGRemapCore {
              * @param handleExceptions Whether a failure is logged rather than thrown. **Default**: ``false``
              * @param version
              @rst
-             The game version to fix to, as a `PEP 440`_ string, or ``std::nullopt`` for the latest
+             The game version to fix **to**, as a `PEP 440`_ string, or ``std::nullopt`` for the
+             newest fix -- feeds :cpp:member:`RemapService::toVersion` :raw-html:`<br />`
+             :raw-html:`<br />`
+
+             Named ``version`` rather than ``toVersion`` because that is what the pure-Python API
+             called it, and what ``--version`` has always meant on the command line
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             **Default**: ``std::nullopt``
+             @endrst
+             *
+             * @param fromVersion
+             @rst
+             The game version the mods being read were written for, as a `PEP 440`_ string, or
+             ``std::nullopt`` for the latest -- feeds :cpp:member:`RemapService::fromVersion`
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             Separate from ``version`` on purpose. It picks the PARSER and the hashes/indices the
+             mod is read with, where ``version`` picks the FIXER, and the two are independent --
+             every shipped fix row is keyed from ``1.0`` whatever version it fixes to. One option
+             feeding both, which is what this class did for a day, makes a divergence at a
+             historical version impossible to attribute to one selection or the other
              :raw-html:`<br />` :raw-html:`<br />`
 
              **Default**: ``std::nullopt``
@@ -226,6 +247,7 @@ namespace AGRemapCore {
                                       bool verbose = true,
                                       bool handleExceptions = false,
                                       std::optional<std::string> version = std::nullopt,
+                                      std::optional<std::string> fromVersion = std::nullopt,
                                       std::optional<std::vector<std::string>> remappedTypes = std::nullopt,
                                       std::optional<std::string> proxy = std::nullopt,
                                       std::optional<std::string> downloadMode = std::nullopt,
@@ -459,7 +481,13 @@ namespace AGRemapCore {
             void _setupDefaultModType(const std::optional<std::string>& defaultType, const std::optional<std::string>& forcedType);
             void _setupToFixModTypes(const std::optional<std::vector<std::string>>& types, const std::optional<std::string>& forcedType);
             void _setupRemappedTypes(const std::optional<std::vector<std::string>>& remappedTypes);
-            void _setupVersion(const std::optional<std::string>& version);
+            // Both version options. Separate methods rather than one taking a pair, because they
+            //   are genuinely independent selections -- see the constructor's 'fromVersion'.
+            void _setupToVersion(const std::optional<std::string>& version);
+            void _setupFromVersion(const std::optional<std::string>& fromVersion);
+
+            // The shared half: parse, or record InvalidVersion and answer std::nullopt.
+            std::optional<Version> _toVersion(const std::optional<std::string>& version);
             void _setupDownloadMode(const std::optional<std::string>& downloadMode);
             void _setupGameTypes(const std::optional<std::vector<std::string>>& gameTypes);
     };

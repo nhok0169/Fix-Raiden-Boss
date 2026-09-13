@@ -197,6 +197,17 @@ namespace AGRemapCore {
              **Default**: ``std::nullopt``
              @endrst
              *
+             * @param toVersion
+             @rst
+             The game version the ``.ini`` files are being fixed **to** -- see #toVersion
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             If this argument has no value, then will use the newest fix each mod type has
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             **Default**: ``std::nullopt``
+             @endrst
+             *
              * @param toModTypeIds
              @rst
              The ids of the mod types to accept when fixing a ``.ini`` file -- see #toModTypeIds
@@ -260,6 +271,7 @@ namespace AGRemapCore {
                                   tsl::ordered_set<int> defaultModTypeIds = {},
                                   bool handleExceptions = false,
                                   std::optional<Version> fromVersion = std::nullopt,
+                                  std::optional<Version> toVersion = std::nullopt,
                                   std::optional<std::unordered_set<int>> toModTypeIds = std::nullopt,
                                   std::optional<std::string> proxy = std::nullopt,
                                   DownloadMode downloadMode = DownloadMode::Normal,
@@ -387,8 +399,13 @@ namespace AGRemapCore {
              The game version the parsed ``.ini`` files originate from :raw-html:`<br />`
              :raw-html:`<br />`
 
-             Feeds :cpp:member:`IniFile::fromVersion`. If this has no value, then the latest
-             version's hashes/indices are used
+             Feeds :cpp:member:`IniFile::fromVersion`, and so decides which PARSER row is
+             chosen, and which version's hashes and indices the mod is read with. If this has
+             no value, then the latest version's are used :raw-html:`<br />` :raw-html:`<br />`
+
+             .. note::
+                This is **not** the pure-Python API's ``version``. That one is #toVersion; see
+                there for why the two were worth separating
              @endrst
              */
             std::optional<Version> fromVersion;
@@ -406,14 +423,19 @@ namespace AGRemapCore {
              :raw-html:`<br />`
 
              .. note::
-                Assigned rather than constructor-passed, the same way \ref defaultModTypeIds is,
-                so neither this class's constructor nor its `pybind11`_ binding changes shape.
+                **This is the pure-Python API's** ``version``, and the CLI's ``--version``. The
+                two halves of the fix table's key are independent -- a mod written for one game
+                version can be fixed onto a target as any other -- so the CLI names them
+                separately: ``--version`` for this one and ``--fromVersion`` for
+                \ref fromVersion.
 
              .. note::
                 Until 2026-09-13 this did not exist and :cpp:func:`createIni` handed
                 :cpp:class:`IniFile` a hardcoded ``std::nullopt`` here, so ``--version`` selected
                 a PARSER row and could never select a fixer one -- every run got the newest fix
-                whatever version was asked for.
+                whatever version was asked for. Setting BOTH from the one option, which is what
+                replaced it, was no better: it made every A/B at a historical version
+                uninterpretable, since a divergence could be coming from either selection.
              @endrst
              */
             std::optional<Version> toVersion;

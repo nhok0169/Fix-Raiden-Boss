@@ -375,7 +375,9 @@ static void testCreateIniPropagatesOptions() {
     ExposedRemapService service((scratchRoot() / "root").string(), true, false, false, false, false,
                                 std::unordered_set<int>{1, 2}, std::nullopt,
                                 tsl::ordered_set<int>{40, 50}, false,
-                                AGRC::Version::parse("4.2"), std::unordered_set<int>{7},
+                                AGRC::Version::parse("4.2"),   // fromVersion
+                                AGRC::Version::parse("5.3"),   // toVersion
+                                std::unordered_set<int>{7},
                                 std::nullopt, AGRC::DownloadMode::Always,
                                 std::unordered_set<int>{static_cast<int>(AGRC::GameTypeId::GI)}, true);
 
@@ -387,7 +389,13 @@ static void testCreateIniPropagatesOptions() {
               std::unordered_set<int>{static_cast<int>(AGRC::GameTypeId::GI)},
           "the game type ids are kept as the set they were given");
     check(service.compressTextures, "compressTextures is kept");
-    check(ini->fromVersion.has_value(), "the from-version is propagated");
+    check(ini->fromVersion.has_value() && *ini->fromVersion == *AGRC::Version::parse("4.2"),
+          "the from-version is propagated");
+
+    // A SEPARATE value from the one above, deliberately: the two select different things (the
+    // parser and the fixer) and a single member feeding both would pass a test that used one.
+    check(ini->toVersion.has_value() && *ini->toVersion == *AGRC::Version::parse("5.3"),
+          "and the to-version is propagated, without the two being confused");
     check(ini->filteredToModTypeIds.has_value(), "a toModTypeIds with a value stays a real filter");
     checkEqual(ini->filteredToModTypeIds->size(), static_cast<std::size_t>(1), "and carries its one id");
 
@@ -417,7 +425,7 @@ static void testCreateIniPassesIdSetsThroughVerbatim() {
     // turned into std::nullopt on the way over.
     ExposedRemapService emptyFilter((scratchRoot() / "root").string(), true, false, false, false, false,
                                     std::nullopt, std::nullopt, tsl::ordered_set<int>{}, false,
-                                    std::nullopt, std::unordered_set<int>{});
+                                    std::nullopt, std::nullopt, std::unordered_set<int>{});
     ini = emptyFilter.createIni(norm(scratchRoot() / "root" / "a.ini"));
 
     check(ini->filteredToModTypeIds.has_value(),
@@ -620,8 +628,8 @@ static std::shared_ptr<CapturingLogger> runReport(bool fixOnly, bool undoOnly,
 
     RealRemapService service((scratchRoot() / "empty").string(), true, fixOnly, undoOnly, false, false,
                              std::nullopt, std::nullopt, tsl::ordered_set<int>{}, false, std::nullopt,
-                             std::nullopt, std::nullopt, AGRC::DownloadMode::Normal, std::nullopt,
-                             false, capture);
+                             std::nullopt, std::nullopt, std::nullopt, AGRC::DownloadMode::Normal,
+                             std::nullopt, false, capture);
     seed(service.stats);
     service.fix();
 
@@ -728,8 +736,8 @@ static void testCreateIniPassesTheLoggerDown() {
 
     ExposedRemapService service((scratchRoot() / "root").string(), true, false, false, false, false,
                                 std::nullopt, std::nullopt, tsl::ordered_set<int>{}, false,
-                                std::nullopt, std::nullopt, std::nullopt, AGRC::DownloadMode::Normal,
-                                std::nullopt, false, capture);
+                                std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                                AGRC::DownloadMode::Normal, std::nullopt, false, capture);
 
     std::unique_ptr<AGRC::IniFile> ini = service.createIni(norm(scratchRoot() / "root" / "a.ini"));
 

@@ -326,6 +326,7 @@ static void testStringsBecomeModelValues() {
                               std::nullopt,                                  // forcedType
                               std::nullopt, false, false,                    // log, verbose, handleExceptions
                               std::string("4.0"),                            // version
+                              std::string("1.0"),                            // fromVersion
                               std::vector<std::string>{"Ayaka"},            // remappedTypes
                               std::string("some.proxy"),                     // proxy
                               std::string("always"));                        // downloadMode
@@ -339,7 +340,12 @@ static void testStringsBecomeModelValues() {
 
     check(holds(cli.service.toModTypeIds, AGRC::ModTypeId::Ayaka), "so do the fix-TO names");
 
-    check(cli.service.fromVersion.has_value(), "a version string is parsed");
+    // The two are separate selections, so each has to land on its OWN member -- one option
+    // feeding both is what made an A/B at a historical version unreadable.
+    check(cli.service.toVersion.has_value() && *cli.service.toVersion == *AGRC::Version::parse("4.0"),
+          "--version is the version being fixed TO");
+    check(cli.service.fromVersion.has_value() && *cli.service.fromVersion == *AGRC::Version::parse("1.0"),
+          "--fromVersion is the version being fixed FROM");
     check(cli.service.downloadMode == AGRC::DownloadMode::Always, "a download mode name resolves");
     check(cli.service.proxy.has_value() && *cli.service.proxy == "some.proxy", "a proxy passes straight through");
 }
@@ -365,7 +371,8 @@ static void testNamesResolveWhateverTheCase() {
     // A download mode is normalized the same way.
     AGRC::RemapServiceCLI mode((scratchRoot() / "empty").string(), true, false, false, false, false,
                                std::nullopt, std::nullopt, std::nullopt, std::nullopt, false, false,
-                               std::nullopt, std::nullopt, std::nullopt, std::string(" DISABLED "));
+                               std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                               std::string(" DISABLED "));
 
     check(!mode.hasErrorsBeforeFix(), "so is a download mode name");
     check(mode.service.downloadMode == AGRC::DownloadMode::Disabled, "resolving to the right mode");
@@ -473,7 +480,7 @@ static void testTheFirstFailureIsTheOneKept() {
     AGRC::RemapServiceCLI cli((scratchRoot() / "empty").string(), true, false, false, false, false,
                               std::vector<std::string>{"NotAModTypeAtAll"},
                               std::nullopt, std::nullopt, std::nullopt, false, false,
-                              std::nullopt, std::nullopt, std::nullopt,
+                              std::nullopt, std::nullopt, std::nullopt, std::nullopt,
                               std::string("NotADownloadMode"));
 
     bool sawModType = false;
@@ -507,7 +514,8 @@ static void testABadVersionAndDownloadModeAreReported() {
 
     AGRC::RemapServiceCLI badMode((scratchRoot() / "empty").string(), true, false, false, false, false,
                                   std::nullopt, std::nullopt, std::nullopt, std::nullopt, false, false,
-                                  std::nullopt, std::nullopt, std::nullopt, std::string("sometimes"));
+                                  std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                                  std::string("sometimes"));
 
     bool threwMode = false;
     try {

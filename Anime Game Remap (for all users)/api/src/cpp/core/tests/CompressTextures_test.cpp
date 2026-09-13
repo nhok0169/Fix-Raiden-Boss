@@ -170,8 +170,8 @@ void testNonTextureResourceIsUntouched() {
 
 void testConstructorArgumentReachesTheMember() {
     RemapService on(std::nullopt, true, false, false, false, false, std::nullopt, std::nullopt, {},
-                    false, std::nullopt, std::nullopt, std::nullopt, DownloadMode::Normal,
-                    std::nullopt, true);
+                    false, std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                    DownloadMode::Normal, std::nullopt, true);
     check(on.compressTextures, "the constructor argument lands on the member");
 }
 

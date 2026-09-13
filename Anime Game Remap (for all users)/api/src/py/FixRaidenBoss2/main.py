@@ -54,7 +54,8 @@ def remapMain(commandSetup: Optional[Callable[[CommandBuilder], Any]] = None):
     remapService = RemapServiceCLI(path = args.src, keepBackups = not args.deleteBackup, fixOnly = args.fixOnly, hideOrig = args.hideOriginal,
                                    undoOnly = args.undo, readAllInis = readAllInis, types = args.types, defaultType = defaultType, forcedType = forcedType,
                                    log = args.log, verbose = True, handleExceptions = True, remappedTypes = args.remappedTypes,
-                                   version = args.version, proxy = args.proxy, downloadMode = args.download,
+                                   version = args.version, fromVersion = args.fromVersion,
+                                   proxy = args.proxy, downloadMode = args.download,
                                    gameTypes = args.game, compressTextures = args.compressTextures)
     remapService.fix()
     remapService.logger.waitExit()

@@ -30,6 +30,7 @@ class CommandOpts(Enum):
     Compress = "--compressTextures"
     ForceType = "--forceType"
     Version = "--version"
+    FromVersion = "--fromVersion"
     Log = "--log"
     DefaultType = "--defaultType"
     HideOriginal = "--hideOriginal"

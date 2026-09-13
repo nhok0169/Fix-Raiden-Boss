@@ -114,6 +114,7 @@ namespace AGRemapCore {
                                      std::optional<std::string> forcedType,
                                      std::optional<std::string> log, bool verbose,
                                      bool handleExceptions, std::optional<std::string> version,
+                                     std::optional<std::string> fromVersion,
                                      std::optional<std::vector<std::string>> remappedTypes,
                                      std::optional<std::string> proxy,
                                      std::optional<std::string> downloadMode,
@@ -142,7 +143,8 @@ namespace AGRemapCore {
         _setupDefaultModType(defaultType, forcedType);
         _setupToFixModTypes(types, forcedType);
         _setupRemappedTypes(remappedTypes);
-        _setupVersion(version);
+        _setupToVersion(version);
+        _setupFromVersion(fromVersion);
         _setupDownloadMode(downloadMode);
         _setupGameTypes(gameTypes);
     }
@@ -298,25 +300,40 @@ namespace AGRemapCore {
         service.toModTypeIds = _toModTypeIds(remappedTypes);
     }
 
-    void RemapServiceCLI::_setupVersion(const std::optional<std::string>& version) {
+    std::optional<Version> RemapServiceCLI::_toVersion(const std::optional<std::string>& version) {
         if (!version.has_value()) {
-            return;
+            return std::nullopt;
         }
 
         const std::optional<Version> parsed = Version::parse(*version);
 
         if (!parsed.has_value()) {
             _recordError(std::make_exception_ptr(InvalidVersion(*version)));
-            return;
         }
 
-        // BOTH halves. The parse table is keyed by version alone, so fromVersion picks the
-        // parser; the fix table is keyed {fromVersion, fromMod, toVersion, toMod} with every
-        // row's fromVersion at 1.0, so it is toVersion that picks the fixer. Setting only the
-        // first -- which is what this did until 2026-09-13 -- parses a mod as 4.0 and then fixes
-        // it with the newest fixer in the table.
-        service.fromVersion = parsed;
-        service.toVersion = parsed;
+        return parsed;
+    }
+
+    void RemapServiceCLI::_setupToVersion(const std::optional<std::string>& version) {
+        // The FIXER half. The fix table is keyed {fromVersion, fromMod, toVersion, toMod} and
+        // every shipped row's fromVersion is 1.0, so this half alone is what picks the fix -- and
+        // it is what the pure-Python API's 'version' has always meant.
+        const std::optional<Version> parsed = _toVersion(version);
+
+        if (parsed.has_value()) {
+            service.toVersion = parsed;
+        }
+    }
+
+    void RemapServiceCLI::_setupFromVersion(const std::optional<std::string>& fromVersion) {
+        // The PARSER half, and the hashes/indices the mod is read with. Independent of the above:
+        // a mod written for an old game version is normally still fixed with the newest fix, which
+        // is exactly the combination a single --version option cannot express.
+        const std::optional<Version> parsed = _toVersion(fromVersion);
+
+        if (parsed.has_value()) {
+            service.fromVersion = parsed;
+        }
     }
 
     void RemapServiceCLI::_setupDownloadMode(const std::optional<std::string>& downloadMode) {

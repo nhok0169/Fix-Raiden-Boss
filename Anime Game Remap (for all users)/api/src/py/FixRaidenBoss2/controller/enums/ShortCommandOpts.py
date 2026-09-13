@@ -30,6 +30,7 @@ class ShortCommandOpts(Enum):
     Compress = "-c"
     ForceType = "-ft"
     Version = "-v"
+    FromVersion = "-fv"
     Log = "-l"
     DefaultType = "-dt"
     HideOriginal = "-ho"

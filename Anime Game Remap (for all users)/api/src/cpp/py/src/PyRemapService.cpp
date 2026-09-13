@@ -140,7 +140,11 @@ handleExceptions: :class:`bool`
     Whether to stop the fix quietly when an exception is caught, rather than raising
 
 fromVersion: Optional[:class:`CppVersion`]
-    The game version the parsed .ini files originate from
+    The game version the parsed .ini files originate from -- picks the PARSER
+
+toVersion: Optional[:class:`CppVersion`]
+    The game version the .ini files are fixed to -- picks the FIXER. This is the pure-Python
+    API's ``version``
 
 toModTypeIds: Optional[Set[:class:`int`]]
     The :class:`ModTypeId` values to accept when fixing
@@ -168,6 +172,7 @@ logger: Optional[:class:`BaseLogger`]
                          std::optional<std::unordered_set<int>> forcedModTypeIds,
                          const py::object &defaultModTypeIds, bool handleExceptions,
                          std::optional<AGRC::Version> fromVersion,
+                         std::optional<AGRC::Version> toVersion,
                          std::optional<std::unordered_set<int>> toModTypeIds,
                          std::optional<std::string> proxy, const py::object &downloadMode,
                          std::optional<std::unordered_set<int>> gameTypeIds, bool compressTextures,
@@ -175,14 +180,16 @@ logger: Optional[:class:`BaseLogger`]
             return std::make_unique<AGRC::RemapService>(
                 std::move(path), keepBackups, fixOnly, undoOnly, hideOrig, readAllInis,
                 std::move(fromModTypeIds), std::move(forcedModTypeIds), toOrderedSet(defaultModTypeIds),
-                handleExceptions, std::move(fromVersion), std::move(toModTypeIds), std::move(proxy),
+                handleExceptions, std::move(fromVersion), std::move(toVersion),
+                std::move(toModTypeIds), std::move(proxy),
                 parseDownloadMode(downloadMode), std::move(gameTypeIds), compressTextures,
                 std::move(logger));
         }), py::arg("path") = py::none(), py::arg("keepBackups") = true, py::arg("fixOnly") = false,
             py::arg("undoOnly") = false, py::arg("hideOrig") = false, py::arg("readAllInis") = false,
             py::arg("fromModTypeIds") = py::none(), py::arg("forcedModTypeIds") = py::none(),
             py::arg("defaultModTypeIds") = py::none(), py::arg("handleExceptions") = false,
-            py::arg("fromVersion") = py::none(), py::arg("toModTypeIds") = py::none(),
+            py::arg("fromVersion") = py::none(), py::arg("toVersion") = py::none(),
+            py::arg("toModTypeIds") = py::none(),
             py::arg("proxy") = py::none(), py::arg("downloadMode") = py::none(),
             py::arg("gameTypeIds") = py::none(), py::arg("compressTextures") = false,
             py::arg("logger") = nullptr)
@@ -229,7 +236,16 @@ Reads back as a **list**, not a set: the order is the order they land in :meth:`
     py::doc(R"doc(:class:`bool`: Whether to stop the fix quietly when an exception is caught)doc"))
 
         .def_readwrite("fromVersion", &AGRC::RemapService::fromVersion,
-    py::doc(R"doc(Optional[:class:`CppVersion`]: The game version the parsed .ini files originate from)doc"))
+    py::doc(R"doc(Optional[:class:`CppVersion`]: The game version the parsed .ini files originate from
+
+Picks the parser, and the hashes/indices the mod is read with)doc"))
+
+        .def_readwrite("toVersion", &AGRC::RemapService::toVersion,
+    py::doc(R"doc(Optional[:class:`CppVersion`]: The game version the .ini files are being fixed to
+
+Picks the fixer: the fix table is keyed ``{fromVersion, fromMod, toVersion, toMod}`` and every
+shipped row is keyed from ``1.0``, so this half alone selects it. It is the pure-Python API's
+``version``, and what ``--version`` means on the command line)doc"))
 
         .def_readwrite("toModTypeIds", &AGRC::RemapService::toModTypeIds,
     py::doc(R"doc(Optional[Set[:class:`int`]]: The mod types to accept when fixing)doc"))
