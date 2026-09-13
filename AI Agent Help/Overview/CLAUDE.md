@@ -616,6 +616,13 @@ cheaper than the next bug report.
   `development`) can hit real conflicts in live, unrelated code (confirmed: conflicts in active
   Python fixer logic and a delete/modify conflict, not just incidental files), so treat it as risky
   enough to check with the user rather than resolving blindly.
+  - **A C++/`core` task handed to a worktree whose branch is `nhok0169`-based has to be done in the
+    user's main checkout**, because `api/src/cpp` is not in that branch at all — and that checkout
+    is `development`, usually with *another agent* editing it at the same time. Workable, not a
+    blocker, but read [Building](../Building/CLAUDE.md)'s "Another agent is holding the Windows
+    build" first: it covers linking a snapshot of `AGRemapCore.lib` instead of running their
+    `ninja`, and committing path-scoped so you never carry off their half-finished files. Confirmed
+    2026-09-13.
 - **Updating a branch that's checked out in a *different* worktree (including the user's main
   checkout — it's "just another worktree" from git's perspective) needs to happen from that
   worktree, not yours.** `git branch -f <branch> <commit>` (and similar ref-forcing commands) is

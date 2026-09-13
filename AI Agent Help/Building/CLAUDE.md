@@ -705,6 +705,37 @@ The same applies to `\t`, `\\`, and `\"`. Note this is a *different* failure fro
 one below --- different tool, different mechanism --- so avoiding one does not protect you from the
 other.
 
+**`wsl.exe -d Ubuntu-22.04 -- bash -lc '...'` silently eats the inner double quotes**, so any
+`VAR="value"` inside that string arrives as an *empty* variable. Confirmed 2026-09-13:
+`bash -lc 'S="/mnt/c/x y"; echo "[$S]"'` prints `[]` and reports `args:0`. The damage surfaces far
+from the cause --- `cp: cannot stat ''`, or a link that dies with `/usr/bin/ld: cannot find :` ---
+and reads like a missing file rather than a quoting bug. Single-quoted commands with no inner quotes
+(`cd ~/x && ninja foo`) are fine; anything bigger goes in through **stdin** instead:
+
+```bash
+tr -d '\r' < <script>.sh | wsl.exe -d Ubuntu-22.04 -- bash -s Arg1 Arg2
+```
+
+The `tr -d` is not optional --- a script authored on the Windows side is CRLF, and `bash` chokes on
+the carriage returns. Copying it over first works too, but the pipe needs no temp file.
+
+**Scripted edits must round-trip CRLF.** Nearly every text file here (`core/tests/*.cpp`, the
+`AI Agent Help/*.md` files) is CRLF. A Python patch script that reads with `newline = ""` and then
+matches multi-line `\n` patterns finds **nothing** and still exits 0 --- which looks exactly like
+"the text moved" when it has not. Read, normalise, patch, restore:
+
+```python
+raw = io.open(path, encoding = "utf-8", newline = "").read()
+crlf = "\r\n" in raw
+s = raw.replace("\r\n", "\n")
+...                                     # assert every pattern matches exactly ONCE, then replace
+io.open(path, "w", encoding = "utf-8", newline = "").write(s.replace("\n", "\r\n") if crlf else s)
+```
+
+Assert `s.count(old) == 1` for each replacement before writing anything: a silently-no-op patch is
+the failure mode to design against, and the same assert catches a pattern that has since come to
+appear twice.
+
 **Constructing a PowerShell command string with `-c "..."`/`Invoke-Expression`, then having
 PowerShell itself re-parse a path containing this repo's own directory name, breaks**: `"Anime Game
 Remap (for all users)"` has literal parentheses in it, which PowerShell's parser treats as
@@ -1003,7 +1034,44 @@ A build script that ends in `echo BUILD_OK` only after every step, and a wait lo
 `error C`/`FAILED` **alongside** the exit codes — a per-target failure does not always change the
 overall exit code.
 
+## Another agent is holding the Windows build: two ways to keep working (2026-09-13)
+
+Several agents share this one checkout, so `cbuild/` is contended and `git status` grows under you.
+Two measured ways through it, neither of which disturbs their build:
+
+1. **Link a *snapshot* of the static lib.** A standalone `core/tests/*.cpp` needs
+   `AGRemapCore.lib`, not a build. Copy it (`cbuild/src/cpp/core/AGRemapCore.lib`, ~550MB, a few
+   seconds) plus `libz3.dll` / `libcurl.dll` / `utf8proc.dll` into your scratch directory, compile
+   against `core/include` and link the copy --- which also immunises you against their `ninja`
+   rewriting the `.lib` mid-link. **Validity rule: a lib is good for any source whose mtime is
+   older than the lib's.** Check before trusting it (`ls -l --time-style=+%m-%d_%H:%M` on the lib,
+   on the `data/*.cpp` you care about, and on the headers your test includes); if an included header
+   is *newer*, stop --- that is the stale-library access violation described above, not a test bug.
+2. **Build on the Linux side instead** (next section). `ninja` there compiles the *shared* working
+   tree, so it also compiles whatever the other agent has half-written; when it fails in files you
+   never touched, that is why --- read the failing paths before assuming the breakage is yours.
+
+Then when you commit: re-run `git status` first (the modified set will have grown), and commit
+**path-scoped** (`git commit -- <your files>`), never `-a`. Measured on 2026-09-13: a session that
+opened with 27 foreign modified files closed with ~42.
+
 ## Building on the Linux side while someone else holds the Windows build (2026-09-12)
+
+**Running the standalone `core/tests` there:** `Tools/Misc/Linux/buildTests.sh <TestName>
+[<TestName> ...]` (bare names -- no `_test.cpp`, no path) compiles and runs them against
+`~/cbuildlin-native`. Three things to know:
+
+* **`ninja AGRemapCore` in `~/cbuildlin-native` first.** Its objects can be far older than the
+  sources --- on 2026-09-13 they predated the Yelan data rows by three hours, so the suites
+  cheerfully asserted the *old* row counts and passed. A run against a stale lib is worse than no
+  run, because it reports green.
+* The Linux `z3` lives at **repo-root `cextlin/z3/lib/libz3.so`**, not under `api/cext` (that is the
+  Windows one). The script's `Z3LIB` lookup covers that as of 2026-09-13; when it comes up empty
+  every suite reports `(did not link)` with `ld: cannot find :` --- an empty variable, not a missing
+  test.
+* It passes `-I core/include` only, so the suites that include the private `tools/z3/Z3Internal.h`
+  need `-I "$CORE/src"` adding --- the same trap as the Windows runner in
+  [Testing](../Testing/CLAUDE.md)'s opening banner.
 
 `Tools/Misc/Linux/linuxBuild.sh` is the whole loop: `ninja core` in the native tree
 (`~/cbuildlin-native`, on ext4 -- see Setup's re-measure), then copy the `.so` into

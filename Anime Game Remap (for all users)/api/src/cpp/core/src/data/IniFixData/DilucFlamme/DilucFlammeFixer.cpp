@@ -84,6 +84,52 @@ namespace AGRemapCore {
 
         return makeGIMICharFixer(std::move(config));
     }
+    IniFixBuilder::Factory IniFixBuilderFuncs::dilucFlamme5_7() {
+        // THE 5.7 FIX, which is dilucFlamme4_0 plus ONE thing: the draw call moves.
+        // Verified only against the old script at --version 5.7 --fromVersion 5.7;
+        // the game cannot be rolled back to play it.
+
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE: Diluc has no dress, so DilucFlamme's body and dress both land on his body.
+        // The head is listed TWICE -- see fischl4_0 for what an omitted object means here.
+        config.objSplits = {{"head", {"head", "head"}}, {"body", {"body"}}, {"dress", {"body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // One edit per SOURCE, both onto the merged body's ps-t0.
+        config.texEdits = {{"body", "ps-t0", "TransparentBodyDiffuse", &transparentBodyDiffuse, true, "body"},
+                           {"body", "ps-t0", "TransparentDressDiffuse", &transparentDressDiffuse, true, "dress"}};
+
+        // ---- the three 6.1-era defaults this row predates ----
+        //
+        // The face register swap corrects something GI 6.x did to the shader; at 4.0 the diffuse
+        // still belongs on faceDiffuseReg.
+        config.swapFaceRegs = false;
+
+        // Nothing in this row's pure-Python body removes the mod's own ORFix/NNFix calls, and
+        // nothing re-issues them, so both halves of that machinery stay off. Leaving the removal
+        // on would delete the modder's call with nothing putting it back.
+        config.removeSrcFixCalls = false;
+
+        // ...and the default NNFix re-issue. An objFixCalls entry REPLACES the default
+        // for its target, including with an empty list, and it is keyed by TARGET -- a
+        // split's second copy is its own target and needs its own entry.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}}};
+
+        // ---- 5.7: THE DRAW CALL MOVES ----
+        //
+        // The pure-Python row says this as IbRemapData + IbDrawIndexedRename +
+        // IbTempToDrawIndexed with a postModel RegRemove of the original 'ib' -- stash the key
+        // on a temp register, rename that register's VALUE to 'drawindexed', remap the temp
+        // register onto the real key, drop what was there. One flag here.
+        //
+        // Applies to head and body, over the 4.0 merge.
+        config.moveDrawIndexed = true;
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::dilucFlamme6_1ToDiluc() {
         GIMICharFixerConfig config{};

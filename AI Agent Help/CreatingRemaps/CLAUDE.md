@@ -290,6 +290,23 @@ order, for a type that is BUILT (a character a `.ini` can classify as):
    population does not hold a keyword-less type either);
 8. `core/CMakeLists.txt` for the new `.cpp` files.
 
+**Four suites hardcode a count that steps 4-7 move, and nothing builds them**, so budget a pass over
+all four rather than only the one you remember (all measured 2026-09-13):
+`BuilderData_test.cpp` (rows per builder table), `VertexCounts_test.cpp` (**44** rows -- one per
+step 6's `VertexCountData.cpp` entry), `VGRemaps_test.cpp` (**58** rows, one per *direction* per
+*component*) and `ModTypeRemaps_test.cpp` (a **45**-row oracle). Step 4 also moves the GI mod type
+count itself, which several doc comments restate --- see the next note. Yelan moved all of these and
+nobody noticed for a day.
+
+**The C++ tables are AHEAD of the pure-Python ones now, deliberately -- do not "resync" them.**
+`data/VertexCountData.cpp` has 44 rows against `VertexCountData.py`'s 43; `data/VGRemapData.cpp` has
+58 against `vgRemapDataBuilder.build()`'s 52; `GIBuilder::all()` builds 45 mod types against
+`ModTypes.getAll()`'s 43. The gap is Yelan / YelanTranquil, which were only ever compiled into C++.
+So when a comment or docstring says "43", read *which side it is talking about* before touching it:
+three of the four "all 43"s in `core/src/constants/GIBuilder.cpp` describe the *pure-Python*
+`GIBuilder` and are still correct. A number "corrected" by regenerating from the Python side
+silently deletes a character.
+
 A type that is a TARGET ONLY (a boss, a skin's component) takes steps 1-3 and 6 only: no
 factory, no `all()` entry, no keyword, no remove row, no oracle row.
 
@@ -350,8 +367,10 @@ get lost:
 5. **Write the fixer**, using the table above to decide hiding/hashes/indices.
 6. **Wire downloads** if the character needs them -- one line each via `tools/DownloadTools.h`.
 7. **A/B against the old script**, then **ask for an in-game screenshot**. Both, always.
-8. **Update the counts in `core/tests/BuilderData_test.cpp`** -- it hardcodes the number of rows in
-   each builder table, nothing builds it, and adding a character silently breaks it.
+8. **Update the hardcoded counts in `core/tests/`** -- `BuilderData_test.cpp` (rows per builder
+   table), `VertexCounts_test.cpp`, `VGRemaps_test.cpp` and `ModTypeRemaps_test.cpp`. Nothing builds
+   any of them, so adding a character silently breaks all four; see the count/divergence notes under
+   "Adding a `ModTypeId`" above before you edit a number.
 
 **Before writing anything, find out what already exists for this character.** Four places, and
 each can save an afternoon:

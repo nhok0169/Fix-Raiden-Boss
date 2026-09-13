@@ -1102,6 +1102,11 @@ classes pass on the Windows build.
 breaks it, and since nothing builds `core/tests/*.cpp`, nothing tells you. This is the same trap
 already described above for interface changes — it applies to *data* changes too.
 
+**When the Windows build is busy, run these on Linux** —
+`Tools/Misc/Linux/buildTests.sh <TestName> ...`, after `ninja AGRemapCore` in `~/cbuildlin-native`;
+see [Building](../Building/CLAUDE.md)'s Linux-side section for the two traps (stale objects that
+report green, and the `cextlin` z3 path).
+
 **Two other suites hardcode data counts the same way**, so a new character breaks them too:
 `VertexCounts_test.cpp` (`44` vertex-count rows) and `VGRemaps_test.cpp` (`58` remap rows). Yelan's
 remap grew past both and nothing said so for a day.
