@@ -191,6 +191,21 @@ object
 
 The fix swaps this with :attr:`faceDiffuseReg`, which is what removes the white shiny cheek spots ---
 GI 6.x swapped which register the shader reads the two out of
+        )doc"))
+
+        .def_readwrite("swapFaceRegs", &AGRC::GIMICharFixerConfig::swapFaceRegs, py::doc(R"doc(
+:class:`bool`: Whether to perform that swap at all. **Default**: ``True``
+
+Set it ``False`` only for a fix transcribed from a PRE-6.x row: the swap corrects something GI 6.x
+did to the shader, so at 4.0 it moves a correct binding to the wrong register
+        )doc"))
+
+        .def_readwrite("removeSrcFixCalls", &AGRC::GIMICharFixerConfig::removeSrcFixCalls, py::doc(R"doc(
+:class:`bool`: Whether a remapped section drops the MOD'S OWN ``ORFix``/``NNFix`` calls. **Default**: ``True``
+
+True because the fix re-issues those itself, so a survivor of the mod's own would duplicate. A row
+that re-issues nothing --- every pre-6.x one --- must set this ``False``, or the removal deletes the
+modder's call and puts nothing back
         )doc"));
 
     // ------------------------------------------------------------------- the factories

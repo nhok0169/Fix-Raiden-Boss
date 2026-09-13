@@ -283,6 +283,28 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The PRE-5.0 spelling of \ref TexFxTransparency0 -- ``T.0`` rather than ``TN.0``
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             The same sub-command, which `TexFx`_ itself renamed at 5.0. A fix transcribed from a
+             4.x row has to issue THIS one: the two are not interchangeable, and issuing the 5.0
+             name names a sub-command that library does not have -- which surfaces as an effect
+             that quietly does nothing rather than as an error
+             @endrst
+             */
+            static inline const std::string TexFxTransparency0Pre5_0 = TexFxFolder + "\\T.0";
+
+            /**
+             * @brief
+             @rst
+             The PRE-5.0 spelling of \ref TexFxTransparency1 -- see \ref TexFxTransparency0Pre5_0
+             @endrst
+             */
+            static inline const std::string TexFxTransparency1Pre5_0 = TexFxFolder + "\\T.1";
+
+            /**
+             * @brief
+             @rst
              Written in place of a ``hash`` that has no mapping onto the mod being fixed to --
              see :cpp:class:`RegAssetRemap`
              @endrst

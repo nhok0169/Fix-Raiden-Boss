@@ -548,6 +548,50 @@ namespace AGRemapCore {
          @endrst
          */
         std::string faceLightMapReg = "ps-t1";
+
+        /**
+         * @brief
+         @rst
+         Whether to apply that swap at all -- **true by default**, which is what every
+         current-version fix wants :raw-html:`<br />` :raw-html:`<br />`
+
+         Set it false only for a fix transcribed from a PRE-6.x row. The swap is a correction
+         for something GI 6.x did; a 4.0-era table describes a game where the shader still read
+         the diffuse off \ref faceDiffuseReg, so swapping there moves a correct binding to the
+         wrong register. It has no pure-Python equivalent, so a transcribed row never asks for
+         it and the old script never produces it -- which is exactly what an A/B at
+         ``--version 4.0`` shows (2026-09-13)
+         @endrst
+         */
+        bool swapFaceRegs = true;
+
+        /**
+         * @brief
+         @rst
+         Whether a remapped section drops the MOD'S OWN calls into `ORFix`_ and `NNFix`_ --
+         **true by default**, which is what every current-version fix wants
+         :raw-html:`<br />` :raw-html:`<br />`
+
+         It is true by default because the fix re-issues those calls itself, in the one place
+         they belong, so a survivor of the mod's own would be a duplicate
+         :raw-html:`<br />` :raw-html:`<br />`
+
+         Set it false for a fix transcribed from a PRE-6.x row. In the pure-Python original this
+         removal is not framework behaviour at all -- it is per-row configuration, a
+         ``RegRemove(*ORFixCompleteRemoval)`` that every 6.1 row carries and no 4.0 row does. A
+         historical row re-issues nothing, so leaving the removal on deletes the modder's own
+         call and puts nothing back: RosariaCN's head section at ``--version 4.0``, where the old
+         script keeps ``run = CommandList\\global\\ORFix\\NNFix`` and this dropped it (2026-09-13)
+
+         .. note::
+            Deriving the set from \ref objFixCalls instead -- stripping exactly what the fixer
+            re-issues -- looks more principled and is not equivalent. Measured over 12 mods it
+            moved two: CherryHuTao gained two ``ORFix`` lines the old script does not write, and
+            GanyuTwilight's ``TexFx`` sub-command changed position as a knock-on. A flag leaves
+            every current character byte-identical, which is the property that matters here
+         @endrst
+         */
+        bool removeSrcFixCalls = true;
     };
 
 

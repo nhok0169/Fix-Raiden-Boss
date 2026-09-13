@@ -37,6 +37,15 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The 4.0 fix that remaps a Diluc mod onto DilucFlamme -- what
+             :cpp:func:`IniFixBuilderFuncs::diluc4_0` returns, and documented there
+             @endrst
+             */
+            static IniFixBuilder::Factory v4_0();
+
+            /**
+             * @brief
+             @rst
              The fix that remaps a Diluc mod onto DilucFlamme at 6.1 -- what
              :cpp:func:`IniFixBuilderFuncs::diluc6_1ToDilucFlamme` returns, and documented
              there

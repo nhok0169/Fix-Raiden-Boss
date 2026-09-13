@@ -776,9 +776,14 @@ namespace AGRemapCore {
                                reissuedTexFx.find(value) != reissuedTexFx.end();
                     };
 
-                    removeFixCalls_ = std::make_unique<RegRemove<>>(
-                        std::vector<std::pair<std::string, std::optional<RegRemove<>::RemoveKeyCheck>>>{
-                            {IniKeywords::Run, RegRemove<>::RemoveKeyCheck(isFixCall)}});
+                    // Left null when the config declines it, and the edit list below then simply
+                    // does not carry it -- see GIMICharFixerConfig::removeSrcFixCalls for why a
+                    // pre-6.x row declines.
+                    if (config_.removeSrcFixCalls) {
+                        removeFixCalls_ = std::make_unique<RegRemove<>>(
+                            std::vector<std::pair<std::string, std::optional<RegRemove<>::RemoveKeyCheck>>>{
+                                {IniKeywords::Run, RegRemove<>::RemoveKeyCheck(isFixCall)}});
+                    }
 
                     // 2. Take the shared draw call off ("", "ib"). Each remapped object now draws
                     //    its own geometry, so the single drawindexed they all ran into is wrong.
@@ -873,9 +878,12 @@ namespace AGRemapCore {
                         toModName_, ctx_.modTypeName().value_or(""), ctx_.version(), toVersion);
 
                     // The face's register swap -- a plain register edit, applied to every part of
-                    // the face graph.
-                    faceRegSwap_ = std::make_unique<RegRemap<>>(
-                        makeFaceRegSwap(config_.faceDiffuseReg, config_.faceLightMapReg));
+                    // the face graph. Left null when the config declines it, and the edit list
+                    // below then simply does not carry it.
+                    if (config_.swapFaceRegs) {
+                        faceRegSwap_ = std::make_unique<RegRemap<>>(
+                            makeFaceRegSwap(config_.faceDiffuseReg, config_.faceLightMapReg));
+                    }
 
                     // THE FACE GETS ITS OWN, LENIENT ASSET REMAP -- notFoundVal left as
                     // std::nullopt, which means "leave the value alone" rather than writing the
@@ -907,9 +915,13 @@ namespace AGRemapCore {
                     renameTexcoordAdapter_ = std::make_unique<GraphPartEdit<>>(renameTexcoordGraph_.get());
                     renameIbAdapter_ = std::make_unique<GraphPartEdit<>>(renameIbGraph_.get());
                     assetAdapter_ = std::make_unique<RegPartEdit<>>(assetRemap_.get());
-                    faceSwapAdapter_ = std::make_unique<RegPartEdit<>>(faceRegSwap_.get());
+                    if (faceRegSwap_ != nullptr) {
+                        faceSwapAdapter_ = std::make_unique<RegPartEdit<>>(faceRegSwap_.get());
+                    }
                     faceAssetAdapter_ = std::make_unique<RegPartEdit<>>(faceAssetRemap_.get());
-                    removeFixCallsAdapter_ = std::make_unique<RegPartEdit<>>(removeFixCalls_.get());
+                    if (removeFixCalls_ != nullptr) {
+                        removeFixCallsAdapter_ = std::make_unique<RegPartEdit<>>(removeFixCalls_.get());
+                    }
                     fillAdapter_ = std::make_unique<GraphPartEdit<>>(fillDrawIndexed_.get());
                     removeDrawIndexedAdapter_ = std::make_unique<RegPartEdit<>>(removeDrawIndexed_.get());
 
@@ -1104,7 +1116,9 @@ namespace AGRemapCore {
                                 edits.push_back(srcRemoval->second.get());
                             }
 
-                            edits.push_back(removeFixCallsAdapter_.get());
+                            if (removeFixCallsAdapter_ != nullptr) {
+                                edits.push_back(removeFixCallsAdapter_.get());
+                            }
 
                             // After the removal and before anything that reads a register by name.
                             auto remap = regRemapAdapters_.find(modObj);
@@ -1186,8 +1200,10 @@ namespace AGRemapCore {
                         // reason it has a mod object of its own. The rename is what stops the copied
                         // graph rendering as a verbatim duplicate of the source text, the same trap
                         // the blend fell into.
-                        iniEdits.edits[FaceObj] = {renameAdapter_.get(), faceAssetAdapter_.get(),
-                                                    faceSwapAdapter_.get()};
+                        iniEdits.edits[FaceObj] = {renameAdapter_.get(), faceAssetAdapter_.get()};
+                        if (faceSwapAdapter_ != nullptr) {
+                            iniEdits.edits[FaceObj].push_back(faceSwapAdapter_.get());
+                        }
                         iniEdits.trackKeys[FaceObj] = false;
 
                         perGroupEdits.push_back(std::move(iniEdits));

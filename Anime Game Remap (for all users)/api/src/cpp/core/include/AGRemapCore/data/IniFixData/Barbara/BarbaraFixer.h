@@ -37,6 +37,15 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The 4.0 fix that remaps a Barbara mod onto BarbaraSummertime -- what
+             :cpp:func:`IniFixBuilderFuncs::barbara4_0` returns, and documented there
+             @endrst
+             */
+            static IniFixBuilder::Factory v4_0();
+
+            /**
+             * @brief
+             @rst
              The fix that remaps a Barbara mod onto BarbaraSummertime at 6.1 -- what
              :cpp:func:`IniFixBuilderFuncs::barbara6_1ToBarbaraSummertime` returns, and documented
              there

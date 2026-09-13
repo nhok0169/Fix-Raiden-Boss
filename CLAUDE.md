@@ -224,6 +224,22 @@ nor ``objFileDownloads``. The assets were on disk all along; only six object tex
 missing from ``Data/Mod Downloads/GI/Arlecchino/5_4`` and they came out of
 GI-Model-Importer-Assets.
 
+**THERE ARE TWO GAME VERSIONS NOW, AND THE OLD SCRIPT'S `--version` IS THE ONE BEING FIXED *TO*
+(2026-09-13).** `FixRaidenBoss6.py` has a single `version`, and it drives four selections at once:
+the parser row, the fixer row, the version-keyed hashes and the indices. This checkout splits it,
+because those are independent -- the ordinary case is a mod written for an old version fixed with
+the newest fix, which one option cannot express. `--version` / `-v` is `RemapService::toVersion`
+and picks the **fixer** (the pure-Python meaning, kept); `--fromVersion` / `-fv` is
+`RemapService::fromVersion` and picks the **parser** and the hashes/indices. So reproducing the old
+script at version X means passing **both**. Two corollaries for the historical rows:
+`makeGIMICharFixer`'s defaults are 6.1-era, so a pre-6.x row must switch off `swapFaceRegs` (a GI
+6.x shader correction), `removeSrcFixCalls` (in pure-Python that strip is a `RegRemove` every 6.1
+row carries and no 4.0 row does -- left on, it deletes the modder's own `NNFix` call and puts
+nothing back) and the default `NNFix` re-issue; and **a count of `NNFix` lines in the output is not
+evidence about the fixer**, because the fix copies section bodies and many mods already call it --
+that mistake made the verification oracle look broken for a day when it was working. See
+[Creating Remaps](AI%20Agent%20Help/CreatingRemaps/CLAUDE.md).
+
 **Placement of the re-issued draw call and of the three external libraries was substantially
 reworked on 2026-09-08, and the old script is NOT the reference for it** -- matching its topology
 reproduced a real bug that silently disabled a mod's transparency. Read

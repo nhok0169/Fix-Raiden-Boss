@@ -1910,6 +1910,123 @@ you mean.
 
 <br>
 
+### THE OLD SCRIPT'S `--version` IS THE VERSION FIXED **TO**, AND IT DRIVES FOUR THINGS (2026-09-13)
+
+`FixRaidenBoss6.py`'s `--version` becomes `IniFile.version`, and one value then selects **all**
+of: the parser row, the fixer row, the version-keyed hashes, and the indices. This checkout
+splits that in two, because they are genuinely independent -- the ordinary case is a mod written
+for an old game version being fixed with the newest fix, which one option cannot express:
+
+| knob | option | selects |
+| --- | --- | --- |
+| `RemapService::toVersion` | `--version` / `-v` | the FIXER row. `IniFixBuilderData::repo` is keyed `{fromVersion, fromMod, toVersion, toMod}` and every shipped row is keyed from `1.0`, so this half alone picks it. **This is the pure-Python API's `version`** |
+| `RemapService::fromVersion` | `--fromVersion` / `-fv` | the PARSER row, the remover, and the hashes/indices the mod is read with |
+
+So **reproducing the old script at version X means passing BOTH**: `--version X --fromVersion X`.
+Passing one alone compares a fix built for X against hashes looked up for the latest version, and
+the resulting divergence is a bug in neither script. `scratchpad/ab_ver.sh` does this for you.
+
+Two notes for anyone reading an older comment in this tree. Until 2026-09-13 `RemapService` had no
+`toVersion` at all and `createIni` handed `IniFile` a hardcoded `std::nullopt`, so `--version`
+could select a parser row and *never* a fixer one -- every run got the newest fix whatever was
+asked for. The first repair, one option setting both halves, was no better: it made every A/B at a
+historical version uninterpretable, since a divergence could be coming from either selection.
+
+<br>
+
+### A HISTORICAL ROW HAS TO SWITCH OFF WHAT THE TEMPLATE DOES BY DEFAULT (2026-09-13)
+
+`makeGIMICharFixer`'s defaults are **6.1-era**. Three of them are things the pure-Python 4.0 rows
+do not do, and none of them shows up in a section-name diff or a binary comparison:
+
+| default | what a pre-6.x row sets | why |
+| --- | --- | --- |
+| re-issues `NNFix` for every drawn object | `objFixCalls` with an **empty list per target** | the whole NNFix/ORFix layer postdates these rows |
+| `swapFaceRegs = true` | `false` | the swap corrects something GI 6.x did to the shader; at 4.0 the diffuse still belongs on `ps-t0` |
+| `removeSrcFixCalls = true` | `false` | the strip exists because the fix re-issues those calls; a row that re-issues nothing just **deletes the modder's line** |
+
+The third is the subtle one, and it is a **framework-versus-row** mistake worth recognising
+generally. In the pure-Python original, dropping the mod's own `ORFix`/`NNFix` calls is *per-row
+configuration*: every 6.1 row carries its own `RegRemove(*cls.ORFixCompleteRemoval)` and no 4.0
+row does. This template folded it into the framework as an unconditional step -- correct for all
+forty-four current characters, and silently wrong for any row that does not re-issue. It showed
+as `run = CommandList\global\ORFix\NNFix` present in the old script's `--version 4.0` output
+for RosariaCN's head and absent from ours.
+
+**When the template does unconditionally what the source table did per row, the fix is a flag,
+not a smarter rule.** The tempting repair here was to derive the strip set from `objFixCalls` --
+"strip exactly what you re-issue", which is more principled, matches the rule already used for
+`TexFx`, and is what the surrounding comment says. It is also not equivalent, and the difference
+is invisible unless you measure it: see the next section.
+
+<br>
+
+### MEASURING A CHANGE TO SHARED FIXER CODE: THE A/B CANNOT DO IT (2026-09-13)
+
+`GIMICharFixer` is shared by all forty-four characters, so any edit to it needs a regression
+check -- and **the A/B against the old script is the wrong instrument**. Several divergences from
+that script are deliberate and permanent (the face register swap, the reworked placement of the
+re-issued draw call and libraries), so `0 of 5 shared .ini files identical in shape` is the
+*expected* reading both before and after your change. It cannot tell you which differences you
+just caused.
+
+Run **this checkout against itself**, across a spread of mods, with and without the edit:
+`scratchpad/batch9/newside.sh <tag>` fixes a fixed list of twelve, concatenates every `.ini` it
+writes into one blob per mod, and a plain `diff` of the two tags then attributes every changed
+line to the edit and nothing else. Budget two rebuilds (`git checkout --` the one file, build,
+capture, restore, build, capture); the link alone is about five minutes here.
+
+That check is what caught the "principled" version of the fix above. Twelve mods, and it moved
+two of them:
+
+```
+SAME    Arlecchino, AyakaSpringbloom, Ganyu, Jean, JeanSea, Kaeya,
+        KaeyaSailwind, Keqing, KiraraBoots, Xiangling
+CHANGED CherryHuTao:    0 removed, 2 added   (+2 run = ...ORFix\ORFix, where the old script writes 4 and we now wrote 6)
+CHANGED GanyuTwilight:  1 removed, 2 added   (+1 ORFix, and TexFx\TN.0 MOVED as a knock-on)
+```
+
+Ten of twelve unchanged is exactly what a wrong-but-plausible change looks like here. The flag
+version leaves all twelve byte-identical.
+
+<br>
+
+### A COUNT OF `NNFix` IN THE OUTPUT IS NOT EVIDENCE ABOUT THE FIXER (2026-09-13)
+
+**The fix copies a section's body verbatim into the remapped section.** So a mod whose own `.ini`
+already calls `NNFix` has those lines in the output at every version, from every fixer row,
+including a row that does nothing at all.
+
+This cost most of a day. Checking the historical `4_0` rows, `RosariaCN` appeared to prove the old
+script *ignored* `--version`: 10 `run =` lines at `--version 4.0` and 10 at its default, where
+`rosariaCN4_0` is `(GIMIObjRegEditFixer, [], {})` and should have emitted none. The conclusion
+written down was "the A/B oracle is unreliable" and the next 59 rows were held back on it.
+
+The oracle was fine. `RosariaCN1`'s **unfixed baseline** already contained 8 `NNFix` and 8 `ORFix`
+calls. Old-script-against-itself, 4.0 vs default:
+
+| | Amber | Barbara | Diluc | MonaCN | RosariaCN |
+| --- | --- | --- | --- | --- | --- |
+| `NNFix` @4.0 / @default | 0 / 8 | 0 / 24 | 0 / 3 | 0 / 2 | **8 / 8** |
+| in the unfixed baseline | 0 | 0 | 0 | 0 | **8** |
+
+The flag worked on `RosariaCN` too: its real 4.0-vs-default difference was two hashes and one
+`run` line **moved** -- which a count cannot see in either direction.
+
+Three rules out of it:
+
+- **Diff, never count.** `ab_ver.sh` prints the baseline's own `NNFix`/`ORFix` totals next to the
+  run's for exactly this reason, and the whole-text diff is the line to read.
+- **Ask the source directly when you can.** Whether the old script honours a flag is answerable
+  from its own tables in seconds -- `scratchpad/batch9/probe_oldver2.py` imports
+  `FixRaidenBoss6.py` and prints, per mod type, which row each version resolves to. That is a fact
+  about the selection; a run's output is that fact plus everything else the fix did.
+- **Compare the old script to ITSELF before comparing it to ours.** `old_ver_ab.sh` runs it at two
+  versions with no new-side involved, which separates "the flag did nothing" from "the flag worked
+  and the two rows agree" -- indistinguishable in a three-way comparison.
+
+<br>
+
 ### `skipped` in the download summary means two different things (2026-09-13)
 
 The run's last line reads like a tally of work done:
