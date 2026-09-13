@@ -1141,7 +1141,7 @@ namespace AGRemapCore {
         std::unique_ptr<IniFile> result = std::make_unique<IniFile>(iniPath, "", gameTypeIds,
                                                                    fromModTypeIds, forcedModTypeIds,
                                                                    std::nullopt, nullptr, std::nullopt,
-                                                                   downloadMode, fromVersion, std::nullopt,
+                                                                   downloadMode, fromVersion, toVersion,
                                                                    toModTypeIds);
 
         // Assigned, not passed: public members on IniFile with no constructor parameter, exactly

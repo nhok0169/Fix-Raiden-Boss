@@ -396,6 +396,31 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The game version the ``.ini`` files are being fixed **to** :raw-html:`<br />`
+             :raw-html:`<br />`
+
+             Feeds :cpp:member:`IniFile::toVersion`, and so decides which FIXER row is chosen:
+             :cpp:func:`IniFixBuilderData::repo` is keyed ``{fromVersion, fromMod, toVersion,
+             toMod}`` and every version-specific fix row varies by this half of the key. No value
+             means the latest row, which is what a normal run wants :raw-html:`<br />`
+             :raw-html:`<br />`
+
+             .. note::
+                Assigned rather than constructor-passed, the same way \ref defaultModTypeIds is,
+                so neither this class's constructor nor its `pybind11`_ binding changes shape.
+
+             .. note::
+                Until 2026-09-13 this did not exist and :cpp:func:`createIni` handed
+                :cpp:class:`IniFile` a hardcoded ``std::nullopt`` here, so ``--version`` selected
+                a PARSER row and could never select a fixer one -- every run got the newest fix
+                whatever version was asked for.
+             @endrst
+             */
+            std::optional<Version> toVersion;
+
+            /**
+             * @brief
+             @rst
              The ids of the :cpp:enum:`ModTypeId`\s to filter on when fixing a ``.ini`` file
              :raw-html:`<br />` :raw-html:`<br />`
 

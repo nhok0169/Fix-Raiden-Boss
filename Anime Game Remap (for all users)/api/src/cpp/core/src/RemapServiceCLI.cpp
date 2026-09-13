@@ -310,7 +310,13 @@ namespace AGRemapCore {
             return;
         }
 
+        // BOTH halves. The parse table is keyed by version alone, so fromVersion picks the
+        // parser; the fix table is keyed {fromVersion, fromMod, toVersion, toMod} with every
+        // row's fromVersion at 1.0, so it is toVersion that picks the fixer. Setting only the
+        // first -- which is what this did until 2026-09-13 -- parses a mod as 4.0 and then fixes
+        // it with the newest fixer in the table.
         service.fromVersion = parsed;
+        service.toVersion = parsed;
     }
 
     void RemapServiceCLI::_setupDownloadMode(const std::optional<std::string>& downloadMode) {
