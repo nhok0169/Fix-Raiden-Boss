@@ -24,7 +24,9 @@
 //   * its value type is int, not std::string
 //   * its data (data/VertexCountData.h) was generated for this port rather than
 //     already existing in C++ the way HashData/IndexData did, so this test
-//     asserts the row count against the live Python dict's own 43
+//     asserts an exact row count -- but that count is this table's OWN now, not
+//     the Python dict's: the two have diverged (44 rows here, 43 there). See
+//     testPrePopulated
 //
 // Covers:
 //   * A default-constructed VertexCounts is FULLY POPULATED, with 3 index
@@ -106,9 +108,14 @@ void testPrePopulated() {
     check(counts.size() == Data::getVertexCountDataRows().size(),
           "it holds exactly as many rows as the VertexCountData table it is built from");
 
-    // Row count taken straight from the live pure-Python VertexCountData dict, so a row dropped or
-    // duplicated during the extraction shows up here.
-    check(counts.size() == 43, "43 rows, matching the pure-Python VertexCountData dict");
+    // NOT the pure-Python dict's count any more -- the two tables have deliberately diverged.
+    // Measured 2026-09-13: this table has 44 rows, the live pure-Python VertexCountData dict 43.
+    // The extra row is Yelan @4.0 (16062), added here for the Yelan -> YelanTranquil remap, which
+    // was compiled straight into C++; the Python dict has no Yelan row at all (nor the "component"
+    // column this one has -- see VertexCountData.h's own note). So this number pins THIS table's
+    // row count: bump it when a character is added here, and do NOT "correct" it by re-reading the
+    // Python dict, which would silently drop Yelan.
+    check(counts.size() == 44, "44 rows -- this table's own count, one ahead of the Python dict's 43");
 
     // Same depth as Hashes now (3), one shallower than Indices (4).
     check(counts.getTotalIndices() == 3, "3 index columns (version, name, component)");
@@ -217,7 +224,8 @@ void testModTypeAttribute() {
     check(amber.vertexCounts != nullptr && amber.vertexCounts->size() > 0, "GIBuilder mod types get populated vertexCounts");
     check(amber.vertexCounts != jean.vertexCounts, "and each GI mod type gets its own");
 
-    // Every GI mod type should have a row of its own -- the table was built from the same 43.
+    // Almost every GI mod type has a row of its own -- 44 rows against 45 GI mod types, the one
+    // exception being YelanTranquil, which ships no vertex count of its own (measured 2026-09-13).
     check(amber.vertexCounts->get({amber.name, ""}, std::nullopt, false).has_value(), "Amber has a row");
     check(jean.vertexCounts->get({jean.name, ""}, std::nullopt, false).has_value(), "Jean has a row");
 }

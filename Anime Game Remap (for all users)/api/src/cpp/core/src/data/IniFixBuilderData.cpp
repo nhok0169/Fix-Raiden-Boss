@@ -26,16 +26,6 @@ namespace AGRemapCore {
     // Every generator is a stub for now -- see IniFixBuilderFuncs' own warning. They are
     // written out one-per-method rather than collapsed into a single shared stub so that each
     // can be filled in independently.
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ganyu4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::hutao4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kaeya4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kaeyaSailwind4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kirara4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::lisa4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::lisaStudent4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::nilou4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::giDefault() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight4_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower4_4() { return IniFixBuilder::defaultFactory(); }

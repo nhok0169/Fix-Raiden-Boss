@@ -771,15 +771,29 @@ namespace AGRemapCore {
                         }
                     }
 
-                    auto isFixCall = [reissuedTexFx](long long, const std::string& value) {
+                    // A row can ask for the FOLDER match instead -- see
+                    // GIMICharFixerConfig::removeSrcTexFxCalls.
+                    const bool allTexFx = config_.removeSrcTexFxCalls;
+                    const bool orNn = config_.removeSrcFixCalls;
+
+                    auto isFixCall = [reissuedTexFx, allTexFx, orNn](long long,
+                                                                    const std::string& value) {
+                        if (allTexFx && StringTools::startsWith(value, IniKeywords::TexFxFolder)) {
+                            return true;
+                        }
+
+                        if (!orNn) {
+                            return reissuedTexFx.find(value) != reissuedTexFx.end();
+                        }
+
                         return value == IniKeywords::ORFixPath || value == IniKeywords::NNFixPath ||
                                reissuedTexFx.find(value) != reissuedTexFx.end();
                     };
 
-                    // Left null when the config declines it, and the edit list below then simply
-                    // does not carry it -- see GIMICharFixerConfig::removeSrcFixCalls for why a
-                    // pre-6.x row declines.
-                    if (config_.removeSrcFixCalls) {
+                    // Left null when the config declines BOTH removals, and the edit list below
+                    // then simply does not carry it -- see GIMICharFixerConfig::removeSrcFixCalls
+                    // for why a pre-6.x row declines.
+                    if (config_.removeSrcFixCalls || config_.removeSrcTexFxCalls) {
                         removeFixCalls_ = std::make_unique<RegRemove<>>(
                             std::vector<std::pair<std::string, std::optional<RegRemove<>::RemoveKeyCheck>>>{
                                 {IniKeywords::Run, RegRemove<>::RemoveKeyCheck(isFixCall)}});

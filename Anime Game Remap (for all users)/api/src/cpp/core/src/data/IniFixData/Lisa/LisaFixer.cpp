@@ -22,6 +22,13 @@
 
 
 namespace AGRemapCore {
+    namespace {
+        // The flat normal map a 4.0-era row invents, matching that row's
+        // TexCreator(1024, 1024, colour = Colours.NormalMapYellow) exactly.
+        const int NormalMapSize4_0 = 1024;
+        const Colour NormalMapYellow4_0(128, 128, 0);
+    }
+
 
     namespace {
         // The flat normal map LisaStudent is given, Lisa having none to bring. 1024x1024
@@ -35,6 +42,59 @@ namespace AGRemapCore {
         const Colour NormalMapPurple1(128, 98, 128);
     }
 
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::lisa4_0() {
+        // THE 4.0 FIX for Lisa -> LisaStudent, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE onto LisaStudent, and the direction matters: lisa4_0's map is
+        // {"head": ["head"], "body": ["body", "dress"]}, which in the pure-Python MERGE notation
+        // reads TARGET <- sources -- her body AND her dress both land on LisaStudent's body.
+        // objSplits here is keyed the other way, by SOURCE, so the same thing is written out as
+        // three entries. Reading the map as source-keyed inverts the remap into a split.
+        config.objSplits = {{"head", {"head"}}, {"body", {"body"}}, {"dress", {"body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        config.objRegRemovals = {{"head", {"ps-t2"}}, {"body", {"ps-t3"}}, {"dress", {"ps-t2"}}};
+
+        config.objRegRemaps = {{"head", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true}}},
+                               {"body", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t2", {{"ps-t3"}}, true}}}};
+
+        // KNOWN GAP, measured rather than suspected (2026-09-13): the old script at
+        // --version 4.0 writes LisaStudentHeadNormMapRemapTex.dds and
+        // LisaStudentBodyNormMapRemapTex.dds here and this row writes neither. Everything else
+        // about this fix matches -- 0 generated binaries DIFFER, and the only-old set is exactly
+        // those two files.
+        //
+        // The suspect is the shape of lisa4_0's RegTexAdd entries. They are THREE-tuples ending in
+        // False -- ("NormMap", TexCreator(...), False) -- where ganyu4_0's are two-tuples, and
+        // GIMICharFixerConfig::TexAdd has no field for that third element, nor for the row's
+        // mustAdd = False. Until what those mean is established, this row invents the two textures
+        // and the old script's copies are the reference for whether it does so correctly.
+        config.texAdds = {{"head", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize4_0, NormalMapSize4_0, NormalMapYellow4_0)},
+                          {"body", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize4_0, NormalMapSize4_0, NormalMapYellow4_0)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"body", {IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::lisa6_1ToLisaStudent() {
         GIMICharFixerConfig config{};

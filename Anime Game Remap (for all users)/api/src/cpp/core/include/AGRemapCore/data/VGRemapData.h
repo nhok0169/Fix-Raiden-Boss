@@ -41,13 +41,16 @@ namespace AGRemapCore {
             :cpp:class:`VGRemaps` uses :cpp:class:`ModAssets` instead -- see that class
 
          .. note::
-            The value is a whole :cpp:class:`VGRemap` object, not a scalar -- 52 rows carrying 5229
-            index pairs between them
+            The value is a whole :cpp:class:`VGRemap` object, not a scalar -- 58 rows carrying 5542
+            index pairs between them (measured 2026-09-13)
 
          .. note::
-            Both ``fromComp`` and ``toComp`` are ``""`` on every row the software currently ships.
-            They are real key values, not "missing" markers, exactly as with the component columns in
-            :cpp:func:`Data::getIndexDataRows` and :cpp:func:`Data::getVertexCountDataRows`
+            ``fromComp`` and ``toComp`` are ``""`` on all but six rows -- the ``Yelan`` <->
+            ``YelanTranquil`` remap, which is per-component (``Body``, ``Bang``, ``Eye``) in both
+            directions and so is the first thing to use these two columns for real. An empty
+            component is still a real key value, not a "missing" marker, exactly as with the
+            component columns in :cpp:func:`Data::getIndexDataRows` and
+            :cpp:func:`Data::getVertexCountDataRows`
 
          .. danger::
             Mechanically generated from the real, live pure-Python data (never hand-transcribed -- a
@@ -56,8 +59,11 @@ namespace AGRemapCore {
             remap updates edit :cpp:func:`getVGRemapDataRows`'s literal directly (see
             ``VGRemapData.cpp``) :raw-html:`<br />` :raw-html:`<br />`
 
-            The pure-Python source still exists and is still live, so the two must be kept in step by
-            hand -- the same caveat :cpp:func:`Data::getVertexCountDataRows` carries
+            **The two have since diverged on purpose: this table has six rows the pure-Python one
+            does not** -- the ``Yelan`` <-> ``YelanTranquil`` remap was added here only, so
+            ``vgRemapDataBuilder.build()`` still yields 52 rows / 5229 pairs against this table's 58
+            / 5542. So this table can no longer be regenerated from that builder: doing so would
+            silently drop Yelan. The same caveat :cpp:func:`Data::getVertexCountDataRows` carries
          @endrst
          */
         const std::vector<std::pair<std::vector<std::string>, VGRemap>>& getVGRemapDataRows();

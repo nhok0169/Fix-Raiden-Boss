@@ -42,6 +42,53 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::hutao4_0() {
+        // THE 4.0 FIX for HuTao -> CherryHuTao, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        // THE SPLIT into four: her head becomes CherryHuTao's head AND extra, her body its
+        // body and dress.
+        config.objSplits = {{"head", {"head", "extra"}}, {"body", {"body", "dress"}}};
+
+        config.objRegRemovals = {{"head", {"ps-t2"}},
+                                 {"body", {"ps-t2", "ps-t3"}},
+
+                                 // The extra binds no textures of its own at all.
+                                 {"extra", {"ps-t0", "ps-t1"}}};
+
+        // The two copies that draw no geometry of their own get a null ib.
+        config.objNewRegVals = {{"extra", {{"ib", "null"}}}, {"dress", {{"ib", "null"}}}};
+
+        config.texEdits = {{"head", "ps-t0", "TransparentHeadDiffuse", &makeHeadTransparent}};
+
+        config.objRegRemaps = {{"head", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true}}},
+                               {"dress", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                          {"ps-t1", {{"ps-t2"}}, true}}}};
+
+        // The head's freed ps-t0 is nulled; the dress's takes an invented blue normal map.
+        config.objNewRegVals.push_back({"head", {{"ps-t0", "null"}}});
+        config.texAdds = {{"dress", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapBlue)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", {IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"extra", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::hutao6_1() {
         // Remapped onto CherryHuTao -- a SPLIT of BOTH objects, two becoming four, which is the
         // widest split here.

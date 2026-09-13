@@ -39,6 +39,37 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ganyu4_0() {
+        // THE 4.0 FIX for Ganyu -> GanyuTwilight, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // ps-t0 is DUPLICATED onto ps-t1 and the old ps-t1 moves to ps-t2, freeing ps-t0 for
+        // the invented normal map.
+        config.objRegRemaps = {{"head", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true}}}};
+
+        // ps-t1 now holds what ps-t0 held, and that copy is the one darkened.
+        config.texEdits = {{"head", "ps-t1", "DarkDiffuse", &DarkDiffuse::edit}};
+        config.texAdds = {{"head", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapYellow)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyu6_1() {
         // Remapped onto GanyuTwilight -- and this is the direction that GAINS a normal map, the
         // exact mirror of ganyuTwilight6_1.

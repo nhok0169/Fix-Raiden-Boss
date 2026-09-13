@@ -39,7 +39,7 @@ namespace AGRemapCore {
         a version of one mod and a version of another. :cpp:class:`ModDictAssets` handles exactly one
         version column, so it cannot express this. :cpp:class:`ModAssets`'s linear scan is the cost of
         that extra dimension, which its own class note calls out as acceptable at this table's size
-        (52 rows)
+        (58 rows)
 
      .. note::
         Six index columns, in order: ``fromVersion`` (version), ``fromChar``, ``fromComp``,

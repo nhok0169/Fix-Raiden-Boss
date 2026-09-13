@@ -592,6 +592,26 @@ namespace AGRemapCore {
          @endrst
          */
         bool removeSrcFixCalls = true;
+
+        /**
+         * @brief
+         @rst
+         Whether a remapped section drops EVERY call under the `TexFx`_ folder, rather than only
+         the sub-commands this fix re-issues -- **false by default**
+         :raw-html:`<br />` :raw-html:`<br />`
+
+         False by default on purpose. Matching `TexFx`_ by folder deletes a mod's calls to
+         sub-commands this fix knows nothing about, which is modder content rather than a
+         duplicate: GanyuTwilight's dress ships ``CommandList\\TexFx\\Transparency.0``, which the
+         pure-Python original keeps and a folder match silently removed
+         :raw-html:`<br />` :raw-html:`<br />`
+
+         Several 4.0 rows nonetheless ask for exactly that -- it is their ``TexFxRemove``, a
+         folder match -- and several of those do **not** remove `ORFix`_/`NNFix`_, so this is a
+         separate switch from \ref removeSrcFixCalls rather than a degree of it
+         @endrst
+         */
+        bool removeSrcTexFxCalls = false;
     };
 
 

@@ -5,7 +5,9 @@ API="/mnt/e/Computer/Games/Genshin/Repos/Repos/Fix-Raiden-Boss/Anime Game Remap 
 CORE="$API/src/cpp/core"
 B=~/cbuildlin-native
 Z3INC=$(dirname "$(find "$API/cext" "$API/extern" -name "z3.h" 2>/dev/null | head -1)")
-Z3LIB=$(find "$API/src/py/FixRaidenBoss2" "$B" "$API/cext" -name "libz3.so*" 2>/dev/null | head -1)
+# NOTE: cextlin/ (repo root) is where the Linux z3 actually lives -- the other three roots only
+# have it when a build has just copied it there, and with an empty $Z3LIB every test "did not link".
+Z3LIB=$(find "$API/src/py/FixRaidenBoss2" "$B" "$API/cext" "$API/../../cextlin" -name "libz3.so*" 2>/dev/null | head -1)
 echo "z3 include: $Z3INC"; echo "z3 lib: $Z3LIB"
 OUT=~/agremap-tests; mkdir -p "$OUT"
 for t in "$@"; do

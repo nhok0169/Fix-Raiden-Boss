@@ -1101,3 +1101,26 @@ classes pass on the Windows build.
 (`54 rows / 10 versions` for parse, `79` for fix, as of Raiden's 6.1 rows). Adding a character's row
 breaks it, and since nothing builds `core/tests/*.cpp`, nothing tells you. This is the same trap
 already described above for interface changes — it applies to *data* changes too.
+
+**Two other suites hardcode data counts the same way**, so a new character breaks them too:
+`VertexCounts_test.cpp` (`44` vertex-count rows) and `VGRemaps_test.cpp` (`58` remap rows). Yelan's
+remap grew past both and nothing said so for a day.
+
+**The GI mod type count is two numbers, not one**, so check which side a sentence is about before
+bumping it: `GIBuilder::all()` builds **45** mod types, while the pure-Python `ModTypes.getAll()` is
+still **43** (no Yelan, no YelanTranquil) — measured 2026-09-13. Three of the four "all 43"s in
+`core/src/constants/GIBuilder.cpp` describe the *pure-Python* GIBuilder's own `ModType(...)` calls
+and are still correct; only the fourth, about the C++ mod types, was stale. Same for
+`ModTypeRemaps_test.cpp`'s "all 42 others", which is about Raiden's pure-Python factory.
+
+**When you bump one of those, check the comment's *provenance* claim, not just the number.**
+`VertexCounts_test`/`VGRemaps_test` used to say their counts came "straight from the live
+pure-Python `VertexCountData` dict" / "`vgRemapDataBuilder.build()` output" — true when the tables
+were generated, false since the Yelan → YelanTranquil remap was compiled into C++ **only**. Measured
+2026-09-13: `VertexCountData` is 44 rows in C++ against the dict's 43 (the extra is `Yelan @4.0`);
+`VGRemapData` is 58 rows / 5542 pairs against the builder's 52 / 5229 (the extra six are
+`Yelan <-> YelanTranquil`, per component — and the **first** rows to use `fromComp`/`toComp` for
+anything but `""`). So these tables can no longer be regenerated from their Python counterparts, and
+a number "corrected" by reading the Python side back silently deletes a character. Say *which* table
+a count belongs to in the comment; the data headers
+(`core/include/AGRemapCore/data/{VertexCountData,VGRemapData}.h`) now spell the divergence out.

@@ -2186,7 +2186,7 @@ practical notes:
   budget for it; appending is cheaper when the semantics allow.
 - **Don't subclass `ModType`.** It is held **by value** in five places --- `ModTypeIdTools::_modTypes`
   / `getModType` / `registerModType`, and `IniFile::modTypes` / `overrideModTypes_` / `getModType` ---
-  plus all 43 `GIBuilder` factories return it by value. Any subclass gets **sliced** and its extra
+  plus all 45 `GIBuilder` factories return it by value. Any subclass gets **sliced** and its extra
   members silently vanish. A `GIModType : ModType` experiment was built and then removed for exactly
   this. Subclassing only becomes viable once those slots hold `shared_ptr<ModType>`.
 - **The asset members' defaults are not uniform.** `hashes`/`indices`/`vertexCounts` each get a

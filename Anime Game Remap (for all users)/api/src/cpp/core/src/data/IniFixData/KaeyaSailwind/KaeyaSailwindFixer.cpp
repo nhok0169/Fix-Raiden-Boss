@@ -19,6 +19,50 @@
 
 
 namespace AGRemapCore {
+    namespace {
+        // The 3dmigoto reflection-support keys. They name the SOURCE's texture slots, so
+        // carrying them into a remapped section aims the reflection pass at the wrong
+        // textures -- the pure-Python row strips them as ReflectionXxxRemove.
+        std::vector<GIMICharFixerConfig::RegRef> reflectionKeys(const std::string& obj) {
+            return {"ResourceRef" + obj + "Diffuse", "ResourceRef" + obj + "LightMap", "$CharacterIB"};
+        }
+    }
+
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::kaeyaSailwind4_0() {
+        // THE 4.0 FIX for KaeyaSailwind -> Kaeya, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE SPLIT into four: his dress becomes Kaeya's dress AND his extra.
+        config.objSplits = {{"head", {"head"}}, {"body", {"body"}}, {"dress", {"dress", "extra"}}};
+
+        std::vector<GIMICharFixerConfig::RegRef> bodyRem = reflectionKeys("Body");
+        bodyRem.push_back({"ps-t0"});
+
+        config.objRegRemovals = {{"head", reflectionKeys("Head")},
+                                 {"body", bodyRem},
+                                 {"dress", reflectionKeys("Dress")}};
+
+        config.objRegRemaps = {{"body", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true},
+                                         {"ps-t3", {{"ps-t2"}}, true}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        //   ^ its removal set carries ORFixCompleteRemoval, inside Reflection*Remove.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", {IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"dress", std::vector<std::string>{}},
+                              {"extra", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::kaeyaSailwind6_1ToKaeya() {
         GIMICharFixerConfig config{};

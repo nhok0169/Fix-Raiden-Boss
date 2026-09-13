@@ -206,6 +206,13 @@ did to the shader, so at 4.0 it moves a correct binding to the wrong register
 True because the fix re-issues those itself, so a survivor of the mod's own would duplicate. A row
 that re-issues nothing --- every pre-6.x one --- must set this ``False``, or the removal deletes the
 modder's call and puts nothing back
+        )doc"))
+
+        .def_readwrite("removeSrcTexFxCalls", &AGRC::GIMICharFixerConfig::removeSrcTexFxCalls, py::doc(R"doc(
+:class:`bool`: Whether to drop EVERY call under the TexFx folder, not just the re-issued ones. **Default**: ``False``
+
+False because a folder match deletes modder content -- a call to a sub-command this fix does not
+re-issue duplicates nothing. Several pre-5.0 rows do ask for it
         )doc"));
 
     // ------------------------------------------------------------------- the factories

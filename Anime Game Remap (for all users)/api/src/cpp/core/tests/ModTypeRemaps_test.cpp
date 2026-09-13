@@ -15,22 +15,23 @@
 // Standalone regression test for the GI remap graph -- which mod types each mod
 // type can be fixed onto. Covers:
 //   * ModTypeIdTools::getHashRemapTargets / getIndexRemapTargets, row by row,
-//     against all 43 entries dumped out of the LIVE pure-Python ModTypes
-//     (ModTypes.getAll(), reading each mod type's hashes.map / indices.map).
-//     The expectations below are GENERATED from that dump, not retyped from
-//     ModTypeId.cpp's own switch -- restating the implementation would pin
-//     nothing.
+//     against a 45-row oracle: the 43 entries dumped out of the LIVE pure-Python
+//     ModTypes (ModTypes.getAll(), reading each mod type's hashes.map /
+//     indices.map) plus Yelan and YelanTranquil, which exist on the C++ side only
+//     and so had to be added by hand. The 43 dumped rows are GENERATED, not
+//     retyped from ModTypeId.cpp's own switch -- restating the implementation
+//     would pin nothing.
 //   * The one asymmetry in the whole table: Raiden remaps by hash only. Its
 //     pure-Python factory passes a bare Indices() with no map, where all 42
 //     others pass the same map to both.
 //   * The two ModTypeIds that are only ever remap TARGETS (RaidenBoss,
 //     ArlecchinoBoss) -- neither is a source, and neither has a GIBuilder
 //     factory.
-//   * GIBuilder::all() building 43 mod types, each carrying that map on its own
+//   * GIBuilder::all() building 45 mod types, each carrying that map on its own
 //     Hashes/Indices. This is what "nullptr hashes/indices" used to lose:
 //     ModMappedAssets::resolveToAssetNames returns nullopt for a from-name that
 //     is not a key, so an empty map means NO targets, not all of them.
-//   * GlobalModTypes::registerAll() filing all 43 into ModTypeIdTools, so
+//   * GlobalModTypes::registerAll() filing all 45 into ModTypeIdTools, so
 //     getModType resolves by id and findByName by name AND by alias.
 //
 // Needs the full static lib. Build AGRemapCore first ("cd cbuild && ninja

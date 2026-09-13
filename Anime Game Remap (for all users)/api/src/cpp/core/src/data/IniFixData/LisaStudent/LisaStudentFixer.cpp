@@ -13,11 +13,44 @@
 
 #include "AGRemapCore/data/IniFixData/LisaStudent/LisaStudentFixer.h"
 
+#include "AGRemapCore/constants/IniKeywords.h"
 #include "AGRemapCore/data/IniFixBuilderData.h"
 #include "AGRemapCore/data/IniFixData/GIMICharFixer.h"
 
 
 namespace AGRemapCore {
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::lisaStudent4_0() {
+        // THE 4.0 FIX for LisaStudent -> Lisa, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objSplits = {{"head", {"head"}}, {"body", {"body", "dress"}}};
+
+        // Drop her normal map and ps-t3, then shift up into the gap -- on ALL THREE targets,
+        // because the split's second copy is its own target.
+        config.objRegRemovals = {{"head", {"ps-t0", "ps-t3"}},
+                                 {"body", {"ps-t0", "ps-t3"}},
+                                 {"dress", {"ps-t0", "ps-t3"}}};
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}},
+                               {"body", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}},
+                               {"dress", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"body", {IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"dress", {IniKeywords::TexFxTransparency0Pre5_0}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::lisaStudent6_1ToLisa() {
         GIMICharFixerConfig config{};

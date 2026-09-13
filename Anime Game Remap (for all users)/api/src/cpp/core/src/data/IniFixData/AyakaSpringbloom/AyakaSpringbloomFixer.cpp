@@ -90,6 +90,47 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom4_0() {
+        // THE 4.0 FIX for AyakaSpringbloom -> Ayaka, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+        headRem.push_back({"ps-t3"});
+
+        std::vector<GIMICharFixerConfig::RegRef> bodyRem = reflectionKeys("Body");
+        bodyRem.push_back({"ps-t0"});
+        bodyRem.push_back({"ResourceRefBodyDiffuse"});
+
+        std::vector<GIMICharFixerConfig::RegRef> dressRem = reflectionKeys("Dress");
+        dressRem.push_back({"ps-t3"});
+        dressRem.push_back({"ResourceRefDressDiffuse"});
+
+        config.objRegRemovals = {{"head", headRem}, {"body", bodyRem}, {"dress", dressRem}};
+
+        // Head and body shift up into the gap ps-t0 left. The DRESS does not -- its row has no
+        // RegRemap entry at all, which is easy to add by symmetry and wrong.
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}},
+                               {"body", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true},
+                                         {"ps-t3", {{"ps-t2"}}, true}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        //   ^ its removal set carries ORFixCompleteRemoval, inside Reflection*Remove.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"body", {IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom6_1() {
         // Remapped onto Ayaka -- a MERGE, and the only one in this batch. Two of the skin's objects
         // land on one of Ayaka's, so the targets collide and the fix writes TWO .ini files which the

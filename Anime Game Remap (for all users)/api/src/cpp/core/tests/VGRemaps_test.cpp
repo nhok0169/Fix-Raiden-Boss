@@ -29,8 +29,12 @@
 //     and is asserted here so it cannot drift silently
 //
 // Covers:
-//   * A default-constructed VGRemaps is FULLY POPULATED: 52 rows, matching the
-//     live pure-Python vgRemapDataBuilder.build() output
+//   * A default-constructed VGRemaps is FULLY POPULATED: 58 rows -- this table's
+//     own count, six ahead of the live pure-Python vgRemapDataBuilder.build()
+//     output. The two have deliberately diverged; see testPrePopulated
+//   * Those six extra rows (Yelan <-> YelanTranquil) are also the first to carry
+//     a NON-EMPTY component key (Body / Bang / Eye), so "fromComp and toComp are
+//     empty on every shipped row" no longer holds
 //   * Its shape: 6 columns, version flags at 0 and 3
 //   * Real lookups against real shipped remaps, keyed on both versions at once,
 //     returning VGRemap objects whose contents match the Python data
@@ -110,8 +114,16 @@ void testPrePopulated() {
     check(remaps.getVersionColumnCount() == 2, "TWO of them are version columns -- the only table like this");
     check(remaps.getNonVersionColumnCount() == 4, "leaving four non-version values to query with");
 
-    check(Data::getVGRemapDataRows().size() == 52,
-          "52 rows, matching the live pure-Python vgRemapDataBuilder.build() output");
+    // NOT the pure-Python builder's count any more -- the two tables have deliberately diverged.
+    // Measured 2026-09-13: this table has 58 rows carrying 5542 index pairs, while a live
+    // vgRemapDataBuilder.build() yields 52 rows / 5229 pairs. The extra six are the
+    // Yelan <-> YelanTranquil remap -- three components each way (Body, Bang, Eye) -- compiled
+    // straight into C++; the Python builder has no Yelan rows at all, and every row it does produce
+    // still carries an empty fromComp and toComp. So this number pins THIS table's row count: bump
+    // it when a remap is added here, rather than reading it back off the Python builder, which would
+    // silently drop Yelan.
+    check(Data::getVGRemapDataRows().size() == 58,
+          "58 rows -- this table's own count, six ahead of the Python builder's 52");
 }
 
 void testRealLookups() {
@@ -179,7 +191,7 @@ void testModTypeAttribute() {
     check(custom.vgRemaps == own, "an explicitly passed VGRemaps is used as-is");
     check(custom.vgRemaps != ModDataAssets::vgRemaps(), "and is genuinely not the shared one");
 
-    // GIBuilder passes nullptr, so all 43 GI mod types share the one table.
+    // GIBuilder passes nullptr, so all 45 GI mod types share the one table.
     ModType amber = GIBuilder::amber();
     ModType jean = GIBuilder::jean();
     check(amber.vgRemaps == ModDataAssets::vgRemaps(), "GIBuilder mod types use the shared table");

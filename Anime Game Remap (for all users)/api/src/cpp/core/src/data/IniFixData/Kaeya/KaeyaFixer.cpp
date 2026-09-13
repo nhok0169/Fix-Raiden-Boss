@@ -30,6 +30,35 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::kaeya4_0() {
+        // THE 4.0 FIX for Kaeya -> KaeyaSailwind, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objRegRemaps = {{"body", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t2", {{"ps-t3"}}, true}}}};
+
+        config.texAdds = {{"body", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapYellow)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"dress", std::vector<std::string>{}},
+                              {"extra", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::kaeya6_1ToKaeyaSailwind() {
         GIMICharFixerConfig config{};
         config.drawnObjs = {"head", "body", "dress"};

@@ -20,12 +20,29 @@
 #include "AGRemapCore/constants/IniKeywords.h"
 #include "AGRemapCore/data/IniFixBuilderData.h"
 #include "AGRemapCore/data/IniFixData/GIMICharFixer.h"
+#include "AGRemapCore/model/files/TextureFile.h"
+#include "AGRemapCore/model/strategies/texEditors/texFilters/ColourReplaceFilter.h"
 #include "AGRemapCore/data/IniFixData/RegValChecks.h"
 #include "AGRemapCore/model/files/TextureFile.h"
 #include "AGRemapCore/model/strategies/texEditors/TexEditor.h"
 
 
 namespace AGRemapCore {
+    namespace {
+        // KiraraBoots' dress lightmap, with the green band whitened. Declared in kirara4_0's
+        // PARSE row as ColourReplaceFilter(White, coloursToReplace = {LightMapGreen},
+        // replaceAlpha = False) and merely pointed at ps-t2 by the fix row, so the filter
+        // itself has to live here. replaceAlpha=false matters: the alpha band is the shader's
+        // material legend and recolouring it would change what the surface IS.
+        void whitenLightMap(TextureFile& texFile) {
+            ColourReplaceFilter filter(
+                Colour(255, 255, 255),
+                ColourOrRangeSet{ColourRange(Colour(0, 125, 0, 0), Colour(50, 160, 50, 255))},
+                false);
+            filter.transform(texFile);
+        }
+    }
+
 
     namespace {
         // 1, not 0 -- see XianglingFixer's note on why a 1 survives the BC7 round trip where a 0
@@ -49,6 +66,33 @@ namespace AGRemapCore {
         }
     }
 
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::kirara4_0() {
+        // THE 4.0 FIX for Kirara -> KiraraBoots, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // Her dress drops ps-t0, and its ps-t1 becomes BOTH ps-t0 and ps-t1 -- a duplicate
+        // rather than a move, which is what a one-to-many entry means here.
+        config.objRegRemovals = {{"dress", {"ps-t0"}}};
+        config.objRegRemaps = {{"dress", {{"ps-t1", {{"ps-t0"}, {"ps-t1"}}, true}}}};
+
+        config.texEdits = {{"dress", "ps-t2", "WhitenLightMap", &whitenLightMap}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::kirara6_1() {
         // Remapped onto KiraraBoots, a genuinely different model -- see makeGIMICharFixer for what

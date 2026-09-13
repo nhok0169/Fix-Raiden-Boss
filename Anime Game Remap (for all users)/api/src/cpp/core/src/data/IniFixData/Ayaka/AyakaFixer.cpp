@@ -26,6 +26,13 @@
 
 
 namespace AGRemapCore {
+    namespace {
+        // The flat normal map a 4.0-era row invents, matching that row's
+        // TexCreator(1024, 1024, colour = Colours.NormalMapYellow) exactly.
+        const int NormalMapSize4_0 = 1024;
+        const Colour NormalMapYellow4_0(128, 128, 0);
+    }
+
 
     namespace {
         // 1 / 2.2, spelled as the division so it reads as the sRGB exponent it is -- the same
@@ -72,6 +79,48 @@ namespace AGRemapCore {
         }
     }
 
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka4_0() {
+        // THE 4.0 FIX for Ayaka -> AyakaSpringbloom, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objRegRemovals = {{"head", {"ps-t2"}}, {"body", {"ps-t3"}}};
+
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true}}},
+                               {"body", {{"ps-t2", {{"ps-t3"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true}}}};
+
+        // Three edits, all named separately by the pure-Python row's single RegTexEdit.
+        // One edit per OBJECT, as ayaka4_0's PARSE row declares them -- head/ps-t0,
+        // body/ps-t1, dress/ps-t0. The fix row's RegTexEdit names only the registers; which
+        // object owns each edit is the parser's half of the pair, and reading only the fixer
+        // row puts all three on the head.
+        config.texEdits = {{"head", "ps-t0", "TransparentDiffuse", &makeHeadTransparent},
+                           {"body", "ps-t1", "BrightLightMap", &brightenLightMap},
+                           {"dress", "ps-t0", "OpaqueDiffuse", &makeDressOpaque}};
+
+        config.texAdds = {{"head", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize4_0, NormalMapSize4_0, NormalMapYellow4_0)},
+                          {"body", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize4_0, NormalMapSize4_0, NormalMapYellow4_0)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1Pre5_0}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::ayaka6_1() {
         // Remapped onto AyakaSpringbloom, a genuinely different model -- see makeGIMICharFixer for

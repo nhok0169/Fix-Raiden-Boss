@@ -254,7 +254,7 @@ void testGIBuilderIsWiredToTheTables() {
     check(amber.iniRemoveBuilder != nullptr && amber.iniRemoveBuilder->getBuilderArgs() == IniRemoveBuilderData::repo(),
           "GIBuilder's remove builder is the table-backed flavour over IniRemoveBuilderData");
 
-    // All 43 mod types share the one builder (and therefore the one table).
+    // All 45 mod types share the one builder (and therefore the one table).
     check(amber.iniParseBuilder == jean.iniParseBuilder, "every GI mod type shares one parse builder");
     check(amber.iniFixBuilder == jean.iniFixBuilder, "every GI mod type shares one fix builder");
     check(amber.iniRemoveBuilder == jean.iniRemoveBuilder, "every GI mod type shares one remove builder");

@@ -275,9 +275,14 @@ namespace AGRemapCore {
              The counterpart to the pure-Python ``ModTypes.getAll()`` (``constants/ModTypes.py``).
              Note this is *not* the same set as :cpp:enum:`ModTypeId`'s members: the two boss ids
              (``RaidenBoss``, ``ArlecchinoBoss``) are only ever remap targets and have no factory
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             Nor is it the same *size* as that counterpart any more: this builds **45** mod types
+             against ``ModTypes.getAll()``'s 43, because ``Yelan`` and ``YelanTranquil`` were added
+             on the C++ side only (measured 2026-09-13)
              @endrst
              *
-             * @return All 43 GI mod types
+             * @return All 45 GI mod types
              */
             static std::vector<ModType> all();
     };

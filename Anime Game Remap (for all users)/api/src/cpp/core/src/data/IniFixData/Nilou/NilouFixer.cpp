@@ -33,6 +33,45 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::nilou4_0() {
+        // THE 4.0 FIX for Nilou -> NilouBreeze, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // UNCONDITIONAL removals, unlike nilou5_7's guarded ones: the 4.0 row strips ps-t0
+        // outright rather than asking RegValChecks whether it still looks like a normal map.
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+        std::vector<GIMICharFixerConfig::RegRef> bodyRem = reflectionKeys("Body");
+        bodyRem.push_back({"ps-t0"});
+        std::vector<GIMICharFixerConfig::RegRef> dressRem = reflectionKeys("Dress");
+        dressRem.push_back({"ps-t0"});
+
+        config.objRegRemovals = {{"head", headRem}, {"body", bodyRem}, {"dress", dressRem}};
+
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true},
+                                         {"ps-t3", {{"ps-t2"}}, true}}},
+                               {"body", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true},
+                                         {"ps-t3", {{"ps-t2"}}, true}}},
+                               {"dress", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true},
+                                          {"ps-t3", {{"ps-t2"}}, true}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        //   ^ its removal set carries ORFixCompleteRemoval, inside Reflection*Remove.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"dress", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0Pre5_0}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::nilou5_7() {
         // Remapped onto NilouBreeze, a genuinely different model -- see makeGIMICharFixer for what
         // that shape does. Only what Nilou does differently lives here.
