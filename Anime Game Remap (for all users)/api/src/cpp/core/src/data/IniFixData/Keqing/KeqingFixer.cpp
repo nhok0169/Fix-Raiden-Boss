@@ -43,6 +43,47 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::keqing4_0() {
+        // THE 4.0 FIX for Keqing -> KeqingOpulent. Kept for the historical record: the game cannot be
+        // rolled back, so an A/B against the old script at --version 4.0 --fromVersion 4.0 is
+        // the whole of its verification.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE: her dress and her head both land on KeqingOpulent's head.
+        //
+        // The BODY is the doubled one here, not the head: keqing4_0's map is
+        // {"head": ["dress", "head"]}, so the body is the object it omits, and an omitted
+        // object goes into every generated file. See fischl4_0.
+        config.objSplits = {{"dress", {"head"}}, {"head", {"head"}}, {"body", {"body", "body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // BOTH sources' diffuses are made opaque, each on its own ps-t0 -- the pure-Python row
+        // names them separately (OpaqueDressDiffuse and OpaqueHeadDiffuse) precisely because a
+        // merge has two sources landing on one target, so the edit is keyed by srcObj.
+        config.texEdits = {{"head", "ps-t0", "OpaqueDressDiffuse", &makeOpaque, true, "dress"},
+                           {"head", "ps-t0", "OpaqueHeadDiffuse", &makeOpaque, true, "head"}};
+
+        // ---- the three 6.1-era defaults this row predates ----
+        //
+        // The face register swap corrects something GI 6.x did to the shader; at 4.0 the diffuse
+        // still belongs on faceDiffuseReg.
+        config.swapFaceRegs = false;
+
+        // Nothing in this row's pure-Python body removes the mod's own ORFix/NNFix calls, and
+        // nothing re-issues them, so both halves of that machinery stay off. Leaving the removal
+        // on would delete the modder's call with nothing putting it back.
+        config.removeSrcFixCalls = false;
+
+        // ...and the default NNFix re-issue. An objFixCalls entry REPLACES the default
+        // for its target, including with an empty list, and it is keyed by TARGET -- a
+        // split's second copy is its own target and needs its own entry.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::keqing6_1() {
         // Remapped onto KeqingOpulent -- and this is the direction that MERGES, the exact mirror of
         // keqingOpulent6_1's split.

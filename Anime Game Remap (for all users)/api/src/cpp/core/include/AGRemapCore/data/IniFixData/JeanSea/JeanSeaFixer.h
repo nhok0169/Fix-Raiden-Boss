@@ -61,6 +61,15 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The 4.0 fix -- what :cpp:func:`IniFixBuilderFuncs::jeanSea4_0` returns,
+             and documented there
+             @endrst
+             */
+            static IniFixBuilder::Factory v4_0();
+
+            /**
+             * @brief
+             @rst
              The 6.1 fix remapping JeanSea onto **Jean** -- what
              :cpp:func:`IniFixBuilderFuncs::jeanSea6_1ToJean` returns, and documented there
              @endrst

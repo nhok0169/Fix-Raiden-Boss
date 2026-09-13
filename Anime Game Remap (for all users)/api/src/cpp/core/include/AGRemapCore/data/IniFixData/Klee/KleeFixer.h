@@ -37,6 +37,15 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The 4.0 fix -- what :cpp:func:`IniFixBuilderFuncs::klee4_0` returns,
+             and documented there
+             @endrst
+             */
+            static IniFixBuilder::Factory v4_0();
+
+            /**
+             * @brief
+             @rst
              The fix that remaps a Klee mod onto KleeBlossomingStarlight at 6.1 -- what
              :cpp:func:`IniFixBuilderFuncs::klee6_1ToKleeBlossomingStarlight` returns, and
              documented there

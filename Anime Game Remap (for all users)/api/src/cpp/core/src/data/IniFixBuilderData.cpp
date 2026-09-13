@@ -28,28 +28,15 @@ namespace AGRemapCore {
     // can be filled in independently.
     IniFixBuilder::Factory IniFixBuilderFuncs::ayaka4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::dilucFlamme4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::fischl4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::fischlHighness4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyu4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::hutao4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::jean4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::jeanCN4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::jeanSea4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::kaeya4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::kaeyaSailwind4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::keqing4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::keqingOpulent4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::kirara4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::klee4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kleeBlossomingStarlight4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::lisa4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::lisaStudent4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::nilou4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ningguang4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::giDefault() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::shenhe4_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::xingqiu4_0() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight4_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower4_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::xingqiuBamboo4_4() { return IniFixBuilder::defaultFactory(); }
@@ -143,15 +130,15 @@ namespace AGRemapCore {
 
                 // ===== Jean @ toVersion 4.0 =====
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::Jean),
-                  "4.0", ModTypeIdTools::getName(ModTypeId::JeanCN)}, IniFixBuilderFuncs::jean4_0()},
+                  "4.0", ModTypeIdTools::getName(ModTypeId::JeanCN)}, IniFixBuilderFuncs::jean4_0ToJeanCN()},
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::Jean),
-                  "4.0", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jean4_0()},
+                  "4.0", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jean4_0ToJeanSea()},
 
                 // ===== JeanCN @ toVersion 4.0 =====
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::JeanCN),
-                  "4.0", ModTypeIdTools::getName(ModTypeId::Jean)}, IniFixBuilderFuncs::jeanCN4_0()},
+                  "4.0", ModTypeIdTools::getName(ModTypeId::Jean)}, IniFixBuilderFuncs::jeanCN4_0ToJean()},
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::JeanCN),
-                  "4.0", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jeanCN4_0()},
+                  "4.0", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jeanCN4_0ToJeanSea()},
 
                 // ===== JeanSea @ toVersion 4.0 =====
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::JeanSea),

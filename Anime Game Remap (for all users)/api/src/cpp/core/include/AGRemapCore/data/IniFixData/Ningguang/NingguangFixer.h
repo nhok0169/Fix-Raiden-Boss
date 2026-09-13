@@ -36,6 +36,15 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             The 4.0 fix -- what :cpp:func:`IniFixBuilderFuncs::ningguang4_0` returns,
+             and documented there
+             @endrst
+             */
+            static IniFixBuilder::Factory v4_0();
+
+            /**
+             * @brief
+             @rst
              The fixer for a 6.1-era Ningguang ``.ini`` file -- what
              :cpp:func:`IniFixBuilderFuncs::ningguang6_1` returns, and documented there
              @endrst

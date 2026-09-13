@@ -32,6 +32,45 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::kleeBlossomingStarlight4_0() {
+        // THE 4.0 FIX for KleeBlossomingStarlight -> Klee. Kept for the historical record: the game cannot be
+        // rolled back, so an A/B against the old script at --version 4.0 --fromVersion 4.0 is
+        // the whole of its verification.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE, the inverse of klee4_0's split. Head twice -- omitted from the
+        // pure-Python map, which means "into every generated file"; see fischl4_0.
+        config.objSplits = {{"head", {"head", "head"}}, {"body", {"body"}}, {"dress", {"body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // Her body diffuse's alpha is inverted.
+        config.texEdits = {{"body", "ps-t0", "TransparentDiffuse", &invertAlpha}};
+
+        // Her head drops ps-t2 and pulls ps-t3 into its place.
+        config.objRegRemovals = {{"head", {"ps-t2"}}};
+        config.objRegRemaps = {{"head", {{"ps-t3", {{"ps-t2"}}, true}}}};
+
+        // ---- the three 6.1-era defaults this row predates ----
+        //
+        // The face register swap corrects something GI 6.x did to the shader; at 4.0 the diffuse
+        // still belongs on faceDiffuseReg.
+        config.swapFaceRegs = false;
+
+        // Nothing in this row's pure-Python body removes the mod's own ORFix/NNFix calls, and
+        // nothing re-issues them, so both halves of that machinery stay off. Leaving the removal
+        // on would delete the modder's call with nothing putting it back.
+        config.removeSrcFixCalls = false;
+
+        // ...and the default NNFix re-issue. An objFixCalls entry REPLACES the default
+        // for its target, including with an empty list, and it is keyed by TARGET -- a
+        // split's second copy is its own target and needs its own entry.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::kleeBlossomingStarlight6_1ToKlee() {
         GIMICharFixerConfig config{};
         config.drawnObjs = {"head", "body", "dress"};
