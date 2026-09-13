@@ -13,6 +13,7 @@
 
 #include "AGRemapCore/data/IniFixData/Arlecchino/ArlecchinoFixer.h"
 
+#include "AGRemapCore/constants/IniKeywords.h"
 #include "AGRemapCore/data/IniFixBuilderData.h"
 #include "AGRemapCore/data/IniFixData/GIMICharFixer.h"
 #include "AGRemapCore/model/files/TextureFile.h"
@@ -78,6 +79,14 @@ namespace AGRemapCore {
         // entry in either row and keeps its own normal map.
         config.texEdits = {{"head", "ps-t0", "YellowHeadNormal", &yellowHeadNormal},
                            {"body", "ps-t0", "YellowBodyNormal", &yellowBodyNormal}};
+
+        // ORFIX ON THE TWO OBJECTS THAT CARRY A NORMAL MAP, NNFix on the one that does not.
+        // ORFix is the normal-map library, and head and body are exactly the two the texEdits
+        // above repaint -- the dress has no entry there and keeps the default. The pure-Python
+        // arlecchino5_7 re-issues neither (it carries no NNFix/ORFix machinery at all), so this
+        // is a deliberate divergence from that row, confirmed in game by the maintainer.
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath}},
+                              {"body", {IniKeywords::ORFixPath}}};
 
         // The Ib* entries on all three objects plus the postModel drawindexed removal.
         config.moveDrawIndexed = true;
