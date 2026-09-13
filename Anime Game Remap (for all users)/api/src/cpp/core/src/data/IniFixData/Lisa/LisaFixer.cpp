@@ -65,17 +65,17 @@ namespace AGRemapCore {
                                          {"ps-t1", {{"ps-t2"}}, true},
                                          {"ps-t2", {{"ps-t3"}}, true}}}};
 
-        // KNOWN GAP, measured rather than suspected (2026-09-13): the old script at
-        // --version 4.0 writes LisaStudentHeadNormMapRemapTex.dds and
-        // LisaStudentBodyNormMapRemapTex.dds here and this row writes neither. Everything else
-        // about this fix matches -- 0 generated binaries DIFFER, and the only-old set is exactly
-        // those two files.
+        // TWO ENTRIES, ONE FILE, and that is deliberate. The old script writes
+        // LisaStudentHeadNormMapRemapTex.dds AND LisaStudentBodyNormMapRemapTex.dds; this writes a
+        // single LisaStudentNormMapRemapTex.dds that both objects bind. They are the same 1024x1024
+        // flat yellow, so TexCreate::getFixResourceName memoises the name per mod and the identical
+        // copies collapse into one -- the de-duplication added 2026-09-12, when four $swapvar
+        // branches were producing four identical 4MB files.
         //
-        // The suspect is the shape of lisa4_0's RegTexAdd entries. They are THREE-tuples ending in
-        // False -- ("NormMap", TexCreator(...), False) -- where ganyu4_0's are two-tuples, and
-        // GIMICharFixerConfig::TexAdd has no field for that third element, nor for the row's
-        // mustAdd = False. Until what those mean is established, this row invents the two textures
-        // and the old script's copies are the reference for whether it does so correctly.
+        // So an A/B against the old script reports this as one only-old file per extra object and
+        // one only-new, with nothing DIFFERING. Same for nilouBreeze4_8 (3 -> 1) and kiraraBoots4_8
+        // (1 -> 1, name only). A row with a single texAdd, like ganyu4_0, shows no divergence at
+        // all, which is what makes this easy to misread as a missing texture.
         config.texAdds = {{"head", "ps-t0", "NormMap",
                             TexCreator(NormalMapSize4_0, NormalMapSize4_0, NormalMapYellow4_0)},
                           {"body", "ps-t0", "NormMap",

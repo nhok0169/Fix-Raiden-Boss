@@ -32,15 +32,17 @@ namespace AGRemapCore {
      each returning the :cpp:type:`IniFixBuilder::Factory` for that pair
      :raw-html:`<br />` :raw-html:`<br />`
 
-     .. warning::
-        **Every method here is a stub except** \ref raiden6_1: they all return
-        :cpp:func:`IniFixBuilder::defaultFactory`, which builds a plain
-        :cpp:class:`BaseIniFixer`. The real pure-Python generators pick between concrete
-        subclasses (``GIMIFixer``, ``GIMIObjRegEditFixer``, ``GIMIObjSplitFixer``, ``MultiModFixer``) and pass per-mod
-        arguments, none of which have been ported to C++ yet. The methods exist now so
-        that the *table* is real and version selection genuinely works -- fill them in one at a
-        time as concrete strategies land, without touching :cpp:class:`IniFixBuilderData` or
-        anything downstream
+     .. note::
+        **This warning used to say every method here was a stub except** ``raiden6_1``, and
+        that it returned a do-nothing :cpp:class:`BaseIniFixer`. Both halves are long dead:
+        forty-four characters have real fixes at 6.1, the historical 4.0 rows are filled in
+        too, and :cpp:func:`IniFixBuilder::defaultFactory` builds a real ``GIMIFixer``
+        rather than a bare base :raw-html:`<br />` :raw-html:`<br />`
+
+        What remains stubbed is a shrinking list in the 5.x groups. A method that returns
+        ``defaultFactory()`` is USUALLY one of those -- but not always:
+        :cpp:func:`IniFixBuilderFuncs::giDefault` returns it because that is genuinely its
+        fix. Read the method before assuming which
 
      .. note::
         The pure-Python original also carries shared constants and predicates such as ``TexFxRemove``,

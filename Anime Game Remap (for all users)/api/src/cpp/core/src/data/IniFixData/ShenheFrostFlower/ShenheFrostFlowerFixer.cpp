@@ -25,6 +25,32 @@
 
 namespace AGRemapCore {
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower4_4() {
+        // THE 4.4 FIX for ShenheFrostFlower -> Shenhe, verified only against the old script at
+        // --version 4.4 --fromVersion 4.4 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress", "extra"};
+
+        // THE MERGE: Shenhe has no extra, so ShenheFrostFlower's body and extra both land on
+        // her body. Its map is {"body": ["body", "extra"]} -- head and dress are OMITTED, so
+        // each goes into every generated file and is written out twice here.
+        config.objSplits = {{"head", {"head", "head"}}, {"body", {"body"}},
+                            {"extra", {"body"}}, {"dress", {"dress", "dress"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower6_1() {
         // Remapped onto Shenhe -- the widest MERGE here, and the mirror of shenhe6_1's split.
         //

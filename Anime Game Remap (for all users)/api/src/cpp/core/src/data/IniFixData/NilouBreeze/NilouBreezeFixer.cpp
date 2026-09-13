@@ -17,9 +17,67 @@
 
 #include "AGRemapCore/data/IniFixBuilderData.h"
 #include "AGRemapCore/data/IniFixData/GIMICharFixer.h"
+#include "AGRemapCore/model/textures/Colour.h"
+#include "AGRemapCore/model/strategies/texEditors/TexCreator.h"
+#include <vector>
+#include <string>
+#include "AGRemapCore/constants/IniKeywords.h"
 
 
 namespace AGRemapCore {
+    namespace {
+        // The flat normal map these rows invent, matching TexCreator(1024, 1024,
+        // colour = Colours.NormalMapYellow) exactly.
+        const int NormalMapSize4x = 1024;
+        const Colour NormalMapYellow4x(128, 128, 0);
+        // The 3dmigoto reflection-support keys. They name the SOURCE's texture slots, so
+        // carrying them into a remapped section aims the reflection pass at the wrong textures.
+        std::vector<GIMICharFixerConfig::RegRef> reflectionKeys(const std::string& obj) {
+            return {"ResourceRef" + obj + "Diffuse", "ResourceRef" + obj + "LightMap", "$CharacterIB"};
+        }
+    }
+
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze4_8() {
+        // THE 4.8 FIX for NilouBreeze -> Nilou, verified only against the old script at
+        // --version 4.8 --fromVersion 4.8 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // All three the same: drop ps-t3, then make room at ps-t0 for a normal map by
+        // duplicating ps-t0 onto ps-t1 and shifting the rest down.
+        config.objRegRemovals = {{"head", {"ps-t3"}}, {"body", {"ps-t3"}}, {"dress", {"ps-t3"}}};
+
+        config.objRegRemaps = {{"head", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t2", {{"ps-t3"}}, true}}},
+                               {"body", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t2", {{"ps-t3"}}, true}}},
+                               {"dress", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                          {"ps-t1", {{"ps-t2"}}, true},
+                                          {"ps-t2", {{"ps-t3"}}, true}}}};
+
+        config.texAdds = {{"head", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize4x, NormalMapSize4x, NormalMapYellow4x)},
+                          {"body", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize4x, NormalMapSize4x, NormalMapYellow4x)},
+                          {"dress", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize4x, NormalMapSize4x, NormalMapYellow4x)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1Pre5_0}},
+                              {"dress", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1Pre5_0}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze6_1() {
         // Remapped onto Nilou, a genuinely different model -- see makeGIMICharFixer for what that

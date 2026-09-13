@@ -23,6 +23,45 @@
 
 
 namespace AGRemapCore {
+    namespace {
+        // The 3dmigoto reflection-support keys. They name the SOURCE's texture slots, so
+        // carrying them into a remapped section aims the reflection pass at the wrong textures.
+        std::vector<GIMICharFixerConfig::RegRef> reflectionKeys(const std::string& obj) {
+            return {"ResourceRef" + obj + "Diffuse", "ResourceRef" + obj + "LightMap", "$CharacterIB"};
+        }
+    }
+
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight4_4() {
+        // THE 4.4 FIX for GanyuTwilight -> Ganyu, verified only against the old script at
+        // --version 4.4 --fromVersion 4.4 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // Only the HEAD loses its normal map and shifts. Body and dress lose the reflection
+        // keys and nothing else -- easy to make symmetric by eye and wrong.
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+
+        config.objRegRemovals = {{"head", headRem},
+                                 {"body", reflectionKeys("Body")},
+                                 {"dress", reflectionKeys("Dress")}};
+
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency0Pre5_0}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight6_1() {
         // Remapped onto Ganyu -- and this is the direction that LOSES a normal map.

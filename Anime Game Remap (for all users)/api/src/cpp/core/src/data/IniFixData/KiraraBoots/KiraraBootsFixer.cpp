@@ -42,6 +42,33 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots4_8() {
+        // THE 4.8 FIX for KiraraBoots -> Kirara, verified only against the old script at
+        // --version 4.8 --fromVersion 4.8 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // The dress makes room at ps-t0 for an invented normal map: ps-t0 is DUPLICATED onto
+        // ps-t1 and the old ps-t1 moves to ps-t2.
+        config.objRegRemaps = {{"dress", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                          {"ps-t1", {{"ps-t2"}}, true}}}};
+
+        config.texAdds = {{"dress", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapYellow)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots6_1() {
         // Remapped onto Kirara, a genuinely different model -- see makeGIMICharFixer for what that
         // shape does. Only what KiraraBoots does differently lives here.

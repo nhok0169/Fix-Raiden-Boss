@@ -58,6 +58,43 @@ namespace AGRemapCore {
 
         return makeGIMICharFixer(std::move(config));
     }
+    IniFixBuilder::Factory IniFixBuilderFuncs::kaeya5_0() {
+        // THE 5.0 FIX, and it is kaeya4_0 with ONE change: TexFx renamed its
+        // transparency sub-commands at 5.0, T.0/T.1 becoming the Natlan TN.0/TN.1. That
+        // rename is the entire difference between the pure-Python rows' ...4_0 and ...5_0
+        // value-rename constants, and issuing the wrong one names a sub-command that
+        // version of the library does not have -- which shows up as an effect that
+        // quietly does nothing.
+        //
+        // kaeya5_0 and kaeya4_0 are otherwise character-for-character identical.
+        //
+        // Originally for Kaeya -> KaeyaSailwind, verified only against the old script at
+        // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objRegRemaps = {{"body", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t2", {{"ps-t3"}}, true}}}};
+
+        config.texAdds = {{"body", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapYellow)}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        //   ^ no ORFix/NNFix entry in its removal set, so the mod's own survive.
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1}},
+                              {"dress", std::vector<std::string>{}},
+                              {"extra", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
 
     IniFixBuilder::Factory IniFixBuilderFuncs::kaeya6_1ToKaeyaSailwind() {
         GIMICharFixerConfig config{};

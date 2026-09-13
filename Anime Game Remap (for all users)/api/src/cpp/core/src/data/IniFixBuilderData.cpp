@@ -26,14 +26,17 @@ namespace AGRemapCore {
     // Every generator is a stub for now -- see IniFixBuilderFuncs' own warning. They are
     // written out one-per-method rather than collapsed into a single shared stub so that each
     // can be filled in independently.
-    IniFixBuilder::Factory IniFixBuilderFuncs::giDefault() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight4_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower4_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::xingqiuBamboo4_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots4_8() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze4_8() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kaeya5_0() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kaeyaSailwind5_0() { return IniFixBuilder::defaultFactory(); }
+    IniFixBuilder::Factory IniFixBuilderFuncs::giDefault() {
+        // THE FALLBACK ROW, and it needs no config: its pure-Python body is
+        // (GIMIFixer, [], {}) -- a plain GIMI fixer with no object awareness at all -- and
+        // IniFixBuilder::defaultFactory already builds exactly that, handed renderIfTemplate
+        // as its section renderer.
+        //
+        // So this line was never a stub; it was the implementation, sitting among the stubs
+        // and spelled identically to them. That is the whole reason it stayed on the list.
+        // It is what Raiden falls back to at 4.0 and ArlecchinoBoss at 4.6.
+        return IniFixBuilder::defaultFactory();
+    }
     IniFixBuilder::Factory IniFixBuilderFuncs::cherryHuTao5_3() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::xianglingCheer5_3() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_4() { return IniFixBuilder::defaultFactory(); }

@@ -24,6 +24,34 @@
 
 namespace AGRemapCore {
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::xingqiuBamboo4_4() {
+        // THE 4.4 FIX for XingqiuBamboo -> Xingqiu, verified only against the old script at
+        // --version 4.4 --fromVersion 4.4 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE: Xingqiu has no dress, so XingqiuBamboo's head and dress both land on his
+        // head. Its map is {"head": ["head", "dress"]}; the BODY is omitted, so it is the one
+        // written twice.
+        config.objSplits = {{"head", {"head"}}, {"dress", {"head"}}, {"body", {"body", "body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        config.objRegRemovals = {{"head", {"ps-t2"}}};
+        config.objRegRemaps = {{"head", {{"ps-t3", {{"ps-t2"}}, true}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        // The external libraries this row re-issues, keyed by TARGET. An empty list means
+        // none, and REPLACES the template's default NNFix.
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::xingqiuBamboo6_1() {
         // Remapped onto Xingqiu -- the MERGE that undoes xingqiu6_1's split.
         //
