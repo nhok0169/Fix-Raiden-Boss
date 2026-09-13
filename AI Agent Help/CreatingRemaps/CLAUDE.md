@@ -297,7 +297,7 @@ factory, no `all()` entry, no keyword, no remove row, no oracle row.
 
 ## Start here: adding a character, in order
 
-Forty-two characters are done, in five *shapes*. **Work out which one you have first, because
+Forty-four characters are done, in five *shapes*. **Work out which one you have first, because
 several decisions follow from it** (see "Two shapes of remap" below, "A character with TWO
 targets" for the third, and "The merge" for the one that writes more than one .ini file):
 
@@ -394,7 +394,7 @@ rather than reasoning from the picture.
 
 ## Most characters are two short files, not two long ones
 
-Forty-two characters are done, and FORTY-ONE of them go through the same template rather than
+Forty-four characters are done, and FORTY-THREE of them go through the same template rather than
 being copied -- everything from the plainest CN skin (Amber, Mona, Rosaria) through the three-way
 merge (ShenheFrostFlower) to the ones that edit textures conditionally and shift a `Position.buf`
 (AyakaSpringbloom, CherryHuTao, XianglingCheer). Only Raiden, whose remap keeps the source
@@ -999,8 +999,8 @@ would land on the wrong register.
 
 ### Editing a texture
 
-**FIFTEEN of the forty-two fixers carry a `texEdits` now** -- Ayaka, AyakaSpringbloom, CherryHuTao,
-DilucFlamme, Ganyu, HuTao, Jean, JeanCN, Keqing, KeqingOpulent, Kirara, Klee,
+**SIXTEEN of the forty-four fixers carry a `texEdits` now** -- Arlecchino, Ayaka, AyakaSpringbloom,
+CherryHuTao, DilucFlamme, Ganyu, HuTao, Jean, JeanCN, Keqing, KeqingOpulent, Kirara, Klee,
 KleeBlossomingStarlight, Ningguang, Xiangling -- so the config route below is the one to reach for;
 the hand-built collector after it is for a fix the config cannot express. SEVEN of them also
 `texAdds` a texture the mod does not have at all (Ayaka, Ganyu, HuTao, Kaeya, KiraraBoots, Lisa,
@@ -1888,6 +1888,44 @@ it. Re-A/B each one individually, read the section bodies rather than the sectio
 expect to find something --- these are by definition the inputs the row was never written
 against. The old script is no help here either: it classifies by name, so on exactly these mods
 there is no reference output to compare to.
+
+<br>
+
+### KNOW WHICH CHECK YOUR SUMMARY LINE IS (2026-09-13)
+
+`--ab`'s run prints two comparisons that are easy to conflate, and one of them is the line that
+looks like a score:
+
+```
+--- remapped section names, old vs new ---     <- a diff of the section NAME lists
+--- generated binaries, old vs new ---
+  4 identical, 0 differ, 8 only-old, 10 only-new   <- cmp_binaries.py: the .dds and .buf FILES
+```
+
+That `N identical, N differ` line is about the **files a fix writes**, not about sections. It is
+the stronger check of the two --- a texture that comes out with different pixels shows up here
+and nowhere else --- but reporting it as "the sections match" claims something it never tested,
+and hides that the section diff is printed separately just above. Read both, and name the one
+you mean.
+
+<br>
+
+### `skipped` in the download summary means two different things (2026-09-13)
+
+The run's last line reads like a tally of work done:
+
+```
+downloaded 1 files, copied 1 files from existing downloads and skipped 3 downloads
+```
+
+**`skipped` counts both "already had it / did not need it" and "could not fetch it".** A github
+DNS outage produces `skipped 1` and so does a redundant request that was correctly elided; the
+same Arlecchino mod printed `copied 4, skipped 0` on one run and `copied 1, skipped 3` on the
+next, both self-consistent and both with zero dangling references. So a clean-looking `skipped N`
+is **not** evidence the downloads succeeded. Check `check_dangling.py` for whether the files a
+fix references actually exist, and grep the log for `Attempt .* failed` if you need to know
+whether the network was the reason --- this is the counter-that-cannot-be-wrong trap from the
+root `CLAUDE.md`, still live in this one line.
 
 <br>
 

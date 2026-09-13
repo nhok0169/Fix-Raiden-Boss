@@ -113,7 +113,7 @@ out are grapheme indices, and a byte cursor and a grapheme cursor must be separa
 **Architecture**'s "Text handling in core is grapheme-aware" section for the full rule set, what was
 deliberately left byte-wise, and the hand-built test that covers it.
 
-**FORTY-TWO characters are real now, in five DIFFERENT shapes, and which one you have decides
+**FORTY-FOUR characters are real now, in five DIFFERENT shapes, and which one you have decides
 almost everything else.** `raiden6_1` remaps onto a boss that **shares the source's geometry**
 (hashes kept, originals hidden). Amber/AmberCN, Mona/MonaCN, Rosaria/RosariaCN and
 Ningguang/NingguangOrchid remap onto a **different model** -- a CN skin or another outfit (hashes
@@ -138,10 +138,10 @@ source-keyed fields for it -- `srcObjRegRemovals`, `srcObjRegRemaps`, and `TexEd
 because everything else in that config is keyed by the TARGET, which is right for a split (one
 source per target) and wrong for a merge (several). It also brought the first `positionEdit`:
 XianglingCheer's model sits at a different height, so her `Position.buf` is shifted as it is
-copied. All forty-two are verified against the old pure-Python script, and every pair through
-Lisa/LisaStudent is **confirmed in game** -- the lantern-rite batch on 2026-09-10, Ayaka/Nilou
-on 2026-09-11, and Klee, Barbara and both Lisa directions on 2026-09-12. Diluc, Fischl and
-Kaeya landed the same day and are A/B-verified but not yet in game.
+copied. All forty-four are verified against the old pure-Python script, and **every GI character
+except Yelan is now confirmed in game** -- the lantern-rite batch on 2026-09-10, Ayaka/Nilou on
+2026-09-11, Klee/Barbara/Lisa on 2026-09-12, and Diluc, Fischl, Kaeya and Arlecchino on
+2026-09-13.
 
 **Ayaka/AyakaSpringbloom, Nilou/NilouBreeze and Kirara/KiraraBoots (2026-09-11) added no new
 shape either, and every one of them needed the TEMPLATE extended rather than a row transcribed.**
@@ -212,6 +212,18 @@ name the SOURCE's slots and so aim the reflection pass at the wrong textures if 
 See [Creating Remaps](AI%20Agent%20Help/CreatingRemaps/CLAUDE.md)'s "Three things the merge and
 the split can do".
 
+**ARLECCHINO IS NOT THE RAIDEN SHAPE, DESPITE REMAPPING ONTO A BOSS (2026-09-13).** The boss in
+the name is the whole trap: Raiden's remap KEEPS the source's hashes and hides the originals,
+and hers REPLACES them (ib ``e811d2a1`` becomes ``480f1267``, every vertex buffer likewise) while
+the indices are IDENTICAL on both sides, so the forward index lookup is a no-op that still has to
+happen. That is the Mona/MonaCN shape, so she goes through the template and Raiden stays
+hand-written. **Read the hash and index tables before picking a shape off the character's name.**
+She also has no 6.1 row -- her 5.7 one serves 6.1, as NilouBreeze's does -- and her pure-Python
+parse row registers NO downloads, the only 5.x row in that table setting neither ``bufDownloads``
+nor ``objFileDownloads``. The assets were on disk all along; only six object textures were
+missing from ``Data/Mod Downloads/GI/Arlecchino/5_4`` and they came out of
+GI-Model-Importer-Assets.
+
 **Placement of the re-issued draw call and of the three external libraries was substantially
 reworked on 2026-09-08, and the old script is NOT the reference for it** -- matching its topology
 reproduced a real bug that silently disabled a mod's transparency. Read
@@ -239,7 +251,7 @@ specification for the character (several have full Integration Tester goldens), 
 silent ways a remap can be wrong while every log line still says it worked.
 **Everything below about the fix being stubbed still holds for every OTHER character.**
 
-All forty-two characters also carry the **face diffuse register swap** (white shiny cheek spots), which
+All forty-four characters also carry the **face diffuse register swap** (white shiny cheek spots), which
 has no pure-Python equivalent. **The obvious diagnosis is the wrong one and was built and thrown
 away once already:** the spots are not an opaque blush mask needing a transparent alpha, they are GI
 6.x having swapped which register the shader reads the face diffuse and the face lightmap out of, so
@@ -247,7 +259,7 @@ a section still binding its diffuse to `ps-t0` hands it to the lightmap slot. Th
 `RegRemap` (`ps-t0` <-> `ps-t1`) over the face graph --- one of the things NNFix does under the
 hood. See [Creating Remaps](AI%20Agent%20Help/CreatingRemaps/CLAUDE.md)'s "The face diffuse".
 
-**THE FIX IS LIVE FOR FORTY-TWO CHARACTERS (verified end-to-end 2026-09-12; thirty-six of them
+**THE FIX IS LIVE FOR FORTY-FOUR CHARACTERS (verified end-to-end, and all but Yelan in game,
 in game). Earlier revisions of this
 file said every `IniFixer`/`IniParser` was stubbed and that `IniFile::getResources()` comes back
 empty --- that is NO LONGER TRUE, and believing it will cost you the best verification tool the repo
@@ -262,7 +274,7 @@ and `fixResources` really does correct `Blend.buf` files and really does write t
 running the CLI over the in-repo Jean fixture and watching two `.dds` files appear.
 
 Two consequences, both the opposite of what this file used to say:
-- **"The fix produces correct output" IS a usable acceptance criterion now** --- for these forty-two.
+- **"The fix produces correct output" IS a usable acceptance criterion now** --- for these forty-four.
   Prefer it over any unit test when the change could possibly affect a fix.
 - **Characters outside that list still have no fixer**, so a run over one of *those* still writes
   only the credit header. That is the stub, not a bug. Check
