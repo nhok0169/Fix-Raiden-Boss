@@ -1095,6 +1095,58 @@ fix the Linux suite runs to the end again: **2137 tests, 12 failures, 7 errors**
 the `IfTemplateTree` question, and the `BaseIniFileTest` setUpClass classes); all 12 failing
 classes pass on the Windows build.
 
+## Running every standalone C++ test on Linux: the runner, and three ways it lies (2026-09-14)
+
+Measured on a full pass over `core/tests/*_test.cpp`: **47 files, 44 pass, 3 fail**, and the three
+failures are Linux-only and have nothing to do with whatever you just changed. Getting to that
+number needed four fixes to the obvious runner, and each of the first three makes the run *look*
+like something it is not.
+
+**1. `Tools/Misc/Linux/buildTests.sh` locates Z3 with `find` over `$API/extern` and `cextlin`.**
+On a checkout mounted at `/mnt/e` those two `find`s take many minutes, and while they run the log
+is EMPTY and no compiler is running -- which reads exactly like a script that failed to start.
+Hardcode the two paths instead; on this checkout they are
+
+```
+z3 include:  <api>/extern/z3/src/api          (and <api>/extern/z3/src/api/c++ for z3++.h)
+z3 lib:      <repo>/cextlin/z3/lib/libz3.so
+```
+
+**2. Judging pass/fail by grepping the output marks every passing suite as failed.** A passing test
+prints `ALL PASSED (0 failure(s))`, and a case-insensitive grep for `FAILURE` matches the word
+"failures" in it. Every one of these tests ends `return (failures == 0) ? 0 : 1`, so **use the exit
+code** and nothing else.
+
+**3. Four of the 47 need include paths the core build does not need**, and without them they report
+"did not build" rather than failing -- the same silent-gap shape as the typed-list lesson above:
+
+| suite | needs |
+| --- | --- |
+| `IfPredPart_test`, `Z3Predicate_test`, `Z3IfPredGenerator_test` | `-I <api>/extern/z3/src/api/c++` (for `z3++.h`, which is NOT beside `z3.h`) |
+| `CompressTextures_test` | `-I <api>/extern/Compressonator/cmp_compressonatorlib -I <api>/extern/Compressonator/cmp_framework` |
+
+With those, all 47 build.
+
+**4. The three that fail are the Linux baseline. Do not "fix" them, and do not read them as your
+regression:**
+
+- `IniNamingTools_test` (3 checks) -- `got .\fooRaidenRemapFix.ini, expected ./foo...`. The product
+  deliberately writes Windows separators into a `.ini` on every OS (Architecture's "A path INSIDE a
+  `.ini` is a Windows path"); these expectations were never updated to match.
+- `IniResources_test` (1 check, `absPathOfRelPath: an already-absolute dstPath ignores relFolder`) --
+  the literal is `"C:/mods/EiRemap"`, which is absolute on Windows and relative on Linux. Same family
+  as the eight hardcoded-Windows-path failures [Setup](../Setup/CLAUDE.md) records for the *Python*
+  suite; that list does not cover the C++ suites, so this is the note for them.
+- `FileDownload_curl_test` -- aborts on an uncaught `std::runtime_error`, *"URL rejected: Malformed
+  input to a URL function"*. Exit 134 (SIGABRT), not a check failure.
+
+**And the cheap way to decide whether a failure is yours** without paying for a second build:
+`grep` the failing test file for the names you touched. `IniNamingTools_test.cpp` mentions no
+`ModTypeId`, `GIBuilder`, `HashData`, `VGRemap` or `VertexCount` at all, which settles it in one
+command.
+
+<br>
+
 ## When you add a row to a builder table, `BuilderData_test.cpp` breaks silently
 
 `core/tests/BuilderData_test.cpp` asserts exact row and version counts for all three builder tables

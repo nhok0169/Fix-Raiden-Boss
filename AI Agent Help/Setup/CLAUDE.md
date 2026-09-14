@@ -956,6 +956,35 @@ across repeated runs, so not `unordered_map` ordering flakiness:
   iteration-order dependence over an unordered container — but that is a hypothesis, not a
   conclusion. Treat it as the one genuinely open question from this port.
 
+### The VM's RAM sets the build parallelism, not its cores -- and getting it wrong WEDGES WSL (2026-09-14)
+
+Three builds in a row died on this before the memory was looked at, and the failure does not look
+like an out-of-memory failure. `wsl -e` starts refusing connections
+(`Wsl/Service/0x8007274c`, *"connected party did not properly respond"*) while `wsl -l -v` still
+reports the distro **Running**; any `wsl -e bash -lc` wrapper that was waiting on the build dies with
+it, so a wait loop reports "ninja finished" when nothing of the sort happened. The tell is the build
+tree: `libAGRemapCore.a` still carries **yesterday's** timestamp.
+
+This box has **12 cores and 7 GB of RAM**. Ninja defaults to `nproc + 2` = 14 parallel `g++` jobs,
+and this tree's translation units are big enough that fourteen of them exhaust it.
+
+```bash
+nproc; free -g          # check BOTH before trusting any -j
+ninja -j 4 core         # ~11 minutes for a widely-included header change, and it finishes
+```
+
+Two habits that make it survivable:
+
+- **Run the build detached**, `setsid nohup ... > ~/agremap-build.log`, and poll the log. Then a
+  dropped `wsl -e` connection cannot take the build down with it.
+- **Don't hammer `wsl -e`.** Several concurrent invocations while a build is running is enough on
+  its own to provoke the connection failures. One poll every 30 s is plenty.
+
+Recovery when it does wedge: `wsl --terminate Ubuntu-22.04`, then any `wsl` command restarts it
+clean. Nothing in the build tree is lost -- ninja just re-does the objects it had not finished.
+
+<br>
+
 ## Other Linux gotchas
 
 - **`.gitignore` doesn't cover versioned sonames.** The install drops `libz3.so.4.17`,
