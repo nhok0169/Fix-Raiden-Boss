@@ -728,6 +728,41 @@ before you do the second one, because that checkout has teeth.
 
 <br>
 
+### Proving a NEW download folder, without a golden to compare against (2026-09-14)
+
+The conversion from a character's asset dump to its `Data/Mod Downloads` folder is
+`Tools/Misc/Prototypes/identityMod.py`'s, minus the `.ini`: the vb0 dump's vertex splits into
+`Position.buf` (40 bytes) + `Blend.buf` (32) + `Texcoord.buf` (measured, 12 or 20), and each
+object's ib is written as R32_UINT whatever the game's own format was. A skin of several components
+gets one buffer set per `hash.json` entry with a `position_vb`, named `<Prefix><Component><Part>`;
+a classic character's component name is the empty string, so one loop writes both shapes.
+
+**A new character has no golden, so prove the pipeline on the characters that do.** Rebuilding six
+shipped folders from their sources reproduced them byte-identically -- Diluc, Amber, Klee (10 files
+each), Ganyu (13), Yelan (16) and, for the multi-component path, YelanTranquil (23). That is the
+check that makes the seventh folder trustworthy, and it costs one `--check` run per character.
+
+**Then verify the new folder a second way, not the same way twice.** Re-running the same reader
+proves nothing. Parse the dump text by hand -- no `VbFile`/`IbFile` -- rebuild the bytes and compare:
+that caught nothing on Bennett (all 18 binaries matched, including the R16 -> R32 index conversion)
+but it is the only check that could have. The `.dds` files are straight copies, so md5 them against
+the asset folder.
+
+Two things measured on Bennett that are not guessable:
+
+- **The Texcoord stride is per COMPONENT, and differs inside one skin.** BennettAdventure's `Body`
+  is 20 and its `Bang` is 12; YelanTranquil's Bang is 20. Carrying a neighbour's number over is
+  wrong.
+- **A component with an empty `texture_hashes` list borrows another's**, and gets no texture files
+  of its own. BennettAdventure's Bang and Eye both do, exactly as YelanTranquil's do.
+
+And the version folder is the one thing here that the data cannot tell you: base characters are all
+filed under `4_0` (verified -- `4_0` holds the CURRENT dump even for characters whose geometry
+hashes moved later, as Bennett's did at 4.1 / 4.3 / 4.4), while a skin takes its own release
+version. **Ask which one.** The dump files' dates are suggestive and not decisive.
+
+<br>
+
 ## The parser
 
 One `GIMIParser` per (character, version). Its whole job is to say **which sections belong to which
