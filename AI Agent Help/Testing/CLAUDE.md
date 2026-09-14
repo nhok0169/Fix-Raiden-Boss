@@ -1098,9 +1098,15 @@ classes pass on the Windows build.
 ## When you add a row to a builder table, `BuilderData_test.cpp` breaks silently
 
 `core/tests/BuilderData_test.cpp` asserts exact row and version counts for all three builder tables
-(`54 rows / 10 versions` for parse, `79` for fix, as of Raiden's 6.1 rows). Adding a character's row
-breaks it, and since nothing builds `core/tests/*.cpp`, nothing tells you. This is the same trap
-already described above for interface changes — it applies to *data* changes too.
+(measured 2026-09-13: `56 rows / 10 versions` for parse, `124` for fix — 78 historical plus 46 at
+6.1 — and `45` for remove, one per GI mod type). Adding a character's row breaks it, and since
+nothing builds `core/tests/*.cpp`, nothing tells you. This is the same trap already described above
+for interface changes — it applies to *data* changes too.
+
+**Don't re-add a per-character enumeration to a count's message.** Two of them rotted here: the fix
+table's listed 36 characters' worth of 6.1 rows while the literal said 124 (it was ten rows behind),
+and this file's own quote above was two characters stale. State the total and where the inventory
+lives; the table file is its own list.
 
 **When the Windows build is busy, run these on Linux** —
 `Tools/Misc/Linux/buildTests.sh <TestName> ...`, after `ninja AGRemapCore` in `~/cbuildlin-native`;

@@ -413,7 +413,8 @@ rather than reasoning from the picture.
 
 ## Most characters are two short files, not two long ones
 
-Forty-four characters are done, and FORTY-THREE of them go through the same template rather than
+Forty-four characters are done (`data/IniParseData/<Name>/` + `data/IniFixData/<Name>/`, one
+directory each -- counted 2026-09-13), and FORTY-THREE of them go through a template rather than
 being copied -- everything from the plainest CN skin (Amber, Mona, Rosaria) through the three-way
 merge (ShenheFrostFlower) to the ones that edit textures conditionally and shift a `Position.buf`
 (AyakaSpringbloom, CherryHuTao, XianglingCheer). Only Raiden, whose remap keeps the source
@@ -421,6 +422,11 @@ geometry and hides the originals, is written by hand:
 
 - `data/IniParseData/GIMICharParser.h` — `makeGIMICharParser(GIMICharParserConfig)`
 - `data/IniFixData/GIMICharFixer.h` — `makeGIMICharFixer(GIMICharFixerConfig)`
+
+All 43 use `makeGIMICharParser`; 42 of them use `makeGIMICharFixer`, and the forty-third (Yelan)
+uses its multi-component sibling `makeGIMIComponentFixer` on the fix side while still taking the
+classic parser -- see "Yelan is COMPILED now" above. So "one template" is one *parser* template and
+two *fixer* templates, and a new multi-component skin picks the fixer, not the whole shape.
 
 A whole character is then this much:
 

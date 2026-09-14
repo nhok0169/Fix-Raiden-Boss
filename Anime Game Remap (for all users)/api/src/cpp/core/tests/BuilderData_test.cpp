@@ -28,11 +28,13 @@
 // works through it, which is the part that has to stay correct while the stubs
 // get filled in one by one:
 //   * row and version counts match the pure-Python originals, plus whatever this
-//     port has added on top of them (the parse table is 54 rows / 10 versions:
-//     53 rows / 9 versions from the Python file, plus Raiden's 6.1 row; the fix
-//     table is 94: 73 Python rows fanned out to 78, plus the sixteen real 6.1 rows
-//     (Raiden, Amber, AmberCN, Mona, MonaCN, Rosaria, RosariaCN);
-//     the remove table is 43 rows all at 4.0)
+//     port has added on top of them. Measured 2026-09-13: the parse table is 56
+//     rows / 10 versions (53 rows / 9 versions from the Python file, plus Raiden's
+//     6.1 row, LisaStudent's 5.4 one and Yelan's 4.0 one); the fix table is 124
+//     (73 Python rows fanned out per target mod to 78, plus 46 at 6.1 that are
+//     this port's own); the remove table is 45 rows all at 4.0, one per GI mod
+//     type. Do NOT restate WHICH characters own the 6.1 rows here -- that list
+//     went stale twice; `IniFixBuilderData.cpp` is its own inventory
 //   * spot-checked rows exist at the versions the Python file lists them at,
 //     including the mods that legitimately appear more than once
 //   * floor-matching through the real table: a mod listed only at 4.0 still
@@ -106,13 +108,13 @@ void testTableShape() {
     // Counts taken straight from the pure-Python dicts, so a row silently dropped or duplicated
     // during the port shows up here.
     check(IniParseBuilderData::repo()->size() == 56, "the parse table has all 53 rows from IniParseBuilderData.py, plus Raiden's 6.1 row, LisaStudent's 5.4 one and Yelan's 4.0 one");
+    // Counted by toVersion straight out of IniFixBuilderData.cpp on 2026-09-13: 78 historical rows
+    // (the 73 Python ones fanned out per target mod, which is what replaced the pure-Python
+    // MultiModFixer -- Jean/JeanCN/JeanSea carry TWO each) plus 46 at 6.1 that are this port's own,
+    // Yelan's three per-component rows among them. Deliberately NOT a per-character list: the
+    // enumeration that used to live here fell ten rows behind the literal without anything noticing.
     check(IniFixBuilderData::repo()->size() == 124,
-          "the fix table has the 73 Python rows fanned out per target mod to 78, plus the thirty-three real 6.1 "
-          "rows (Raiden, Amber, AmberCN, Mona, MonaCN, Rosaria, RosariaCN, Ningguang, NingguangOrchid, GanyuTwilight, "
-          "NilouBreeze, Kirara, KiraraBoots, Ayaka, AyakaSpringbloom, Barbara, BarbaraSummertime, Klee, "
-          "KleeBlossomingStarlight, Lisa, LisaStudent, Diluc, DilucFlamme, Fischl, FischlHighness, Kaeya, "
-          "KaeyaSailwind, and Jean/JeanCN/JeanSea with TWO each -- one per target mod, "
-          "which is what replaced the pure-Python MultiModFixer) -- and Yelan's THREE 6.1 rows, one per YelanTranquil component");
+          "the fix table has 124 rows -- 78 historical, plus the 46 at 6.1 this port added");
 
     // The remove table has no Python original -- one row per GI mod type, all at 4.0.
     check(IniRemoveBuilderData::repo()->size() == 45, "the remove table has one row per GI mod type (43, plus Yelan and YelanTranquil)");
