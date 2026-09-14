@@ -57,6 +57,7 @@ Special Thanks to ❤:
 - ![Static Badge](https://img.shields.io/badge/%E2%8F%B1%EF%B8%8F%E2%9B%93%EF%B8%8F%20The%20Critical%20Path%20Breaker-1-%23854d0e?style=plastic&labelColor=%230c0a09)
 - ![Static Badge](https://img.shields.io/badge/%F0%9F%A6%B4%F0%9F%A7%AD%20The%20Vertex%20Group%20Cartographer-1-%237c2d12?style=for-the-badge&labelColor=%23fef3c7)
 - ![Static Badge](https://img.shields.io/badge/%F0%9F%A7%B0%E2%9B%93%EF%B8%8F%20The%20Toolchain%20Mender-1-%2364748b?style=plastic&labelColor=%23020617)
+- ![Static Badge](https://img.shields.io/badge/%F0%9F%8F%BA%F0%9F%95%B0%EF%B8%8F%20The%20Version%20Archaeologist-1-%23b08d57?style=flat-square&labelColor=%232f4f4f)
 
 <br>
 
