@@ -45,6 +45,38 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::xianglingCheer5_3() {
+        // THE 5.3 FIX for XianglingCheer -> Xiangling, verified only against the old script at
+        // --version 5.3 --fromVersion 5.3 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        // THE SPLIT: Xiangling has a dress XianglingCheer does not draw, fed from her head.
+        config.objSplits = {{"head", {"head", "dress"}}, {"body", {"body"}}};
+
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+        std::vector<GIMICharFixerConfig::RegRef> bodyRem = reflectionKeys("Body");
+        bodyRem.push_back({"ps-t0"});
+
+        config.objRegRemovals = {{"head", headRem}, {"body", bodyRem}};
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}},
+                               {"body", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}}};
+
+        // The split's head copy keeps no index buffer of its own.
+        config.objNewRegVals = {{"head", {{"ib", "null"}}}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::xianglingCheer6_1() {
         // Remapped onto Xiangling -- the SPLIT that undoes xiangling4_0's merge, and the direction
         // that LOSES a normal map.

@@ -77,6 +77,53 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::cherryHuTao5_3() {
+        // THE 5.3 FIX for CherryHuTao -> HuTao, verified only against the old script at
+        // --version 5.3 --fromVersion 5.3 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress", "extra"};
+
+        // THE MERGE back onto HuTao, who has no extra and no dress of her own: CherryHuTao's
+        // head and extra land on HuTao's head, her body and dress on the body. Its map is
+        // {"head": ["head", "extra"], "body": ["body", "dress"]} -- TARGET <- sources, because
+        // this is a GIMIObjMergeFixer. Nothing is omitted, so nothing is doubled.
+        config.objSplits = {{"head", {"head"}}, {"extra", {"head"}},
+                            {"body", {"body"}}, {"dress", {"body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // All four objects drop the reflection-support keys; head and dress ALSO drop the
+        // normal map at ps-t0 and shift up into the gap. Body and extra do not shift.
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+        std::vector<GIMICharFixerConfig::RegRef> dressRem = reflectionKeys("Dress");
+        dressRem.push_back({"ps-t0"});
+
+        config.objRegRemovals = {{"head", headRem},
+                                 {"body", reflectionKeys("Body")},
+                                 {"dress", dressRem},
+                                 {"extra", reflectionKeys("Extra")}};
+
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}},
+                               {"dress", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}}};
+
+        // One edit per SOURCE object, which is what a merge needs -- all three land on the
+        // merged body, and srcObj is what tells them apart.
+        config.texEdits = {{"body", "ps-t0", "TransparentBodyDiffuse", &invertAlpha, true, "body"},
+                           {"body", "ps-t1", "TransparentyDressDiffuse", &invertAlpha, true, "dress"},
+                           {"body", "ps-t1", "OpaqueBodyLightMap", &flattenEmission, true, "body"}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency0}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", {IniKeywords::TexFxTransparency0}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::cherryHuTao6_1() {
         // Remapped onto HuTao -- the MERGE that undoes hutao6_1's split, and the most involved fix
         // in the repo.

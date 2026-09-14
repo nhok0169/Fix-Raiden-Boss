@@ -503,7 +503,10 @@ namespace AGRemapCore {
              :cpp:func:`IniFixBuilder::defaultFactory`, see this class's own warning
              @endrst
              */
-            static IniFixBuilder::Factory jean5_5();
+            static IniFixBuilder::Factory jeanCN5_5ToJeanSea();
+            static IniFixBuilder::Factory jeanCN5_5ToJean();
+            static IniFixBuilder::Factory jean5_5ToJeanSea();
+            static IniFixBuilder::Factory jean5_5ToJeanCN();
 
             /**
              * @brief
@@ -512,7 +515,6 @@ namespace AGRemapCore {
              :cpp:func:`IniFixBuilder::defaultFactory`, see this class's own warning
              @endrst
              */
-            static IniFixBuilder::Factory jeanCN5_5();
 
             /**
              * @brief

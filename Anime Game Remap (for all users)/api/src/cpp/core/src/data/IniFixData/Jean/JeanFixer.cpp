@@ -25,6 +25,49 @@
 
 namespace AGRemapCore {
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::jean5_5ToJeanSea() {
+        // THE 5.5 FIX for Jean -> JeanSea, verified only against the old script at
+        // --version 5.5 --fromVersion 5.5 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objSplits = {{"head", {"head"}}, {"body", {"body", "dress"}}};
+
+        // WHAT 5.5 ADDS over jean4_0ToJeanSea, and it is all on this target: the split's dress
+        // copy gets a null ib, and the body's lightmap gets JeanSea's shading lift.
+        config.objNewRegVals = {{"dress", {{"ib", "null"}}}};
+        config.texEdits = {{"body", "ps-t1", "ShadeLightMap", &JeanShading::liftLowAlpha}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::jean5_5ToJeanCN() {
+        // THE 5.5 FIX for Jean -> JeanCN, verified only against the old script at
+        // --version 5.5 --fromVersion 5.5 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        // A plain one-to-one remap, exactly as at 4.0 -- the MultiModFixer hands this target a
+        // bare GIMIObjRegEditFixer with empty kwargs.
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::jean4_0ToJeanCN() {
         // THE 4.0 FIX for Jean -> JeanCN. Kept for the historical record: the game cannot be
         // rolled back, so an A/B against the old script at --version 4.0 --fromVersion 4.0 is

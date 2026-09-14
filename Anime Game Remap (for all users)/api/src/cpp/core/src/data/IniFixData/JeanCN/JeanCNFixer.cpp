@@ -25,6 +25,48 @@
 
 namespace AGRemapCore {
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::jeanCN5_5ToJeanSea() {
+        // THE 5.5 FIX for JeanCN -> JeanSea, verified only against the old script at
+        // --version 5.5 --fromVersion 5.5 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        // jeanCN5_5 names the head explicitly where jean5_5 omits it, but for a SPLIT that is
+        // the same thing -- one generated file, so an omitted object passes through once.
+        config.objSplits = {{"head", {"head"}}, {"body", {"body", "dress"}}};
+
+        config.objNewRegVals = {{"dress", {{"ib", "null"}}}};
+        config.texEdits = {{"body", "ps-t1", "ShadeLightMap", &JeanShading::liftLowAlpha}};
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::jeanCN5_5ToJean() {
+        // THE 5.5 FIX for JeanCN -> Jean, verified only against the old script at
+        // --version 5.5 --fromVersion 5.5 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        // The mirror of jean5_5ToJeanCN: a plain one-to-one remap.
+
+        // ---- what this row does with the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::jeanCN4_0ToJean() {
         // THE 4.0 FIX for JeanCN -> Jean. Kept for the historical record: the game cannot be
         // rolled back, so an A/B against the old script at --version 4.0 --fromVersion 4.0 is

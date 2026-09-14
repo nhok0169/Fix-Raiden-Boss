@@ -37,14 +37,10 @@ namespace AGRemapCore {
         // It is what Raiden falls back to at 4.0 and ArlecchinoBoss at 4.6.
         return IniFixBuilder::defaultFactory();
     }
-    IniFixBuilder::Factory IniFixBuilderFuncs::cherryHuTao5_3() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::xianglingCheer5_3() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::arlecchino5_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze5_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::lisa5_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::jean5_5() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::jeanCN5_5() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::hutao5_6() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_6() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_6() { return IniFixBuilder::defaultFactory(); }
@@ -468,15 +464,15 @@ namespace AGRemapCore {
 
                 // ===== Jean @ toVersion 5.5 =====
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::Jean),
-                  "5.5", ModTypeIdTools::getName(ModTypeId::JeanCN)}, IniFixBuilderFuncs::jean5_5()},
+                  "5.5", ModTypeIdTools::getName(ModTypeId::JeanCN)}, IniFixBuilderFuncs::jean5_5ToJeanCN()},
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::Jean),
-                  "5.5", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jean5_5()},
+                  "5.5", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jean5_5ToJeanSea()},
 
                 // ===== JeanCN @ toVersion 5.5 =====
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::JeanCN),
-                  "5.5", ModTypeIdTools::getName(ModTypeId::Jean)}, IniFixBuilderFuncs::jeanCN5_5()},
+                  "5.5", ModTypeIdTools::getName(ModTypeId::Jean)}, IniFixBuilderFuncs::jeanCN5_5ToJean()},
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::JeanCN),
-                  "5.5", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jeanCN5_5()},
+                  "5.5", ModTypeIdTools::getName(ModTypeId::JeanSea)}, IniFixBuilderFuncs::jeanCN5_5ToJeanSea()},
 
                 // ===== HuTao @ toVersion 5.6 =====
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::HuTao),
