@@ -192,7 +192,7 @@ hash set, `incModTypeCountByHash` weighs a hash at **2** against a section name'
 `readLine` already skips a `hash =` inside a `Remap`-named section so an already-fixed mod's
 target hashes cannot vote. The GI population simply passed `{}`. It now passes the five hash
 types that actually IDENTIFY a character --- `ib`, `draw_vb`, `position_vb`, `blend_vb`,
-`texcoord_vb`, unique across all 312 of their rows --- and no texture hashes, which are shared
+`texcoord_vb`, unique across all 357 of their rows --- and no texture hashes, which are shared
 assets (`b0e08915` is filed under **forty** names). Measured over 150 real mod `.ini` files: 141
 classify identically, 9 change, and all 9 are corrections (4 of them files that classified as
 *nothing* and were being skipped). See **Overview**'s "A live feature with an empty input", and
@@ -401,6 +401,22 @@ named before it exists.
 WORK.** `script build/`'s `AGRemap.py` used to be the whole pure-Python API flattened into one file
 by the `ScriptBuilder`. That is impossible now --- a single `.py` cannot carry a compiled extension
 module --- so the script *references* the API instead (a path in a `dev` build, a pypi download in a
+**BENNETT AND BENNETTADVENTURE HAVE DATA BUT NO FIX (2026-09-14), AND THAT IS A DELIBERATE
+HALF-STEP.** Both download folders are in (`GI/Bennett/4_0`, 10 files; `GI/BennettAdventure/5_7`,
+20 files), and so are the five `ModTypeId`s -- `Bennett`, `BennettAdventure`, and the three
+target-only component ids `BennettAdventure{Body,Bang,Eye}`, the YelanTranquil arrangement -- plus
+`HashData` (Bennett at **4.0 / 4.1 / 4.3 / 4.4**, following his `hash.json`'s history in the assets
+repo, and the skin's three components at 5.7), `IndexData`, `VertexCountData`, five `VGRemapData`
+rows and `Data/RemapDrafts/BennettRemapDraft.xlsx`. **No parser and no fixer**, so a run over a
+Bennett mod still writes only the credit header. The counts the suites hardcode moved with it: GI
+mod types **45 -> 47**, `VertexCountData` **44 -> 45**, `VGRemapData` **58 -> 63**, the remove table
+**45 -> 47**. Read [Creating Remaps](AI%20Agent%20Help/CreatingRemaps/CLAUDE.md)'s "Recipe: a
+classic-shape mod onto a multi-component skin (Bennett and after)" before adding the fix, and its
+new "Proving a NEW download folder" before adding another character's assets --- the pipeline is
+proved by rebuilding six *shipped* folders byte-identically, because a new one has no golden.
+**The vertex group rows are PROPOSED, not confirmed in game**, and Bennett has no hand-made draft
+to score against.
+
 `prod` one) and went from **31732 lines to 490**. Its source is its own tool at `Tools/Script`, and
 the `ScriptBuilder` topologically compiles *that*. The same session found `ScriptBuilder`,
 `APIMirrorBuilder` and the script build's own output path all broken by the API's package having

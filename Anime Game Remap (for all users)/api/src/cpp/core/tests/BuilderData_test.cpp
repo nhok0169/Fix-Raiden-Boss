@@ -117,7 +117,7 @@ void testTableShape() {
           "the fix table has 124 rows -- 78 historical, plus the 46 at 6.1 this port added");
 
     // The remove table has no Python original -- one row per GI mod type, all at 4.0.
-    check(IniRemoveBuilderData::repo()->size() == 45, "the remove table has one row per GI mod type (43, plus Yelan and YelanTranquil)");
+    check(IniRemoveBuilderData::repo()->size() == 47, "the remove table has one row per GI mod type (43, plus Yelan, YelanTranquil, Bennett and BennettAdventure)");
 
     check(IniParseBuilderData::repo()->getTotalIndices() == 2, "the parse table has 2 index columns");
     check(IniParseBuilderData::repo()->getVersionIndexPos() == 0, "with the version at position 0");
@@ -256,7 +256,7 @@ void testGIBuilderIsWiredToTheTables() {
     check(amber.iniRemoveBuilder != nullptr && amber.iniRemoveBuilder->getBuilderArgs() == IniRemoveBuilderData::repo(),
           "GIBuilder's remove builder is the table-backed flavour over IniRemoveBuilderData");
 
-    // All 45 mod types share the one builder (and therefore the one table).
+    // All 47 mod types share the one builder (and therefore the one table).
     check(amber.iniParseBuilder == jean.iniParseBuilder, "every GI mod type shares one parse builder");
     check(amber.iniFixBuilder == jean.iniFixBuilder, "every GI mod type shares one fix builder");
     check(amber.iniRemoveBuilder == jean.iniRemoveBuilder, "every GI mod type shares one remove builder");

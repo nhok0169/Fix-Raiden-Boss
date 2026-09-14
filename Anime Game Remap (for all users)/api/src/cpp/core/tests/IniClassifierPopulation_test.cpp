@@ -111,6 +111,8 @@ static const std::vector<KeywordRow>& expectedRows() {
         {"AyakaSpringBloom", {"ayakaspringbloom"}},
         {"Barbara", {"barbara"}},
         {"BarbaraSummertime", {"barbarasummertime"}},
+        {"Bennett", {"bennett"}},
+        {"BennettAdventure", {"bennettadventure"}},
         {"CherryHuTao", {"cherryhutao", "hutaocherry"}},
         {"Diluc", {"diluc"}},
         {"DilucFlamme", {"dilucflamme"}},
@@ -173,7 +175,7 @@ static ModTypeId idOf(const std::string& name) {
 static void testEveryKeywordRowMatchesPython() {
     std::printf("testEveryKeywordRowMatchesPython\n");
 
-    check(expectedRows().size() == 45, "the oracle itself still has all 45 rows (43 plus Yelan and YelanTranquil)");
+    check(expectedRows().size() == 47, "the oracle itself still has all 47 rows (43 plus Yelan, YelanTranquil, Bennett and BennettAdventure)");
 
     for (const KeywordRow& row : expectedRows()) {
         checkKeywords(ModTypeIdTools::getSectionKeywords(idOf(row.name)), row.keywords,

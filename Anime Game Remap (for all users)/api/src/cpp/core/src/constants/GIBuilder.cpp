@@ -104,7 +104,7 @@ namespace AGRemapCore {
          * type remaps onto nothing: ModMappedAssets::resolveToAssetNames returns nullopt for a
          * from-name that isn't a key, so an absent entry means "no targets", NOT "all targets".
          */
-        std::unordered_map<std::string, std::vector<std::string>> makeRemapMap(const std::string& name,
+        std::unordered_map<std::string, std::vector<std::string>> makeRemapMap(ModTypeId modTypeId, const std::string& name,
                                                                                const std::vector<ModTypeId>& targets) {
             if (targets.empty()) {
                 return {};
@@ -116,7 +116,19 @@ namespace AGRemapCore {
                 targetNames.push_back(ModTypeIdTools::getName(target));
             }
 
-            return {{name, std::move(targetNames)}};
+            std::unordered_map<std::string, std::vector<std::string>> result;
+            result.emplace(name, targetNames);
+
+            // A skin of several components is ALSO a remap source under each of its component
+            // names, because that is how its hash and index rows are filed. Without these the
+            // reverse-then-forward lookup of ModMappedAssets::replace resolves a source hash to
+            // "YelanTranquilBody", finds no such key here, and writes HashNotFound -- see
+            // ModTypeIdTools::getComponentIds.
+            for (ModTypeId component : ModTypeIdTools::getComponentIds(modTypeId)) {
+                result.emplace(ModTypeIdTools::getName(component), targetNames);
+            }
+
+            return result;
         }
 
         ModType makeGIModType(ModTypeId modTypeId, std::vector<std::string> aliases = {}) {
@@ -131,14 +143,14 @@ namespace AGRemapCore {
                            // enumerator rather than by a bare string. Passing nullptr instead (as
                            // this used to) lands on ModType's bare Hashes()/Indices() defaults,
                            // whose empty map means the mod type can remap onto nothing at all.
-                           std::make_shared<Hashes>(makeRemapMap(name, ModTypeIdTools::getHashRemapTargets(modTypeId))),
-                           std::make_shared<Indices>(makeRemapMap(name, ModTypeIdTools::getIndexRemapTargets(modTypeId))),
+                           std::make_shared<Hashes>(makeRemapMap(modTypeId, name, ModTypeIdTools::getHashRemapTargets(modTypeId))),
+                           std::make_shared<Indices>(makeRemapMap(modTypeId, name, ModTypeIdTools::getIndexRemapTargets(modTypeId))),
                            // nullptr vertexCounts -> each GI mod type gets its own fully-populated
                            // table, matching the pure-Python GIBuilder (which passes none and so
                            // lands on ModType's own VertexCounts() default).
                            //
                            // nullptr vgRemaps is NOT the same thing: ModType's fallback there is the
-                           // single shared ModDataAssets::vgRemaps, so all 45 GI mod types share one
+                           // single shared ModDataAssets::vgRemaps, so all 47 GI mod types share one
                            // remap table. That too matches the original -- see ModType::vgRemaps.
                            nullptr, nullptr,
                            giIniParseBuilder(), giIniFixBuilder(), giIniRemoveBuilder());
@@ -171,6 +183,14 @@ namespace AGRemapCore {
 
     ModType GIBuilder::barbaraSummerTime() {
         return makeGIModType(ModTypeId::BarbaraSummertime, {"IdolSummertime", "HealerSummertime", "BarbaraBikini"});
+    }
+
+    ModType GIBuilder::bennett() {
+        return makeGIModType(ModTypeId::Bennett, {"Benny"});
+    }
+
+    ModType GIBuilder::bennettAdventure() {
+        return makeGIModType(ModTypeId::BennettAdventure, {"BennyAdventure", "AdventureBennett", "AdventureBenny"});
     }
 
     ModType GIBuilder::cherryHutao() {
@@ -337,6 +357,8 @@ namespace AGRemapCore {
             arlecchino(),
             barbara(),
             barbaraSummerTime(),
+            bennett(),
+            bennettAdventure(),
             cherryHutao(),
             diluc(),
             dilucFlamme(),

@@ -77,6 +77,41 @@ namespace AGRemapCore {
         BarbaraSummertime,
 
         /**
+         * @brief Bennett from GI
+         */
+        Bennett,
+
+        /**
+         * @brief Bennett outfit skin (Adventure) from GI -- THREE components (Body, Bang, Eye)
+         */
+        BennettAdventure,
+
+        /**
+         * @brief
+         @rst
+         BennettAdventure's ``Body`` component, as a fix TARGET :raw-html:`<br />` :raw-html:`<br />`
+
+         The same arrangement as :cpp:enumerator:`YelanTranquilBody`, whose comment has the reasoning:
+         a skin of several components is fixed by one fixer per component, and the tables those
+         fixers read -- :cpp:class:`IniFixBuilderData`, :cpp:class:`HashData`,
+         :cpp:class:`IndexData` -- are keyed by a mod type NAME, so each component is a mod type of
+         its own for their purposes. Nothing classifies a ``.ini`` file AS one of these; the skin
+         itself is :cpp:enumerator:`BennettAdventure`, whose vertex-group rows are keyed by component
+         @endrst
+         */
+        BennettAdventureBody,
+
+        /**
+         * @brief BennettAdventure's ``Bang`` component, as a fix target -- see :cpp:enumerator:`BennettAdventureBody`
+         */
+        BennettAdventureBang,
+
+        /**
+         * @brief BennettAdventure's ``Eye`` component, as a fix target -- see :cpp:enumerator:`BennettAdventureBody`
+         */
+        BennettAdventureEye,
+
+        /**
          * @brief Hu Tao Lantern Rite skin from GI
          */
         CherryHuTao,
@@ -474,6 +509,34 @@ namespace AGRemapCore {
              * @return The mod types 'value' remaps onto, or an empty list if it remaps onto none
              */
             static std::vector<ModTypeId> getIndexRemapTargets(ModTypeId value);
+
+            /**
+             * @brief
+             @rst
+             The **component** mod types a skin of several components is made of, or an empty list
+             for the ordinary one-mesh mod type :raw-html:`<br />` :raw-html:`<br />`
+
+             A skin like :cpp:enumerator:`YelanTranquil` draws out of three separate buffer sets,
+             and the asset tables file its hashes under the COMPONENT names
+             (``YelanTranquilBody`` / ``...Bang`` / ``...Eye``) rather than the skin's, because a
+             fixer of the forward direction needs one row per component. Those component ids are a
+             fix *target* in :cpp:func:`getHashRemapTargets`; this function is the other half of the
+             same fact, and is what lets the component names be remap **sources** too
+
+             .. note::
+                This is not cosmetic. :cpp:func:`ModMappedAssets::replace` is reverse-then-forward,
+                so remapping a several-component skin ONTO something resolves the source hash back
+                to a component name and then asks the remap graph what that name maps to. Without
+                these edges the forward half finds nothing and every ``hash`` in the output is
+                written as ``HashNotFound`` -- a well-formed ``.ini`` file that triggers on nothing
+                at all
+             @endrst
+             *
+             * @param value The mod type to look up the components of
+             *
+             * @return The mod type's component ids, or an empty list if it is a single mesh
+             */
+            static std::vector<ModTypeId> getComponentIds(ModTypeId value);
 
             /**
              * @brief

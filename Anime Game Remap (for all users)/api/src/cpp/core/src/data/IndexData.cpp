@@ -208,6 +208,16 @@ const std::vector<std::pair<std::vector<std::string>, std::string>>& getIndexDat
         {{"4.0", "Yelan", "", "dress"}, "51759"},
         {{"4.0", "Yelan", "", "extra"}, "54042"},
 
+        // ===== Bennett (2026-09-14) =====
+        // Bennett's two objects, unchanged through every hash update in the assets repo's history.
+        //
+        // NO rows for BennettAdventure's components, ON PURPOSE -- the same reasoning as Yelan's
+        // above: their draw slots' indices (Body A 0 / B 44334, Bang A 0, Eye A 0) belong in the
+        // fixer's config, because a "0" filed at 5.7 would capture the reverse lookup's "0" bucket
+        // away from every 4.0-era character's head.
+        {{"4.0", "Bennett", "", "head"}, "0"},
+        {{"4.0", "Bennett", "", "body"}, "9879"},
+
         // ===== version 5.3 =====
         // CherryHuTao
         {{"5.3", "CherryHuTao", "", "head"}, "0"},

@@ -44,6 +44,21 @@ namespace AGRemapCore {
             case static_cast<int>(ModTypeId::BarbaraSummertime):
                 return ModTypeId::BarbaraSummertime;
 
+            case static_cast<int>(ModTypeId::Bennett):
+                return ModTypeId::Bennett;
+
+            case static_cast<int>(ModTypeId::BennettAdventure):
+                return ModTypeId::BennettAdventure;
+
+            case static_cast<int>(ModTypeId::BennettAdventureBody):
+                return ModTypeId::BennettAdventureBody;
+
+            case static_cast<int>(ModTypeId::BennettAdventureBang):
+                return ModTypeId::BennettAdventureBang;
+
+            case static_cast<int>(ModTypeId::BennettAdventureEye):
+                return ModTypeId::BennettAdventureEye;
+
             case static_cast<int>(ModTypeId::CherryHuTao):
                 return ModTypeId::CherryHuTao;
 
@@ -202,6 +217,21 @@ namespace AGRemapCore {
 
             case ModTypeId::BarbaraSummertime:
                 return "BarbaraSummertime";
+
+            case ModTypeId::Bennett:
+                return "Bennett";
+
+            case ModTypeId::BennettAdventure:
+                return "BennettAdventure";
+
+            case ModTypeId::BennettAdventureBody:
+                return "BennettAdventureBody";
+
+            case ModTypeId::BennettAdventureBang:
+                return "BennettAdventureBang";
+
+            case ModTypeId::BennettAdventureEye:
+                return "BennettAdventureEye";
 
             case ModTypeId::CherryHuTao:
                 return "CherryHuTao";
@@ -400,6 +430,15 @@ namespace AGRemapCore {
             case ModTypeId::BarbaraSummertime:
                 return {ModTypeId::Barbara};
 
+            // As Yelan below: the targets are the skin's three COMPONENT ids, not the skin itself,
+            // because a fixer is built per component and IniFixBuilderData is keyed by the target's
+            // name. BennettAdventure remaps back onto plain Bennett, who is one mesh.
+            case ModTypeId::Bennett:
+                return {ModTypeId::BennettAdventureBody, ModTypeId::BennettAdventureBang, ModTypeId::BennettAdventureEye};
+
+            case ModTypeId::BennettAdventure:
+                return {ModTypeId::Bennett};
+
             case ModTypeId::CherryHuTao:
                 return {ModTypeId::HuTao};
 
@@ -524,6 +563,22 @@ namespace AGRemapCore {
     }
 
 
+    std::vector<ModTypeId> ModTypeIdTools::getComponentIds(ModTypeId value) {
+        switch (value) {
+            case ModTypeId::BennettAdventure:
+                return {ModTypeId::BennettAdventureBody, ModTypeId::BennettAdventureBang, ModTypeId::BennettAdventureEye};
+
+            case ModTypeId::YelanTranquil:
+                return {ModTypeId::YelanTranquilBody, ModTypeId::YelanTranquilBang, ModTypeId::YelanTranquilEye};
+
+            // Every other mod type is one mesh. The component ids themselves included -- a
+            // component has no components of its own.
+            default:
+                return {};
+        }
+    }
+
+
     std::vector<ModTypeId> ModTypeIdTools::getIndexRemapTargets(ModTypeId value) {
         // Identical to the hash targets for all but one mod type: Raiden remaps by hash only. Its
         // pure-Python factory passes a bare "Indices()" with no map at all, where every other
@@ -564,6 +619,12 @@ namespace AGRemapCore {
 
             case ModTypeId::BarbaraSummertime:
                 return {"barbarasummertime"};
+
+            case ModTypeId::Bennett:
+                return {"bennett"};
+
+            case ModTypeId::BennettAdventure:
+                return {"bennettadventure"};
 
             case ModTypeId::CherryHuTao:
                 return {"cherryhutao", "hutaocherry"};

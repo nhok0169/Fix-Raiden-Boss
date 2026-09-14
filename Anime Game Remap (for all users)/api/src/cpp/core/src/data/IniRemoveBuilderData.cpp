@@ -34,6 +34,8 @@ namespace AGRemapCore {
     IniRemoveBuilder::Factory IniRemoveBuilderFuncs::arlecchino4_0() { return IniRemoveBuilder::defaultFactory(); }
     IniRemoveBuilder::Factory IniRemoveBuilderFuncs::barbara4_0() { return IniRemoveBuilder::defaultFactory(); }
     IniRemoveBuilder::Factory IniRemoveBuilderFuncs::barbaraSummertime4_0() { return IniRemoveBuilder::defaultFactory(); }
+    IniRemoveBuilder::Factory IniRemoveBuilderFuncs::bennett4_0() { return IniRemoveBuilder::defaultFactory(); }
+    IniRemoveBuilder::Factory IniRemoveBuilderFuncs::bennettAdventure4_0() { return IniRemoveBuilder::defaultFactory(); }
     IniRemoveBuilder::Factory IniRemoveBuilderFuncs::cherryHuTao4_0() { return IniRemoveBuilder::defaultFactory(); }
     IniRemoveBuilder::Factory IniRemoveBuilderFuncs::diluc4_0() { return IniRemoveBuilder::defaultFactory(); }
     IniRemoveBuilder::Factory IniRemoveBuilderFuncs::dilucFlamme4_0() { return IniRemoveBuilder::defaultFactory(); }
@@ -86,6 +88,8 @@ namespace AGRemapCore {
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::Arlecchino)}, IniRemoveBuilderFuncs::arlecchino4_0()},
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::Barbara)}, IniRemoveBuilderFuncs::barbara4_0()},
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::BarbaraSummertime)}, IniRemoveBuilderFuncs::barbaraSummertime4_0()},
+                {{"4.0", ModTypeIdTools::getName(ModTypeId::Bennett)}, IniRemoveBuilderFuncs::bennett4_0()},
+                {{"4.0", ModTypeIdTools::getName(ModTypeId::BennettAdventure)}, IniRemoveBuilderFuncs::bennettAdventure4_0()},
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::CherryHuTao)}, IniRemoveBuilderFuncs::cherryHuTao4_0()},
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::Diluc)}, IniRemoveBuilderFuncs::diluc4_0()},
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::DilucFlamme)}, IniRemoveBuilderFuncs::dilucFlamme4_0()},

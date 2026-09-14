@@ -1245,6 +1245,56 @@ const std::vector<std::pair<std::vector<std::string>, std::string>>& getHashData
         {{"5.7", "YelanTranquilEye", "ib"}, "54bc082e"},
         {{"5.7", "YelanTranquilEye", "tex_face_diffuse"}, "e8ad6095"},
 
+        // ===== Bennett and BennettAdventure (2026-09-14) =====
+        //
+        // Bennett's rows follow the assets repo's history of his hash.json, the same shape as
+        // Yelan's and Raiden's: the state before "THE GREAT 4.1 HASH FIX" is the 4.0 row, and each
+        // later fix commit is a row of its own. Three of his five geometry hashes moved --
+        // draw_vb at 4.1, ib at 4.3, position_vb at 4.4 -- while blend_vb, texcoord_vb, his object
+        // indices and every texture hash are unchanged from the 2.8 dump to today's. A mod may
+        // still carry any of the older sections, and the classifier resolves the version it is
+        // asked at.
+        {{"4.0", "Bennett", "draw_vb"}, "8b2a1582"},
+        {{"4.0", "Bennett", "position_vb"}, "993d1661"},
+        {{"4.0", "Bennett", "blend_vb"}, "d4acf3f7"},
+        {{"4.0", "Bennett", "texcoord_vb"}, "acde80a4"},
+        {{"4.0", "Bennett", "ib"}, "f51209fc"},
+        {{"4.0", "Bennett", "tex_head_diffuse"}, "49d07d1f"},
+        {{"4.0", "Bennett", "tex_head_lightmap"}, "7d266803"},
+        {{"4.0", "Bennett", "tex_body_diffuse"}, "156dc5d5"},
+        {{"4.0", "Bennett", "tex_body_lightmap"}, "ce3129ff"},
+        {{"4.0", "Bennett", "tex_face_diffuse"}, "50f7dc9a"},
+        {{"4.1", "Bennett", "draw_vb"}, "02cf3aa5"},
+        {{"4.3", "Bennett", "ib"}, "cdc66323"},
+        {{"4.4", "Bennett", "position_vb"}, "6cff51b4"},
+
+        // BennettAdventure (5.7) is a Body (draw slots A and B), a Bang and an Eye, each with its
+        // own buffers and so its own hashes, and each a fix TARGET of its own
+        // (ModTypeId::BennettAdventureBody etc.): the rows are filed under the component's name,
+        // exactly as YelanTranquil's are. All three share the skin's face diffuse.
+        //
+        // Read off the skin's own dump. As with YelanTranquil, the per-object texture hashes its
+        // hash.json carries are deliberately NOT here: they would need object names ("a", "b") that
+        // this table's tex_<object>_<kind> vocabulary does not have, and nothing looks them up.
+        {{"5.7", "BennettAdventureBody", "draw_vb"}, "bc87167b"},
+        {{"5.7", "BennettAdventureBody", "position_vb"}, "14efbc45"},
+        {{"5.7", "BennettAdventureBody", "blend_vb"}, "09b92379"},
+        {{"5.7", "BennettAdventureBody", "texcoord_vb"}, "51dd19aa"},
+        {{"5.7", "BennettAdventureBody", "ib"}, "022a9ccd"},
+        {{"5.7", "BennettAdventureBody", "tex_face_diffuse"}, "2b1b2edf"},
+        {{"5.7", "BennettAdventureBang", "draw_vb"}, "2f953b46"},
+        {{"5.7", "BennettAdventureBang", "position_vb"}, "a8a0adb9"},
+        {{"5.7", "BennettAdventureBang", "blend_vb"}, "d2bb6147"},
+        {{"5.7", "BennettAdventureBang", "texcoord_vb"}, "5a79eaa8"},
+        {{"5.7", "BennettAdventureBang", "ib"}, "43ad99d1"},
+        {{"5.7", "BennettAdventureBang", "tex_face_diffuse"}, "2b1b2edf"},
+        {{"5.7", "BennettAdventureEye", "draw_vb"}, "feb0e532"},
+        {{"5.7", "BennettAdventureEye", "position_vb"}, "f5dd3d9e"},
+        {{"5.7", "BennettAdventureEye", "blend_vb"}, "89827a3f"},
+        {{"5.7", "BennettAdventureEye", "texcoord_vb"}, "941adcbf"},
+        {{"5.7", "BennettAdventureEye", "ib"}, "91b4d5dd"},
+        {{"5.7", "BennettAdventureEye", "tex_face_diffuse"}, "2b1b2edf"},
+
         // ===== version 5.4 =====
         // LisaStudent
         {{"5.4", "LisaStudent", "tex_head_normalmap"}, "a64a57de"},

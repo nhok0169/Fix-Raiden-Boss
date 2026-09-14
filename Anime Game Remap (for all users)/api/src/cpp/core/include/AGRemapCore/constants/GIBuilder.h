@@ -69,6 +69,16 @@ namespace AGRemapCore {
             static ModType barbaraSummerTime();
 
             /**
+             * @brief Creates the :cpp:class:`ModType` for Bennett
+             */
+            static ModType bennett();
+
+            /**
+             * @brief Creates the :cpp:class:`ModType` for BennettAdventure
+             */
+            static ModType bennettAdventure();
+
+            /**
              * @brief Creates the :cpp:class:`ModType` for CherryHuTao
              */
             static ModType cherryHutao();

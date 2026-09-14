@@ -50,6 +50,11 @@ Mirrors the keys of the pure-Python ``ModTypeNames`` enum (``constants/ModTypeNa
 
         .value("BarbaraSummertime", AGRC::ModTypeId::BarbaraSummertime, R"doc(Barbara summer skin from GI)doc")
 
+        .value("Bennett", AGRC::ModTypeId::Bennett, R"doc(Bennett from GI)doc")
+        .value("BennettAdventure", AGRC::ModTypeId::BennettAdventure, R"doc(Bennett outfit skin (Adventure) from GI -- three components (Body, Bang, Eye))doc")
+        .value("BennettAdventureBody", AGRC::ModTypeId::BennettAdventureBody, R"doc(BennettAdventure's Body component, as a fix target -- a skin of several components is fixed one component at a time, and each is a mod type for the tables' purposes)doc")
+        .value("BennettAdventureBang", AGRC::ModTypeId::BennettAdventureBang, R"doc(BennettAdventure's Bang component, as a fix target)doc")
+        .value("BennettAdventureEye", AGRC::ModTypeId::BennettAdventureEye, R"doc(BennettAdventure's Eye component, as a fix target)doc")
         .value("CherryHuTao", AGRC::ModTypeId::CherryHuTao, R"doc(Hu Tao Lantern Rite skin from GI)doc")
 
         .value("Diluc", AGRC::ModTypeId::Diluc, R"doc(Diluc from GI)doc")

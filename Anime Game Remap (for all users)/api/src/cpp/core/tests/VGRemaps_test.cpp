@@ -122,8 +122,8 @@ void testPrePopulated() {
     // still carries an empty fromComp and toComp. So this number pins THIS table's row count: bump
     // it when a remap is added here, rather than reading it back off the Python builder, which would
     // silently drop Yelan.
-    check(Data::getVGRemapDataRows().size() == 58,
-          "58 rows -- this table's own count, six ahead of the Python builder's 52");
+    check(Data::getVGRemapDataRows().size() == 63,
+          "63 rows -- this table's own count, eleven ahead of the Python builder's 52");
 }
 
 void testRealLookups() {
@@ -191,7 +191,7 @@ void testModTypeAttribute() {
     check(custom.vgRemaps == own, "an explicitly passed VGRemaps is used as-is");
     check(custom.vgRemaps != ModDataAssets::vgRemaps(), "and is genuinely not the shared one");
 
-    // GIBuilder passes nullptr, so all 45 GI mod types share the one table.
+    // GIBuilder passes nullptr, so all 47 GI mod types share the one table.
     ModType amber = GIBuilder::amber();
     ModType jean = GIBuilder::jean();
     check(amber.vgRemaps == ModDataAssets::vgRemaps(), "GIBuilder mod types use the shared table");

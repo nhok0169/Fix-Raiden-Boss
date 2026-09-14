@@ -126,6 +126,24 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
+             Stub for the bennett4_0's remover -- returns
+             :cpp:func:`IniRemoveBuilder::defaultFactory`, see this class's own warning
+             @endrst
+             */
+            static IniRemoveBuilder::Factory bennett4_0();
+
+            /**
+             * @brief
+             @rst
+             Stub for the bennettAdventure4_0's remover -- returns
+             :cpp:func:`IniRemoveBuilder::defaultFactory`, see this class's own warning
+             @endrst
+             */
+            static IniRemoveBuilder::Factory bennettAdventure4_0();
+
+            /**
+             * @brief
+             @rst
              Stub for the cherryHuTao4_0's remover -- returns
              :cpp:func:`IniRemoveBuilder::defaultFactory`, see this class's own warning
              @endrst

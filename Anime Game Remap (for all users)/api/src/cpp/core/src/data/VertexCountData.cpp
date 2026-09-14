@@ -87,6 +87,12 @@ const std::vector<std::pair<std::vector<std::string>, int>>& getVertexCountDataR
         // ===== Yelan (2026-09-12) =====
         // The game's own model, counted off her identity mod (Tools/Misc/Prototypes/identityMod.py).
         {{"4.0", ModTypeIdTools::getName(ModTypeId::Yelan), ""}, 16062},
+
+        // ===== Bennett (2026-09-14) =====
+        // The game's own model, counted off Data/Mod Downloads/GI/Bennett/4_0's Position.buf
+        // (657320 bytes / 40). No row for BennettAdventure: as with YelanTranquil, a skin of
+        // several components has no single vertex count.
+        {{"4.0", ModTypeIdTools::getName(ModTypeId::Bennett), ""}, 16433},
     };
 
     return rows;

@@ -966,7 +966,18 @@ const std::vector<std::pair<std::vector<std::string>, VGRemap>>& getVGRemapDataR
         {{"1.0", ModTypeIdTools::getName(ModTypeId::YelanTranquil), "Body",
           "5.7", ModTypeIdTools::getName(ModTypeId::Yelan), ""},
          VGRemap({
-            {0, 14}, {1, 15}, {2, 16}, {3, 17}, {4, 59}, {5, 61}, {6, 83}, {7, 52}, {8, 85}, {9, 85},
+            // 9 -> 108, not 85: 8 and 9 are a MIRROR PAIR of knee helper bones (44 vertices
+            // each, X -0.052 / +0.052, Y 0.552) and the finder sent both to 85, which sits at
+            // X -0.100 -- so the positive-side knee was driven by the negative-side thigh and
+            // its vertices were dragged across the body. Warped one knee in game (2026-09-13).
+            // Yelan's thigh pair is 85 / 108 and the bones around it already respect the sides
+            // (Tranquil 34 at X -0.091 -> 85, Tranquil 58 at X +0.065 -> 108).
+            //
+            // Many-to-one is NORMAL here -- the source has more bones than the target -- but a
+            // mirror PAIR collapsing onto one OFF-MIDLINE bone never is: whichever side is on
+            // the far side of it gets pulled across. Tools/Misc/Diagnostics/mirrorRemapCheck.py
+            // is that check, and this was the only such case in all three components.
+            {0, 14}, {1, 15}, {2, 16}, {3, 17}, {4, 59}, {5, 61}, {6, 83}, {7, 52}, {8, 85}, {9, 108},
             {10, 53}, {11, 58}, {12, 60}, {13, 64}, {14, 65}, {15, 66}, {16, 67}, {17, 68}, {18, 69},
             {19, 70}, {20, 71}, {21, 72}, {22, 73}, {23, 74}, {24, 75}, {25, 76}, {26, 77}, {27, 78},
             {28, 79}, {29, 80}, {30, 81}, {31, 82}, {32, 83}, {33, 84}, {34, 85}, {35, 86}, {36, 59},
@@ -994,6 +1005,69 @@ const std::vector<std::pair<std::vector<std::string>, VGRemap>>& getVGRemapDataR
           "5.7", ModTypeIdTools::getName(ModTypeId::Yelan), ""},
          VGRemap({
             {0, 28}, {1, 29}
+         })},
+
+        // ===== from Bennett @ 1.0 =====
+        // BennettAdventure is THREE components (Body, Bang, Eye), each with its own vertex group index
+        // space, so Bennett's 80 groups are split across rows keyed by the target component -- the same
+        // shape as Yelan above (2026-09-14, Tools/VGRemapFinder over the two Data/Mod Downloads folders).
+        //
+        // There is NO Bang row, and that is the proposal rather than an omission: 78 of Bennett's groups
+        // land on the Body and 2 on the Eye, and none of them on the Bang, whose nine groups all
+        // correspond to Bennett's three head bones (see the reverse rows). A split's Bang component
+        // therefore takes its bones from the REVERSE row, which is what ComponentSplit's
+        // augmentFromReverse is for -- Yelan needed the same augmentation even though she does have a
+        // forward Bang row. The union of the rows still covers each of Bennett's 80 groups exactly once.
+        //
+        // PROPOSED, NOT YET CONFIRMED IN GAME. Bennett has no hand-made draft to score against, so
+        // unlike every pair above these rows have only the geometry behind them.
+        {{"1.0", ModTypeIdTools::getName(ModTypeId::Bennett), "",
+          "5.7", ModTypeIdTools::getName(ModTypeId::BennettAdventure), "Body"},
+         VGRemap({
+            {0, 5}, {3, 104}, {4, 29}, {5, 55}, {6, 31}, {7, 54}, {8, 7}, {9, 53}, {10, 26}, {11, 50},
+            {12, 53}, {13, 3}, {14, 4}, {15, 48}, {16, 99}, {17, 100}, {18, 101}, {19, 1}, {20, 2}, {21, 63},
+            {22, 91}, {23, 78}, {24, 79}, {25, 79}, {26, 92}, {27, 47}, {28, 51}, {29, 23}, {30, 27}, {31, 95},
+            {32, 105}, {33, 78}, {34, 79}, {35, 3}, {36, 4}, {37, 25}, {38, 1}, {39, 2}, {40, 49}, {41, 32},
+            {42, 33}, {43, 35}, {44, 36}, {45, 38}, {46, 44}, {47, 45}, {48, 34}, {49, 36}, {50, 37}, {51, 39},
+            {52, 40}, {53, 42}, {54, 43}, {55, 45}, {56, 8}, {57, 9}, {58, 11}, {59, 12}, {60, 14}, {61, 20},
+            {62, 21}, {63, 10}, {64, 12}, {65, 13}, {66, 15}, {67, 16}, {68, 18}, {69, 19}, {70, 21}, {71, 3},
+            {72, 4}, {73, 30}, {74, 6}, {75, 81}, {76, 82}, {77, 83}, {78, 84}, {79, 84}
+         })},
+
+        {{"1.0", ModTypeIdTools::getName(ModTypeId::Bennett), "",
+          "5.7", ModTypeIdTools::getName(ModTypeId::BennettAdventure), "Eye"},
+         VGRemap({
+            {1, 1}, {2, 0}
+         })},
+
+        // ===== from BennettAdventure @ 1.0 =====
+        // one row per source component
+        {{"1.0", ModTypeIdTools::getName(ModTypeId::BennettAdventure), "Body",
+          "5.7", ModTypeIdTools::getName(ModTypeId::Bennett), ""},
+         VGRemap({
+            {0, 12}, {1, 19}, {2, 20}, {3, 13}, {4, 14}, {5, 0}, {6, 74}, {7, 8}, {8, 56}, {9, 57}, {10, 63},
+            {11, 64}, {12, 64}, {13, 65}, {14, 66}, {15, 66}, {16, 67}, {17, 68}, {18, 69}, {19, 70}, {20, 60},
+            {21, 61}, {22, 62}, {23, 29}, {24, 21}, {25, 37}, {26, 10}, {27, 30}, {28, 20}, {29, 4}, {30, 73},
+            {31, 6}, {32, 41}, {33, 42}, {34, 48}, {35, 49}, {36, 49}, {37, 50}, {38, 51}, {39, 51}, {40, 52},
+            {41, 53}, {42, 54}, {43, 55}, {44, 45}, {45, 46}, {46, 47}, {47, 27}, {48, 15}, {49, 40}, {50, 11},
+            {51, 28}, {52, 14}, {53, 12}, {54, 7}, {55, 5}, {56, 6}, {57, 4}, {58, 5}, {59, 6}, {60, 8},
+            {61, 20}, {62, 14}, {63, 21}, {64, 15}, {65, 0}, {66, 1}, {67, 2}, {68, 4}, {69, 4}, {70, 4},
+            {71, 4}, {72, 1}, {73, 2}, {74, 74}, {75, 73}, {76, 22}, {77, 26}, {78, 23}, {79, 24}, {80, 75},
+            {81, 76}, {82, 75}, {83, 76}, {84, 77}, {85, 7}, {86, 9}, {87, 3}, {88, 22}, {89, 26}, {90, 9},
+            {91, 22}, {92, 26}, {93, 10}, {94, 11}, {95, 31}, {96, 9}, {97, 19}, {98, 13}, {99, 16}, {100, 17},
+            {101, 18}, {102, 7}, {103, 75}, {104, 3}, {105, 32}
+         })},
+
+        {{"1.0", ModTypeIdTools::getName(ModTypeId::BennettAdventure), "Bang",
+          "5.7", ModTypeIdTools::getName(ModTypeId::Bennett), ""},
+         VGRemap({
+            {0, 0}, {1, 1}, {2, 2}, {3, 1}, {4, 2}, {5, 1}, {6, 1}, {7, 2}, {8, 1}
+         })},
+
+        {{"1.0", ModTypeIdTools::getName(ModTypeId::BennettAdventure), "Eye",
+          "5.7", ModTypeIdTools::getName(ModTypeId::Bennett), ""},
+         VGRemap({
+            {0, 2}, {1, 1}
          })},
     };
 

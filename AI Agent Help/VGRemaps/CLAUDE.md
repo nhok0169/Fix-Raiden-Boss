@@ -433,6 +433,37 @@ component column in `HashData`, a slot choice by shader family, a per-pair band 
 `Texcoord.buf` edit and a per-component blend split still need config fields and rows. The pair,
 and `yelanTranquilFix.py`, are the worked specification for all of them.
 
+## Bennett -> BennettAdventure: the second multi-component pair, and a shape Yelan did not have (2026-09-14)
+
+`BennettAdventure` is a `Body` (draw slots A and B), a `Bang` and an `Eye` -- structurally
+YelanTranquil, so the ids, the rows and the draft all take her shape. Run over the two
+`Data/Mod Downloads` folders, `Tools/VGRemapFinder` proposes Bennett's 80 groups against the skin's
+106 / 9 / 2, and the union covers each of the 80 exactly once. `VGRemapData.cpp` gained **five**
+rows, not six:
+
+| direction | rows |
+| --- | --- |
+| `Bennett ""` -> `BennettAdventure` | `Body` (78 pairs), `Eye` (2 pairs) |
+| `BennettAdventure` -> `Bennett ""` | `Body` (106), `Bang` (9), `Eye` (2) |
+
+**There is no forward `Bang` row, and that is the finding worth carrying forward.** Not one of
+Bennett's groups is nearest anything in the skin's Bang: all nine of its groups correspond to
+Bennett's three head bones, so the correspondence exists only in the *reverse* direction. Yelan
+has a forward Bang row (5 pairs) and still needed `ComponentSplit`'s `augmentFromReverse` to draw
+her bangs at all -- so a component whose forward row is *empty* is not a new failure mode, it is
+the same one at its limit. Expect the split, not the table, to feed such a component.
+
+The rule the invariants section states -- every source vertex group maps to something -- is about
+the **union across a target's component rows**, and that still holds here. Check it that way, not
+row by row, or an empty row reads as a gap.
+
+**Neither direction is confirmed in game**, and unlike every pair above Bennett has no hand-made
+draft to score against, so the rows have only the geometry behind them. They are commented as such
+in `VGRemapData.cpp`; `Data/RemapDrafts/BennettRemapDraft.xlsx` keeps the tool's `About` sheet for
+the same reason, which is what stops `benchmark.py` ever scoring the tool against its own output.
+
+<br>
+
 ## Where the data lives, and which copy to trust for what
 
 | | what it is | trust it for |
