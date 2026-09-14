@@ -43,6 +43,68 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::lisa5_7() {
+        // THE 5.7 FIX for Lisa -> LisaStudent, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        config.objSplits = {{"head", {"head"}}, {"body", {"body"}}, {"dress", {"body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // AND NOTHING ELSE. By 5.7 the register shift, the invented normal map and the TexFx
+        // re-issue are all gone -- lisa5_7's body is three removals and the merge. A row can
+        // get SIMPLER with the version, which is why none of these is safe to interpolate.
+        config.objRegRemovals = {{"head", {"ps-t2"}}, {"body", {"ps-t3"}}, {"dress", {"ps-t2"}}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::lisa5_4() {
+        // THE 5.4 FIX for Lisa -> LisaStudent, verified only against the old script at
+        // --version 5.4 --fromVersion 5.4 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE, same shape as lisa4_0: TARGET <- sources, so her body AND dress both land
+        // on LisaStudent's body.
+        config.objSplits = {{"head", {"head"}}, {"body", {"body"}}, {"dress", {"body"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        config.objRegRemovals = {{"head", {"ps-t2"}}, {"body", {"ps-t3"}}, {"dress", {"ps-t2"}}};
+
+        config.objRegRemaps = {{"head", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true}}},
+                               {"body", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t2", {{"ps-t3"}}, true}}}};
+
+        // PURPLE from 5.4, where lisa4_0 invents a yellow one.
+        config.texAdds = {{"head", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapPurple1)},
+                          {"body", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapPurple1)}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency1}},
+                              {"body", {IniKeywords::TexFxTransparency1}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::lisa4_0() {
         // THE 4.0 FIX for Lisa -> LisaStudent, verified only against the old script at
         // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.

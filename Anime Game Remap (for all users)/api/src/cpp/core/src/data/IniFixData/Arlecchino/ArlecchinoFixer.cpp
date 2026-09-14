@@ -50,6 +50,28 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::arlecchino5_4() {
+        // THE 5.4 FIX for Arlecchino -> ArlecchinoBoss, verified only against the old script at
+        // --version 5.4 --fromVersion 5.4 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // The WHOLE row: two normal-map edits, one per object, both on ps-t0. No removals, no
+        // shifts, no re-issues. arlecchino5_7 is what adds the rest.
+        config.texEdits = {{"head", "ps-t0", "YellowHeadNormal", &yellowHeadNormal},
+                           {"body", "ps-t0", "YellowBodyNormal", &yellowBodyNormal}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::arlecchino5_7() {
         GIMICharFixerConfig config{};
         config.drawnObjs = {"head", "body", "dress"};

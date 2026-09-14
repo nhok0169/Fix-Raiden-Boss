@@ -29,7 +29,15 @@ namespace AGRemapCore {
     // can be filled in independently, and so the table below reads exactly like the
     // pure-Python original's.
 
-    IniParseBuilder::Factory IniParseBuilderFuncs::giDefault() { return IniParseBuilder::defaultFactory(); }
+    IniParseBuilder::Factory IniParseBuilderFuncs::giDefault() {
+        // THE FALLBACK PARSE ROW, and like its fix-side twin it needs no config: its
+        // pure-Python body is (GIMIParser, [], {}) -- a plain GIMI parser with no object
+        // awareness -- and IniParseBuilder::defaultFactory already builds exactly that.
+        //
+        // So this was never a stub either. It is the last line in either table that LOOKS
+        // like one, which is the whole reason to say so here.
+        return IniParseBuilder::defaultFactory();
+    }
 
     namespace {
         // The version index sits at position 0 and the mod name at position 1, matching the

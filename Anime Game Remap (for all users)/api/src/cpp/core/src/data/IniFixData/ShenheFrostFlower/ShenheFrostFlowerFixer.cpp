@@ -25,6 +25,35 @@
 
 namespace AGRemapCore {
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower5_7() {
+        // THE 5.7 FIX for ShenheFrostFlower -> Shenhe, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress", "extra"};
+
+        // Its map is {"head": ["head", "head", "head"], "body": ["head", "body", "extra"]} --
+        // TARGET <- sources. Shenhe's head is fed by ShenheFrostFlower's head three times AND
+        // her body by that same head once, so the head has FOUR targets once inverted. That is
+        // the three-file merge this character is known for.
+        config.objSplits = {{"head", {"head", "head", "head", "body"}},
+                            {"body", {"body"}}, {"extra", {"body"}},
+                            {"dress", {"dress", "dress", "dress"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        // The head copies draw no geometry of their own.
+        config.objNewRegVals = {{"head", {{"ib", "null"}}}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        config.objFixCalls = {{"head", std::vector<std::string>{}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower4_4() {
         // THE 4.4 FIX for ShenheFrostFlower -> Shenhe, verified only against the old script at
         // --version 4.4 --fromVersion 4.4 -- the game cannot be rolled back to play it.

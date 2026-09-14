@@ -42,6 +42,49 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots5_7() {
+        // NOT VERIFIABLE AGAINST THE OLD SCRIPT, and that is the old script's fault rather
+        // than a gap here. FixRaidenBoss6.py CRASHES on this row:
+        //
+        //     TypeError: _regValIsOrFixWrapper() missing 1 required positional argument: 'part'
+        //
+        // -- fixing 0 of 1 mods and writing no remapped sections at all. So an A/B at
+        // --version 5.7 reports every section this row produces as 'only new', which reads
+        // like over-production and is the reference implementation failing to run.
+        // kirara5_7, which uses the same guarded-remap machinery, runs fine on both sides.
+        //
+        // This row is therefore transcription-reviewed only.
+        // THE 5.7 FIX for KiraraBoots -> Kirara, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        config.objRegRemovals = {{"head", reflectionKeys("Head")},
+                                 {"body", reflectionKeys("Body")}};
+
+        // GUARDED remaps: the pure-Python says KeyRemapData.build([(..., _remapIsLightMap)],
+        // keepKeyWithoutRemap = True), which is this shape -- move the register only where its
+        // value still looks like a lightmap, and leave the key alone where it does not. That is
+        // what lets the fix run over an already-fixed mod without shifting it twice.
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t2", &RegValChecks::isLightMap}}, true},
+                                         {"ps-t2", {{"ps-t2", &RegValChecks::isLightMap}}, true}}},
+                               {"body", {{"ps-t2", {{"ps-t2", &RegValChecks::isLightMap}}, true}}}};
+
+        config.texAdds = {{"head", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapYellow)}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots4_8() {
         // THE 4.8 FIX for KiraraBoots -> Kirara, verified only against the old script at
         // --version 4.8 --fromVersion 4.8 -- the game cannot be rolled back to play it.

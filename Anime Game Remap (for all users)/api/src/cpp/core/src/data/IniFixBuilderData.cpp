@@ -37,17 +37,6 @@ namespace AGRemapCore {
         // It is what Raiden falls back to at 4.0 and ArlecchinoBoss at 4.6.
         return IniFixBuilder::defaultFactory();
     }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::arlecchino5_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze5_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::lisa5_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kirara5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::lisa5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::shenheFrostFlower5_7() { return IniFixBuilder::defaultFactory(); }
 
     namespace {
         // Four index columns: fromVersion, fromModName, toVersion, toModName -- with the two

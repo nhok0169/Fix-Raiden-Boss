@@ -32,6 +32,34 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight5_7() {
+        // THE 5.7 FIX for GanyuTwilight -> Ganyu, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // Only the head loses its normal map; body and dress lose the reflection keys alone.
+        // NO SHIFT, unlike ganyuTwilight4_4 -- by 5.7 the registers stay where they are.
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+
+        config.objRegRemovals = {{"head", headRem},
+                                 {"body", reflectionKeys("Body")},
+                                 {"dress", reflectionKeys("Dress")}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency0}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight4_4() {
         // THE 4.4 FIX for GanyuTwilight -> Ganyu, verified only against the old script at
         // --version 4.4 --fromVersion 4.4 -- the game cannot be rolled back to play it.

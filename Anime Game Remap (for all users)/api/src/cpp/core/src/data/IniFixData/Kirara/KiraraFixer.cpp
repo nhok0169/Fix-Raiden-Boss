@@ -67,6 +67,37 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::kirara5_7() {
+        // THE 5.7 FIX for Kirara -> KiraraBoots, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // The dress's ps-t0 goes only where it still LOOKS like a normal map -- the pure-Python
+        // guards that one removal with _removeIsNormalMap and leaves the other two unguarded.
+        std::vector<GIMICharFixerConfig::RegRef> dressRem = reflectionKeys("Dress");
+        dressRem.push_back({"ps-t0", &RegValChecks::isNormalMap});
+
+        config.objRegRemovals = {{"head", reflectionKeys("Head")},
+                                 {"body", reflectionKeys("Body")},
+                                 {"dress", dressRem}};
+
+        config.objRegRemaps = {{"body", {{"ps-t2", {{"ps-t2", &RegValChecks::isLightMap}}, true}}},
+                               {"dress", {{"ps-t1", {{"ps-t0", &RegValChecks::isDiffuse}}, true},
+                                          {"ps-t2", {{"ps-t1", &RegValChecks::isLightMap}}, true}}}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency0}},
+                              {"dress", {IniKeywords::TexFxTransparency0}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::kirara4_0() {
         // THE 4.0 FIX for Kirara -> KiraraBoots, verified only against the old script at
         // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.

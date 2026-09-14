@@ -90,6 +90,41 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_7() {
+        // THE 5.7 FIX for AyakaSpringbloom -> Ayaka, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE HEAD/BODY SWAP again, and the same inversion care as ayakaSpringbloom5_6: target
+        // head is fed by source body TWICE, so source body has three targets.
+        config.objSplits = {{"body", {"head", "head", "body"}}, {"head", {"body"}},
+                            {"dress", {"dress", "dress"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t3"});
+        std::vector<GIMICharFixerConfig::RegRef> dressRem = reflectionKeys("Dress");
+        dressRem.push_back({"ps-t3"});
+
+        // NO ps-t0 REMOVAL and no shift, unlike 5.6.
+        config.objRegRemovals = {{"head", headRem}, {"body", reflectionKeys("Body")},
+                                 {"dress", dressRem}};
+
+        config.objNewRegVals = {{"head", {{"ib", "null"}}}};
+
+        // ---- the 6.1-era defaults ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath}},
+                              {"body", {IniKeywords::ORFixPath}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_6() {
         // THE 5.6 FIX for AyakaSpringbloom -> Ayaka, verified only against the old script at
         // --version 5.6 --fromVersion 5.6 -- the game cannot be rolled back to play it.
