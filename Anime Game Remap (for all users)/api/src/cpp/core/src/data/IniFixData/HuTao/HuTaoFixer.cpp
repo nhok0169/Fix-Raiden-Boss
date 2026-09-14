@@ -42,6 +42,48 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::hutao5_6() {
+        // THE 5.6 FIX for HuTao -> CherryHuTao, verified only against the old script at
+        // --version 5.6 --fromVersion 5.6 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objSplits = {{"head", {"head", "extra"}}, {"body", {"body", "dress"}}};
+
+        config.objRegRemovals = {{"head", {"ps-t2"}},
+                                 {"body", {"ps-t2", "ps-t3"}},
+                                 {"extra", {"ps-t0", "ps-t1"}}};
+
+        config.objNewRegVals = {{"extra", {{"ib", "null"}}}, {"dress", {{"ib", "null"}}},
+                                {"head", {{"ps-t0", "null"}}}};
+
+        config.texEdits = {{"head", "ps-t0", "TransparentHeadDiffuse", &makeHeadTransparent}};
+
+        config.objRegRemaps = {{"head", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true}}},
+                               {"dress", {{"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true},
+                                          {"ps-t1", {{"ps-t2"}}, true}}}};
+
+        config.texAdds = {{"dress", "ps-t0", "NormMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapBlue)}};
+
+        // ---- the 6.1-era defaults, and 5.x's own draw-call move ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // IbRemapData + IbDrawIndexedRename + IbTempToDrawIndexed + the postModel
+        // drawindexed removal, all four of which this flag is.
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency1}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", {IniKeywords::TexFxTransparency1}},
+                              {"extra", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::hutao4_0() {
         // THE 4.0 FIX for HuTao -> CherryHuTao, verified only against the old script at
         // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.

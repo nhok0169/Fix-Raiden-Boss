@@ -41,12 +41,7 @@ namespace AGRemapCore {
     IniFixBuilder::Factory IniFixBuilderFuncs::arlecchino5_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::nilouBreeze5_4() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::lisa5_4() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::hutao5_6() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_6() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_6() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_7() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_7() { return IniFixBuilder::defaultFactory(); }
-    IniFixBuilder::Factory IniFixBuilderFuncs::ganyu5_7() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyuTwilight5_7() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::kirara5_7() { return IniFixBuilder::defaultFactory(); }
     IniFixBuilder::Factory IniFixBuilderFuncs::kiraraBoots5_7() { return IniFixBuilder::defaultFactory(); }

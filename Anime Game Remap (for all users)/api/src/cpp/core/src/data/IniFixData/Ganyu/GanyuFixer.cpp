@@ -39,6 +39,34 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ganyu5_7() {
+        // THE 5.7 FIX for Ganyu -> GanyuTwilight, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // NO REGISTER SHIFT, unlike ganyu4_0 -- by 5.7 the normal map binds straight at ps-t0
+        // and the darkened diffuse stays where it is.
+        config.texEdits = {{"head", "ps-t1", "DarkDiffuse", &DarkDiffuse::edit}};
+        config.texAdds = {{"head", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapYellow)}};
+
+        // ---- the 6.1-era defaults, and 5.x's own draw-call move ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // IbRemapData + IbDrawIndexedRename + IbTempToDrawIndexed + the postModel
+        // drawindexed removal, all four of which this flag is.
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1}},
+                              {"body", std::vector<std::string>{}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ganyu4_0() {
         // THE 4.0 FIX for Ganyu -> GanyuTwilight, verified only against the old script at
         // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.

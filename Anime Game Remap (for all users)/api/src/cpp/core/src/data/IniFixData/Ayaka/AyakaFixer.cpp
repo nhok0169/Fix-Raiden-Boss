@@ -80,6 +80,83 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_7() {
+        // THE 5.7 FIX for Ayaka -> AyakaSpringbloom, verified only against the old script at
+        // --version 5.7 --fromVersion 5.7 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        // NO REGISTER SHIFT, and that is the whole difference from ayaka5_6. By 5.7 the normal
+        // map binds straight at ps-t0 with no ps-t0 -> ps-t1 duplication; ayaka6_1 then puts the
+        // shift BACK, so interpolating between the neighbours gives the wrong row.
+        //
+        // NO TexFx EITHER: ayaka5_7 drops the TexFxRemove and the re-issue that ayaka5_6 has.
+        config.objRegRemovals = {{"head", {"ps-t2"}}, {"body", {"ps-t3"}}};
+
+        config.texEdits = {{"head", "ps-t0", "TransparentDiffuse", &makeHeadTransparent},
+                           {"body", "ps-t1", "BrightLightMap", &brightenLightMap},
+                           {"dress", "ps-t0", "OpaqueDiffuse", &makeDressOpaque}};
+
+        config.texAdds = {{"head", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapPurple1)},
+                          {"body", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapPurple1)}};
+
+        // ---- the 6.1-era defaults, and 5.x's own draw-call move ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+
+        // IbRemapData + IbDrawIndexedRename + IbTempToDrawIndexed + the postModel
+        // drawindexed removal, all four of which this flag is.
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath}},
+                              {"body", {IniKeywords::ORFixPath}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
+    IniFixBuilder::Factory IniFixBuilderFuncs::ayaka5_6() {
+        // THE 5.6 FIX for Ayaka -> AyakaSpringbloom, verified only against the old script at
+        // --version 5.6 --fromVersion 5.6 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body"};
+
+        config.objRegRemovals = {{"head", {"ps-t2"}}, {"body", {"ps-t3"}}};
+
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true}}},
+                               {"body", {{"ps-t2", {{"ps-t3"}}, true},
+                                         {"ps-t1", {{"ps-t2"}}, true},
+                                         {"ps-t0", {{"ps-t0"}, {"ps-t1"}}, true}}}};
+
+        config.texEdits = {{"head", "ps-t0", "TransparentDiffuse", &makeHeadTransparent},
+                           {"body", "ps-t1", "BrightLightMap", &brightenLightMap},
+                           {"dress", "ps-t0", "OpaqueDiffuse", &makeDressOpaque}};
+
+        // PURPLE from 5.6 on, where ayaka4_0 invents a yellow one.
+        config.texAdds = {{"head", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapPurple1)},
+                          {"body", "ps-t0", "NormalMap",
+                            TexCreator(NormalMapSize, NormalMapSize, NormalMapPurple1)}};
+
+        // ---- the 6.1-era defaults, and 5.x's own draw-call move ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = false;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // IbRemapData + IbDrawIndexedRename + IbTempToDrawIndexed + the postModel
+        // drawindexed removal, all four of which this flag is.
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1}},
+                              {"body", {IniKeywords::ORFixPath, IniKeywords::TexFxTransparency1}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ayaka4_0() {
         // THE 4.0 FIX for Ayaka -> AyakaSpringbloom, verified only against the old script at
         // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.

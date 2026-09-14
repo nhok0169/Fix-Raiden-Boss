@@ -90,6 +90,52 @@ namespace AGRemapCore {
     }
 
 
+    IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom5_6() {
+        // THE 5.6 FIX for AyakaSpringbloom -> Ayaka, verified only against the old script at
+        // --version 5.6 --fromVersion 5.6 -- the game cannot be rolled back to play it.
+        GIMICharFixerConfig config{};
+        config.drawnObjs = {"head", "body", "dress"};
+
+        // THE MERGE, and it is the one that SWAPS head and body: AyakaSpringbloom's body feeds
+        // Ayaka's head, her head and body both feed the body. Read TARGET <- sources.
+        // Its map is {"head": ["body", "body"], "body": ["head", "body"], "dress": ["dress",
+        // "dress"]} -- TARGET <- sources. Target head is fed by source body TWICE, so inverting to
+        // this source-keyed form gives source body three targets, not two. Dropping the repeat is
+        // what leaves the head's RemapFix out of the merge's second file.
+        config.objSplits = {{"body", {"head", "head", "body"}}, {"head", {"body"}},
+                            {"dress", {"dress", "dress"}}};
+        config.copyPreamble = IniComments::GIMIObjMergerPreamble;
+
+        std::vector<GIMICharFixerConfig::RegRef> headRem = reflectionKeys("Head");
+        headRem.push_back({"ps-t0"});
+        headRem.push_back({"ps-t3"});
+        std::vector<GIMICharFixerConfig::RegRef> bodyRem = reflectionKeys("Body");
+        bodyRem.push_back({"ps-t0"});
+        std::vector<GIMICharFixerConfig::RegRef> dressRem = reflectionKeys("Dress");
+        dressRem.push_back({"ps-t3"});
+
+        config.objRegRemovals = {{"head", headRem}, {"body", bodyRem}, {"dress", dressRem}};
+
+        config.objRegRemaps = {{"head", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true}}},
+                               {"body", {{"ps-t1", {{"ps-t0"}}, true}, {"ps-t2", {{"ps-t1"}}, true},
+                                         {"ps-t3", {{"ps-t2"}}, true}}}};
+
+        // ---- the 6.1-era defaults, and 5.x's own draw-call move ----
+        config.swapFaceRegs = false;
+        config.removeSrcFixCalls = true;
+        config.removeSrcTexFxCalls = true;   // its TexFxRemove is a FOLDER match
+
+        // IbRemapData + IbDrawIndexedRename + IbTempToDrawIndexed + the postModel
+        // drawindexed removal, all four of which this flag is.
+        config.moveDrawIndexed = true;
+
+        config.objFixCalls = {{"head", {IniKeywords::TexFxTransparency0}},
+                              {"body", {IniKeywords::TexFxTransparency0}},
+                              {"dress", std::vector<std::string>{}}};
+
+        return makeGIMICharFixer(std::move(config));
+    }
+
     IniFixBuilder::Factory IniFixBuilderFuncs::ayakaSpringbloom4_0() {
         // THE 4.0 FIX for AyakaSpringbloom -> Ayaka, verified only against the old script at
         // --version 4.0 --fromVersion 4.0 -- the game cannot be rolled back to play it.
