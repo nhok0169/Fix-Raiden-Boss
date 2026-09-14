@@ -374,6 +374,48 @@ twenty suffixed blends beside the shared `YelanBlend.buf`.
      byte-comparing every `.ib` with its dump text and sampling vertices against the `vb0` text;
      the fix runs over it clean (4 objects, every triangle drawn once, the Bang taking the 551
      bang triangles and the Eye the 156 eye triangles).
+     **It builds a skin of SEVERAL components too, as of 2026-09-13** -- every `hash.json` entry
+     with a `position_vb` is a component and gets its own five buffer sections, its own objects and
+     its own `.buf` files, and since a single-component skin's component name is the empty string
+     the same loop writes both (Yelan's output is unchanged to the byte). YelanTranquil's is
+     `Mods/YelanTranquilIdentity`: Body 25954 vertices in slots A / B / C, Bang 2256, Eye 120,
+     built with `--faceRegister ps-t1 --textureFrom Bang=Body:A --textureFrom Eye=Body:A:plain`.
+     Three things that shape cost, none of them guessable from `hash.json`:
+
+       * **The texture layout is per OBJECT, and it is the shader family that decides it.** An
+         object whose `hash.json` lists a NormalMap is bound in GIMI's three-register convention
+         under **ORFix** (`ps-t0` normal map, `ps-t1` diffuse, `ps-t2` light map); one without is
+         the two-register **NNFix** layout (`ps-t0` diffuse, `ps-t1` light map). That is not a
+         convention someone wrote down -- it is what `ORFix.ini`'s own `CommandListReference` /
+         `CommandListReferenceNoNormal` read, and its `CommandListFixLogic` then re-slots them to
+         what the shader wants by the `ShaderOverride`'s `filter_index` (`037731.0` -> `LND`:
+         light map, normal map, diffuse; `037731.1` and the fall-through `else` -> `LDX`: light
+         map, diffuse). Tranquil's dump agrees draw for draw: 44 / 45 (slots B / A, vs
+         `2c157719180b096c`, LND) and 46 (slot C, vs `d4c01363144d79d6`, LDX).
+       * **A component can have no textures of its own and read another's.** Tranquil's Bang and
+         Eye both draw the Body slot A set (`fe0fd573` / `183ca818` / `f5cc10b7` in the dump),
+         which is why their `texture_hashes` are empty -- `--textureFrom <comp>=<comp>:<obj>` says
+         so. The layout stays the BORROWER's: the Bang is on the normal-map shader and the Eye
+         (`95aa6cdb84eb7b99`, no `filter_index`, so LDX) is not, hence the `:plain`. Left
+         unpointed, such an object is written with its geometry and **no `run =` line at all**,
+         deliberately: ORFix / NNFix re-slot whatever is bound whether or not the section bound
+         it, so a fix call over the game's own already-correct slots scrambles them.
+       * **The Texcoord stride is per component**, 20 with a second UV set and 12 without --
+         Tranquil's Eye carries no `TEXCOORD1` where her Body and Bang do (dump strides 84 vs 92).
+         It is measured off the dump and declared per component; only Position (40) and Blend (32)
+         are fixed by GIMI's convention, and a layout disagreeing with those is an error.
+
+     And the face: GI 6.x swapped the face diffuse and light map registers, so on a 6.x skin the
+     diffuse is bound at **`ps-t1`** (Tranquil's main face draws 42 / 43 / 47 / 48 / 53 / 54 have
+     the light map `d4841e1a` at `ps-t0`) and a section overriding `ps-t0` replaces the light map
+     with it. `--faceRegister` defaults to `ps-t0`, which is what the older identity mods were
+     built with; the maintainer's hand-made `YelanHandMade.ini` says `ps-t1` for Tranquil's
+     `e8ad6095`, which is the value to trust. **The acceptance test for an identity mod is a byte
+     comparison against the game's own buffers, not a clean run** -- a frame dump holds the real
+     `vb0` / `vb1` / `ib` binaries under exactly the hashes `hash.json` names (the game already
+     stores position / blend / texcoord as three buffers of those strides), so all 9 `.buf` files
+     and all 3 index buffers were checked against `FrameAnalysis-YelanTranquil-2026-09-12-060339`
+     rather than against the dump text the writer itself parsed, which would validate in a circle.
    - Still open, from the same conversation: the multiple draws one hand-made section did for a
      single hash + index (the Copy29 shape) would be a new `GraphGroupEdit` that APPENDS one graph
      into another -- the merge's second file is the API's answer today, and WuWa mods will want
