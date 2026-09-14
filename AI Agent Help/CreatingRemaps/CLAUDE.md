@@ -1953,6 +1953,111 @@ historical version uninterpretable, since a divergence could be coming from eith
 
 <br>
 
+### TRANSCRIBING A ROW: THE FOUR WAYS IT GOES WRONG AND STILL BUILDS (2026-09-13)
+
+All 59 historical rows are implemented now -- every `4_0` through `5_7` entry, and the two
+`giDefault`s. They produced four distinct classes of mistake between them, and **not one of them
+was a compile error or a crash**. Each built, ran, reported success, and wrote output that was
+wrong in a way only the A/B could see. In the order you are likely to hit them:
+
+**1. The FIXER CLASS decides how to read the object map, not the map's shape.** The identical
+literal `{"body": ["body", "dress"]}` means opposite things:
+
+| fixer class | reading | means |
+| --- | --- | --- |
+| `GIMIObjSplitFixer` | SOURCE -> targets | this source's body becomes the target's body and dress |
+| `GIMIObjMergeFixer` | TARGET <- sources | the target's body is fed by this source's body and dress |
+
+`lisa4_0` and `lisaStudent4_0` have near-identical maps and opposite classes. Reading Lisa's
+merge as a split inverted her whole remap and emitted a dress apparatus the old script never
+writes -- 35 only-new sections, and it ran perfectly.
+
+**2. An object OMITTED from a merge map goes into EVERY generated file.** Naming it explicitly
+once is what restricts it to the first. `jeanSea6_1` names its head; `jeanSea4_0` does not mention
+it at all. Since `objSplits` here is all-or-nothing, "in both files" has to be spelled out as two
+entries: `{"head", {"head", "head"}}`.
+
+**3. An EXPLICIT repeat is lost the same way, in the inversion.** `ayakaSpringbloom5_6`'s
+`{"head": ["body", "body"], ...}` feeds target head from source body TWICE, so inverting to the
+source-keyed form gives source body THREE targets. `shenheFrostFlower5_7` takes it further --
+`{"head": ["head", "head", "head"], "body": ["head", ...]}` gives its head FOUR.
+
+(2) and (3) are the same rule reached from opposite directions, and both produce **exactly one
+missing section in the second generated file**. That is invisible to `cmp_binaries` -- 0 differ
+throughout -- and invisible to the section-NAME check, because the section still exists globally,
+just in the wrong file. Only the per-file body comparison sees it.
+
+**4. The FIXER row says what is EDITED; the PARSER row says what EXISTS.** This one bit twice on
+the same character:
+
+- `ayaka4_0`'s `RegTexEdit` names only REGISTERS (`{"BrightLightMap": ["ps-t1"], ...}`). Which
+  object owns each edit is in her parse row -- head/ps-t0, body/ps-t1, dress/ps-t0. Reading the
+  fixer row alone put all three on the head: three edits of one texture, body and dress untouched.
+- `drawnObjs` is the parse row's object set, `[{"head", "body", "dress"}]` -- **not** the objects
+  the fixer row happens to name in its removals, which for all four of her historical rows is just
+  head and body. Getting it wrong dropped her dress remap entirely.
+
+The first of those failed to compile only by luck, because the helper names happened to differ.
+With matching names it would have built clean. **A character's fix is the PAIR of rows; reading
+one of them is not transcription.**
+
+<br>
+
+### A ROW CAN GET SIMPLER WITH THE VERSION, SO DO NOT INTERPOLATE (2026-09-13)
+
+The tempting shortcut across 59 rows is to derive one from its neighbour. It works exactly where
+the pure-Python rows say it does and nowhere else:
+
+- **`5_0` really is `4_0` with one thing changed** -- `TexFx` renamed its transparency
+  sub-commands at 5.0, `T.0`/`T.1` becoming the Natlan `TN.0`/`TN.1`. That rename is the entire
+  difference between the `...4_0` and `...5_0` value-rename constants.
+- **`5_7` really is "the draw call moved"** for eight characters -- `IbRemapData` +
+  `IbDrawIndexedRename` + `IbTempToDrawIndexed` + a postModel `drawindexed` removal, which is one
+  `moveDrawIndexed` here. Those eight were GENERATED from their `4_0` rows rather than retyped,
+  because the bodies are register lists and retyping one is how a register goes missing.
+
+And then it stops. `lisa5_7` is three removals and a merge -- the register shift, the invented
+normal map and the `TexFx` re-issue that `lisa5_4` carries are **gone** by 5.7. `nilouBreeze5_7` is
+three removals, full stop. `ayaka5_7` drops the `ps-t0 -> ps-t1` duplication that `ayaka5_6` has,
+and then **`ayaka6_1` puts it back**. A row is not a monotonic accretion of its predecessors, so
+reading either neighbour and interpolating gives a wrong row that builds.
+
+<br>
+
+### THE OLD SCRIPT CRASHES ON ONE ROW, AND THE A/B READS THAT AS OUR BUG (2026-09-13)
+
+`FixRaidenBoss6.py` raises on `kiraraBoots5_7`:
+
+```
+TypeError: _regValIsOrFixWrapper() missing 1 required positional argument: 'part'
+```
+
+It fixes **0 of 1 mods** and writes no remapped sections at all. The A/B then reports every
+section our row produces as `only new`, which reads exactly like over-production. `kirara5_7` uses
+the same guarded-remap machinery and runs fine on both sides, so there is nothing structural to
+infer from it either.
+
+**A one-sided A/B is not a pass and not a fail -- it is no measurement.** Read the old side's log
+before interpreting a lopsided only-new count; `fixed 0 mods and skipped 1` is right there in the
+summary. That row is marked transcription-reviewed-only in the code, which is the honest status
+and the one the next reader needs.
+
+<br>
+
+### `defaultFactory()` IS SOMETIMES THE ANSWER, NOT A STUB (2026-09-13)
+
+Both tables' `giDefault` returned `IniFixBuilder::defaultFactory()` / 
+`IniParseBuilder::defaultFactory()` and sat on the to-do list for months because that is what every
+genuine stub looked like too. Their pure-Python bodies are `(GIMIFixer, [], {})` and
+`(GIMIParser, [], {})`, and those factories build exactly that -- a real `GIMIFixer`/`GIMIParser`,
+not a bare base. **They were the implementation.** `giDefault` is what Raiden falls back to at 4.0
+and ArlecchinoBoss at 4.6.
+
+The lesson generalises past this one function: a line that is indistinguishable from a placeholder
+will be read as one indefinitely. Both now carry a comment saying why they are correct.
+
+<br>
+
 ### A HISTORICAL ROW HAS TO SWITCH OFF WHAT THE TEMPLATE DOES BY DEFAULT (2026-09-13)
 
 `makeGIMICharFixer`'s defaults are **6.1-era**. Three of them are things the pure-Python 4.0 rows

@@ -4,7 +4,7 @@ C++ internal core of AGRemap
 from __future__ import annotations
 import collections.abc
 import typing
-__all__: list[str] = ['BaseBufEditor', 'BaseDFA', 'BaseIniClassifier', 'BaseIniFixer', 'BaseIniGraphEdit', 'BaseIniGraphGroupEdit', 'BaseIniGraphPartEdit', 'BaseIniParser', 'BaseIniPartEdit', 'BaseIniRemover', 'BaseLogger', 'BaseRegEdit', 'BaseResEdit', 'BaseSLR1Parser', 'BaseTokenizer', 'BiMap', 'BinaryFile', 'BlendFile', 'BufBaseFloat', 'BufBaseInt', 'BufDataType', 'BufEditor', 'BufElementType', 'BufFloat', 'BufFloat16', 'BufSignedInt', 'BufType', 'BufUnSignedInt', 'BufUnorm', 'CachedFileStats', 'CallGraph', 'CppAhoCorasickDFA', 'CppAlgo', 'CppBaseIniFixer', 'CppBaseIniParser', 'CppBaseIniRemover', 'CppBasePixelTransform', 'CppBaseTexEditor', 'CppBaseTexFilter', 'CppBufFile', 'CppColour', 'CppColourRange', 'CppColourReplace', 'CppColourReplaceFilter', 'CppCorrectGamma', 'CppGammaFilter', 'CppGlobalModTypes', 'CppHashTools', 'CppHighlightShadow', 'CppHueAdjust', 'CppIniFixBuilderArgs', 'CppIniFixFactory', 'CppIniNamingTools', 'CppIniParseBuilderArgs', 'CppIniParseFactory', 'CppIniRemoveBuilderArgs', 'CppIntTools', 'CppInvertAlpha', 'CppInvertAlphaFilter', 'CppListTools', 'CppPixelFilter', 'CppRemapServiceCLI', 'CppStrategyOverrides', 'CppTempControl', 'CppTexCreator', 'CppTexEditor', 'CppTextureFile', 'CppTintTransform', 'CppTransparency', 'CppTransparencyAdjustFilter', 'CppTrie', 'CppVersion', 'DFA', 'FileDownload', 'FileStats', 'FilteredTokenizer', 'GIBuilder', 'GIMICharFixerConfig', 'GIMICharParserConfig', 'GIMIFixer', 'GIMIObjPartFilter', 'GIMIParser', 'GIMISectionClassifier', 'GameTypeId', 'GameTypeIdTools', 'GlobalRemapIniRemover', 'GraphGroupEdit', 'GraphGroupRemap', 'GraphInherit', 'GraphRemove', 'GraphRename', 'GraphTools', 'Hash128', 'Hash64', 'Hashes', 'IOrderedMultiMap', 'IbFile', 'IfContentPart', 'IfContentPartColourChange', 'IfContentPartColouring', 'IfPredParser', 'IfPredPart', 'IfPredTokenizer', 'IfTemplate', 'IfTemplateNode', 'IfTemplatePart', 'IfTemplateTree', 'Indices', 'IniClassifier', 'IniClassifyStats', 'IniDownloadModel', 'IniFile', 'IniFixBuilder', 'IniFixResource', 'IniFixResourceModel', 'IniFixingContext', 'IniGraphGroup', 'IniGroupedResource', 'IniParseBuilder', 'IniRemovalContext', 'IniRemoveBuilder', 'IniResource', 'IniResourceModel', 'IniSectionGraph', 'IniSectionGraphSectionIterator', 'IniSrcResourceModel', 'IniTexModel', 'KeyRemapData', 'Logger', 'ModAssets', 'ModDictAssets', 'ModMappedAssets', 'ModType', 'ModTypeId', 'ModTypeIdData', 'ModTypeIdTools', 'MultiModFixer', 'OrderedMultiMap', 'OrderedMultiMapIterator', 'OrderedMultiMapSqrt', 'OrderedMultiMapSqrtIterator', 'ParseContext', 'ParseNode', 'ParseTree', 'PositionFile', 'Ranges', 'RangesInt', 'RegAdd', 'RegAssetRemap', 'RegDelimitedAdd', 'RegFillMissing', 'RegNewVals', 'RegRemap', 'RegRemove', 'RegSurroundedAdd', 'RemapBlendReplace', 'RemapBlendResource', 'RemapIniDownload', 'RemapIniFixResource', 'RemapIniGroupedResource', 'RemapIniRemover', 'RemapIniResource', 'RemapIniResourceMixin', 'RemapService', 'RemapStats', 'RemapTexAddResource', 'RemapTexEditResource', 'RemappedKeyData', 'ReplaceIf', 'ReplaceList', 'ResCreate', 'ResGroupCollect', 'ResIdentity', 'ResRegCollect', 'ResReplace', 'SectionIterData', 'SectionIterDataIterator', 'SectionIterQueryData', 'SectionIterQueryDataIterator', 'SympyParser', 'SympyTokenizer', 'TexCreate', 'TexReplace', 'Token', 'VGRemap', 'VGRemaps', 'VbFile', 'VertexCounts', 'Z3Context', 'Z3Predicate', 'appendAllToOrderedMultiMap', 'makeGIMICharFixer', 'makeGIMICharParser']
+__all__: list[str] = ['BaseBufEditor', 'BaseDFA', 'BaseIniClassifier', 'BaseIniFixer', 'BaseIniGraphEdit', 'BaseIniGraphGroupEdit', 'BaseIniGraphPartEdit', 'BaseIniParser', 'BaseIniPartEdit', 'BaseIniRemover', 'BaseLogger', 'BaseRegEdit', 'BaseResEdit', 'BaseSLR1Parser', 'BaseTokenizer', 'BiMap', 'BinaryFile', 'BlendFile', 'BufBaseFloat', 'BufBaseInt', 'BufDataType', 'BufEditor', 'BufElementType', 'BufFloat', 'BufFloat16', 'BufReplace', 'BufSignedInt', 'BufType', 'BufUnSignedInt', 'BufUnorm', 'CachedFileStats', 'CallGraph', 'CppAhoCorasickDFA', 'CppAlgo', 'CppBaseIniFixer', 'CppBaseIniParser', 'CppBaseIniRemover', 'CppBasePixelTransform', 'CppBaseTexEditor', 'CppBaseTexFilter', 'CppBufFile', 'CppColour', 'CppColourRange', 'CppColourReplace', 'CppColourReplaceFilter', 'CppCorrectGamma', 'CppGammaFilter', 'CppGlobalModTypes', 'CppHashTools', 'CppHighlightShadow', 'CppHueAdjust', 'CppIniFixBuilderArgs', 'CppIniFixFactory', 'CppIniNamingTools', 'CppIniParseBuilderArgs', 'CppIniParseFactory', 'CppIniRemoveBuilderArgs', 'CppIntTools', 'CppInvertAlpha', 'CppInvertAlphaFilter', 'CppListTools', 'CppPixelFilter', 'CppRemapServiceCLI', 'CppStrategyOverrides', 'CppTempControl', 'CppTexCreator', 'CppTexEditor', 'CppTextureFile', 'CppTintTransform', 'CppTransparency', 'CppTransparencyAdjustFilter', 'CppTrie', 'CppVersion', 'DFA', 'FileDownload', 'FileStats', 'FilteredTokenizer', 'GIBuilder', 'GIMICharFixerConfig', 'GIMICharParserConfig', 'GIMIFixer', 'GIMIObjPartFilter', 'GIMIParser', 'GIMISectionClassifier', 'GameTypeId', 'GameTypeIdTools', 'GlobalRemapIniRemover', 'GraphGroupEdit', 'GraphGroupRemap', 'GraphInherit', 'GraphRemove', 'GraphRename', 'GraphTools', 'Hash128', 'Hash64', 'Hashes', 'IOrderedMultiMap', 'IbFile', 'IfContentPart', 'IfContentPartColourChange', 'IfContentPartColouring', 'IfPredParser', 'IfPredPart', 'IfPredTokenizer', 'IfTemplate', 'IfTemplateNode', 'IfTemplatePart', 'IfTemplateTree', 'Indices', 'IniClassifier', 'IniClassifyStats', 'IniDownloadModel', 'IniFile', 'IniFixBuilder', 'IniFixResource', 'IniFixResourceModel', 'IniFixingContext', 'IniGraphGroup', 'IniGroupedResource', 'IniParseBuilder', 'IniRemovalContext', 'IniRemoveBuilder', 'IniResource', 'IniResourceModel', 'IniSectionGraph', 'IniSectionGraphSectionIterator', 'IniSrcResourceModel', 'IniTexModel', 'KeyRemapData', 'Logger', 'ModAssets', 'ModDictAssets', 'ModMappedAssets', 'ModType', 'ModTypeId', 'ModTypeIdData', 'ModTypeIdTools', 'MultiModFixer', 'OrderedMultiMap', 'OrderedMultiMapIterator', 'OrderedMultiMapSqrt', 'OrderedMultiMapSqrtIterator', 'ParseContext', 'ParseNode', 'ParseTree', 'PositionFile', 'Ranges', 'RangesInt', 'RegAdd', 'RegAssetRemap', 'RegDelimitedAdd', 'RegFillMissing', 'RegNewVals', 'RegRemap', 'RegRemove', 'RegSurroundedAdd', 'RemapBlendReplace', 'RemapBlendResource', 'RemapIniDownload', 'RemapIniFixResource', 'RemapIniGroupedResource', 'RemapIniRemover', 'RemapIniResource', 'RemapIniResourceMixin', 'RemapService', 'RemapStats', 'RemapTexAddResource', 'RemapTexEditResource', 'RemappedKeyData', 'ReplaceIf', 'ReplaceList', 'ResCreate', 'ResGroupCollect', 'ResIdentity', 'ResRegCollect', 'ResReplace', 'SectionIterData', 'SectionIterDataIterator', 'SectionIterQueryData', 'SectionIterQueryDataIterator', 'SympyParser', 'SympyTokenizer', 'TexCreate', 'TexReplace', 'Token', 'VGComponentBuffers', 'VGComponentSpec', 'VGComponentSplit', 'VGComponentSplitStats', 'VGRemap', 'VGRemaps', 'VGSplitGroupResource', 'VbFile', 'VertexCounts', 'Z3Context', 'Z3Predicate', 'appendAllToOrderedMultiMap', 'makeGIMICharFixer', 'makeGIMICharParser']
 class BaseBufEditor:
     """
     
@@ -2067,6 +2067,84 @@ class BufFloat16(BufBaseFloat):
         isBigEndian: :class:`bool`
             Whether the type is in big endian mode. **Default**: ``False``
         """
+class BufReplace(BaseResEdit):
+    """
+    
+    This class inherits from :class:`ResReplace`
+    
+    Names the replacement of one of a mod's buffers -- a ``Blend.buf``, ``Position.buf``, ``Texcoord.buf``
+    or ``.ib`` -- by its **kind**, and builds a :class:`RemapIniFixResource` of that kind for it
+    
+    Nothing here writes a file. A buffer that has to be fixed together with the others (see
+    :class:`VGSplitGroupResource`) is collected by a :class:`ResGroupCollect` through one of these per
+    buffer, and the grouped resource does the writing; a buffer fixed on its own wants
+    :class:`RemapBlendReplace` instead
+    
+    The kind is the resource's ``type`` -- ``blend`` / ``position`` / ``texcoord`` / ``buf`` (an index
+    buffer) -- which is what the remap's stats count under and what a grouped fix tells its members apart
+    by. The naming follows the kind too: ``...RemapBlend``, ``...RemapPosition``, ``...RemapTexcoord``,
+    ``...RemapIB``
+    
+    Parameters
+    ----------
+    resModObj: Tuple[:class:`int`, :class:`str`, :class:`str`]
+        The mod object to hold the newly created :class:`IniSectionGraph` for the resource
+    
+    kind: :class:`str`
+        ``"blend"``, ``"position"``, ``"texcoord"`` or ``"ib"``
+    
+    resSubType: Optional[:class:`str`]
+        An extra name between the mod's and the kind's, for a second buffer of the same kind and mod :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+        
+    """
+    def __init__(self, resModObj: typing.Any, kind: str, resSubType: typing.Any = None) -> None:
+        ...
+    def buildResModel(self, resType: str, ini: typing.Any, srcPath: str, fixedPath: str, modType: typing.Any = None, *args, modName: str = '', **kwargs) -> typing.Any:
+        """
+        Builds the model for the resource -- a :class:`RemapIniFixResource` typed by :attr:`kind`
+        
+        Parameters
+        ----------
+        resType: :class:`str`
+            The name for the type of resource. Unused: the kind decides
+        
+        ini: :class:`IniFile`
+            The .ini file to build the resource for
+        
+        srcPath: :class:`str`
+            The file path to the original buffer
+        
+        fixedPath: :class:`str`
+            The file path to the fixed buffer
+        
+        modType: Optional[:class:`ModType`]
+            The type of mod being fixed. Unused
+        
+        modName: :class:`str`
+            The name of the mod to fix to. Unused :raw-html:`<br />` :raw-html:`<br />`
+        
+            **Default**: ``""``
+        
+        Returns
+        -------
+        Optional[:class:`RemapIniFixResource`]
+            The built resource, or ``None`` without a .ini file
+        """
+    @property
+    def kind(self) -> str:
+        """
+        :class:`str`: The kind of buffer
+        """
+    @property
+    def resSubType(self) -> typing.Any:
+        """
+        Optional[:class:`str`]: An extra name between the mod's and the kind's
+        """
+    @resSubType.setter
+    def resSubType(self, arg1: typing.Any) -> None:
+        ...
 class BufSignedInt(BufBaseInt):
     """
     
@@ -4387,8 +4465,10 @@ class CppRemapServiceCLI:
     **From strings** -- what an argument parser produced. This is the one ``main.py`` uses, and it takes
     the same arguments the pure-Python :class:`RemapService` did: ``path``, ``keepBackups``, ``fixOnly``,
     ``undoOnly``, ``hideOrig``, ``readAllInis``, ``types``, ``defaultType``, ``forcedType``, ``log``,
-    ``verbose``, ``handleExceptions``, ``version``, ``remappedTypes``, ``proxy``, ``downloadMode`` and
-    ``gameTypes`` and ``compressTextures``. Mod type and game names/aliases become
+    ``verbose``, ``handleExceptions``, ``version``, ``fromVersion``, ``remappedTypes``, ``proxy``,
+    ``downloadMode`` and ``gameTypes`` and ``compressTextures``. ``version`` is the version being
+    fixed **to** -- the pure-Python API's own meaning -- and ``fromVersion`` the one the mods were
+    written for; they select the fixer and the parser respectively and are independent. Mod type and game names/aliases become
     :class:`ModTypeId`/:class:`GameTypeId` ints (ignoring case and surrounding whitespace), a
     `PEP 440`_ string becomes a :class:`Version`, and a mode name becomes a :class:`DownloadMode`
     
@@ -4419,7 +4499,7 @@ class CppRemapServiceCLI:
     def __init__(self, service: RemapService, log: str | None = None, verbose: bool = True) -> None:
         ...
     @typing.overload
-    def __init__(self, path: str | None = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, hideOrig: bool = False, readAllInis: bool = False, types: collections.abc.Sequence[str] | None = None, defaultType: str | None = None, forcedType: str | None = None, log: str | None = None, verbose: bool = True, handleExceptions: bool = False, version: str | None = None, remappedTypes: collections.abc.Sequence[str] | None = None, proxy: str | None = None, downloadMode: str | None = None, gameTypes: collections.abc.Sequence[str] | None = None, compressTextures: bool = False) -> None:
+    def __init__(self, path: str | None = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, hideOrig: bool = False, readAllInis: bool = False, types: collections.abc.Sequence[str] | None = None, defaultType: str | None = None, forcedType: str | None = None, log: str | None = None, verbose: bool = True, handleExceptions: bool = False, version: str | None = None, fromVersion: str | None = None, remappedTypes: collections.abc.Sequence[str] | None = None, proxy: str | None = None, downloadMode: str | None = None, gameTypes: collections.abc.Sequence[str] | None = None, compressTextures: bool = False) -> None:
         ...
     def addTips(self) -> None:
         """
@@ -4644,7 +4724,7 @@ class CppTexCreator(CppBaseTexEditor):
     Creates a brand new ``.dds`` file if the file does not already exist
         
     """
-    def __init__(self, width: typing.SupportsInt | typing.SupportsIndex, height: typing.SupportsInt | typing.SupportsIndex, colour: CppColour = ..., compress: bool = True) -> None:
+    def __init__(self, width: typing.SupportsInt | typing.SupportsIndex, height: typing.SupportsInt | typing.SupportsIndex, colour: CppColour = ..., compress: bool = True, mipmaps: bool = False) -> None:
         """
         Constructs a new texture creator
         
@@ -4662,6 +4742,10 @@ class CppTexCreator(CppBaseTexEditor):
         compress: :class:`bool`
             Whether the created texture is written compressed, or as a plain 32-bit uncompressed ``.dds``.
             **Default**: ``True``
+        
+        mipmaps: :class:`bool`
+            Whether the created texture is written with its full mip chain -- see :meth:`CppTextureFile.save`.
+            **Default**: ``False``
         """
     @property
     def colour(self) -> CppColour:
@@ -4691,6 +4775,16 @@ class CppTexCreator(CppBaseTexEditor):
     def height(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
         ...
     @property
+    def mipmaps(self) -> bool:
+        """
+        :class:`bool`: Whether the created texture is written with its full mip chain
+        
+        The :class:`CppTexCreator` counterpart of :attr:`CppTexEditor.mipmaps`
+        """
+    @mipmaps.setter
+    def mipmaps(self, arg0: bool) -> None:
+        ...
+    @property
     def width(self) -> int:
         """
         :class:`int`: The width, in pixels, of the texture to create
@@ -4714,7 +4808,7 @@ class CppTexEditor(CppBaseTexEditor):
         Python-visible behavior
         
     """
-    def __init__(self, compress: bool = True) -> None:
+    def __init__(self, compress: bool = True, mipmaps: bool = False) -> None:
         ...
     @property
     def compress(self) -> bool:
@@ -4730,6 +4824,17 @@ class CppTexEditor(CppBaseTexEditor):
         """
     @compress.setter
     def compress(self, arg1: bool) -> None:
+        ...
+    @property
+    def mipmaps(self) -> bool:
+        """
+        Whether :meth:`~CppBaseTexEditor.fix` writes the edited texture back with its full mip chain --
+        handed straight to :meth:`CppTextureFile.save`, which says why a texture wants one
+        
+        **Default**: ``False``
+        """
+    @mipmaps.setter
+    def mipmaps(self, arg1: bool) -> None:
         ...
 class CppTextureFile:
     """
@@ -4786,9 +4891,14 @@ class CppTextureFile:
         
         If the file does not exist, :attr:`hasImage` becomes ``False`` and :meth:`getPixels` is cleared
         """
-    def save(self, compress: bool = True) -> None:
+    def save(self, compress: bool = True, mipmaps: bool = False) -> None:
         """
         Saves :meth:`getPixels` to the texture file at :attr:`src`
+        
+        ``mipmaps`` writes the full mip chain (box-filtered from :meth:`getPixels`) instead of the single
+        top level. Every texture the game ships carries its chain, and one written without it is sampled
+        from its top level at every distance, which on a fine texture such as hair reads in game as
+        scattered off-colour pixels that move with the camera. **Default**: ``False``
         
         If :attr:`gamma` is set, the R/G/B channels of :meth:`getPixels` are gamma-corrected first (see
         :class:`CppGammaFilter`), in place. The file is re-encoded to whatever compressed format it was
@@ -6178,6 +6288,16 @@ class GIBuilder:
         """
         Creates the :class:`ModType` for XingqiuBamboo
         """
+    @staticmethod
+    def yelan() -> ModType:
+        """
+        Creates the :class:`ModType` for Yelan
+        """
+    @staticmethod
+    def yelanTranquil() -> ModType:
+        """
+        Creates the :class:`ModType` for YelanTranquil, the skin of three components; her component ids are fix targets only and have no factory
+        """
 class GIMICharFixerConfig:
     """
     
@@ -6303,7 +6423,7 @@ class GIMICharFixerConfig:
     def objNewRegVals(self, arg0: collections.abc.Sequence[tuple[str, collections.abc.Sequence[tuple[str, str]]]]) -> None:
         ...
     @property
-    def objRegRemaps(self) -> list[tuple[str, list[tuple[str, list[str]]]]]:
+    def objRegRemaps(self) -> list[tuple[str, list[...]]]:
         """
         List[Tuple[:class:`str`, List[Tuple[:class:`str`, List[:class:`str`]]]]]: Registers **renamed** on
         one target object's parts --- ``[("head", [("ps-t1", ["ps-t0"]), ("ps-t2", ["ps-t1"])])]``
@@ -6312,16 +6432,16 @@ class GIMICharFixerConfig:
         and neither re-reads its own output. Naming two targets duplicates the value into both
         """
     @objRegRemaps.setter
-    def objRegRemaps(self, arg0: collections.abc.Sequence[tuple[str, collections.abc.Sequence[tuple[str, collections.abc.Sequence[str]]]]]) -> None:
+    def objRegRemaps(self, arg0: collections.abc.Sequence[tuple[str, collections.abc.Sequence[...]]]) -> None:
         ...
     @property
-    def objRegRemovals(self) -> list[tuple[str, list[str]]]:
+    def objRegRemovals(self) -> list[tuple[str, list[...]]]:
         """
         List[Tuple[:class:`str`, List[:class:`str`]]]: Registers stripped from one **target** object's parts
         entirely --- ``[("head", ["ps-t3"])]``
         """
     @objRegRemovals.setter
-    def objRegRemovals(self, arg0: collections.abc.Sequence[tuple[str, collections.abc.Sequence[str]]]) -> None:
+    def objRegRemovals(self, arg0: collections.abc.Sequence[tuple[str, collections.abc.Sequence[...]]]) -> None:
         ...
     @property
     def objSplits(self) -> list[tuple[str, list[str]]]:
@@ -6334,6 +6454,40 @@ class GIMICharFixerConfig:
         """
     @objSplits.setter
     def objSplits(self, arg0: collections.abc.Sequence[tuple[str, collections.abc.Sequence[str]]]) -> None:
+        ...
+    @property
+    def removeSrcFixCalls(self) -> bool:
+        """
+        :class:`bool`: Whether a remapped section drops the MOD'S OWN ``ORFix``/``NNFix`` calls. **Default**: ``True``
+        
+        True because the fix re-issues those itself, so a survivor of the mod's own would duplicate. A row
+        that re-issues nothing --- every pre-6.x one --- must set this ``False``, or the removal deletes the
+        modder's call and puts nothing back
+        """
+    @removeSrcFixCalls.setter
+    def removeSrcFixCalls(self, arg0: bool) -> None:
+        ...
+    @property
+    def removeSrcTexFxCalls(self) -> bool:
+        """
+        :class:`bool`: Whether to drop EVERY call under the TexFx folder, not just the re-issued ones. **Default**: ``False``
+        
+        False because a folder match deletes modder content -- a call to a sub-command this fix does not
+        re-issue duplicates nothing. Several pre-5.0 rows do ask for it
+        """
+    @removeSrcTexFxCalls.setter
+    def removeSrcTexFxCalls(self, arg0: bool) -> None:
+        ...
+    @property
+    def swapFaceRegs(self) -> bool:
+        """
+        :class:`bool`: Whether to perform that swap at all. **Default**: ``True``
+        
+        Set it ``False`` only for a fix transcribed from a PRE-6.x row: the swap corrects something GI 6.x
+        did to the shader, so at 4.0 it moves a correct binding to the wrong register
+        """
+    @swapFaceRegs.setter
+    def swapFaceRegs(self, arg0: bool) -> None:
         ...
     @property
     def texEdits(self) -> list[GIMICharFixerConfig.TexEdit]:
@@ -13222,6 +13376,16 @@ class ModTypeId:
       Xingqiu : Xingqiu from GI
     
       XingqiuBamboo : Xingqiu Lantern Rite skin from GI
+    
+      Yelan : Yelan from GI
+    
+      YelanTranquil : Yelan summer skin (Tranquil Banquet) from GI -- three components (Body, Bang, Eye)
+    
+      YelanTranquilBody : YelanTranquil's Body component, as a fix target -- a skin of several components is fixed one component at a time, and each is a mod type for the tables' purposes
+    
+      YelanTranquilBang : YelanTranquil's Bang component, as a fix target
+    
+      YelanTranquilEye : YelanTranquil's Eye component, as a fix target
     """
     Amber: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Amber: 0>
     AmberCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.AmberCN: 1>
@@ -13268,7 +13432,12 @@ class ModTypeId:
     XianglingCheer: typing.ClassVar[ModTypeId]  # value = <ModTypeId.XianglingCheer: 42>
     Xingqiu: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Xingqiu: 43>
     XingqiuBamboo: typing.ClassVar[ModTypeId]  # value = <ModTypeId.XingqiuBamboo: 44>
-    __members__: typing.ClassVar[dict[str, ModTypeId]]  # value = {'Amber': <ModTypeId.Amber: 0>, 'AmberCN': <ModTypeId.AmberCN: 1>, 'Ayaka': <ModTypeId.Ayaka: 2>, 'AyakaSpringbloom': <ModTypeId.AyakaSpringbloom: 3>, 'Arlecchino': <ModTypeId.Arlecchino: 4>, 'ArlecchinoBoss': <ModTypeId.ArlecchinoBoss: 5>, 'Barbara': <ModTypeId.Barbara: 6>, 'BarbaraSummertime': <ModTypeId.BarbaraSummertime: 7>, 'CherryHuTao': <ModTypeId.CherryHuTao: 8>, 'Diluc': <ModTypeId.Diluc: 9>, 'DilucFlamme': <ModTypeId.DilucFlamme: 10>, 'Fischl': <ModTypeId.Fischl: 11>, 'FischlHighness': <ModTypeId.FischlHighness: 12>, 'Ganyu': <ModTypeId.Ganyu: 13>, 'GanyuTwilight': <ModTypeId.GanyuTwilight: 14>, 'HuTao': <ModTypeId.HuTao: 15>, 'Jean': <ModTypeId.Jean: 16>, 'JeanCN': <ModTypeId.JeanCN: 17>, 'JeanSea': <ModTypeId.JeanSea: 18>, 'Kaeya': <ModTypeId.Kaeya: 19>, 'KaeyaSailwind': <ModTypeId.KaeyaSailwind: 20>, 'Keqing': <ModTypeId.Keqing: 21>, 'KeqingOpulent': <ModTypeId.KeqingOpulent: 22>, 'Kirara': <ModTypeId.Kirara: 23>, 'KiraraBoots': <ModTypeId.KiraraBoots: 24>, 'Klee': <ModTypeId.Klee: 25>, 'KleeBlossomingStarlight': <ModTypeId.KleeBlossomingStarlight: 26>, 'Lisa': <ModTypeId.Lisa: 27>, 'LisaStudent': <ModTypeId.LisaStudent: 28>, 'Mona': <ModTypeId.Mona: 29>, 'MonaCN': <ModTypeId.MonaCN: 30>, 'Nilou': <ModTypeId.Nilou: 31>, 'NilouBreeze': <ModTypeId.NilouBreeze: 32>, 'Ningguang': <ModTypeId.Ningguang: 33>, 'NingguangOrchid': <ModTypeId.NingguangOrchid: 34>, 'Raiden': <ModTypeId.Raiden: 35>, 'RaidenBoss': <ModTypeId.RaidenBoss: 36>, 'Rosaria': <ModTypeId.Rosaria: 37>, 'RosariaCN': <ModTypeId.RosariaCN: 38>, 'Shenhe': <ModTypeId.Shenhe: 39>, 'ShenheFrostFlower': <ModTypeId.ShenheFrostFlower: 40>, 'Xiangling': <ModTypeId.Xiangling: 41>, 'XianglingCheer': <ModTypeId.XianglingCheer: 42>, 'Xingqiu': <ModTypeId.Xingqiu: 43>, 'XingqiuBamboo': <ModTypeId.XingqiuBamboo: 44>}
+    Yelan: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Yelan: 45>
+    YelanTranquil: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquil: 46>
+    YelanTranquilBang: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilBang: 48>
+    YelanTranquilBody: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilBody: 47>
+    YelanTranquilEye: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilEye: 49>
+    __members__: typing.ClassVar[dict[str, ModTypeId]]  # value = {'Amber': <ModTypeId.Amber: 0>, 'AmberCN': <ModTypeId.AmberCN: 1>, 'Ayaka': <ModTypeId.Ayaka: 2>, 'AyakaSpringbloom': <ModTypeId.AyakaSpringbloom: 3>, 'Arlecchino': <ModTypeId.Arlecchino: 4>, 'ArlecchinoBoss': <ModTypeId.ArlecchinoBoss: 5>, 'Barbara': <ModTypeId.Barbara: 6>, 'BarbaraSummertime': <ModTypeId.BarbaraSummertime: 7>, 'CherryHuTao': <ModTypeId.CherryHuTao: 8>, 'Diluc': <ModTypeId.Diluc: 9>, 'DilucFlamme': <ModTypeId.DilucFlamme: 10>, 'Fischl': <ModTypeId.Fischl: 11>, 'FischlHighness': <ModTypeId.FischlHighness: 12>, 'Ganyu': <ModTypeId.Ganyu: 13>, 'GanyuTwilight': <ModTypeId.GanyuTwilight: 14>, 'HuTao': <ModTypeId.HuTao: 15>, 'Jean': <ModTypeId.Jean: 16>, 'JeanCN': <ModTypeId.JeanCN: 17>, 'JeanSea': <ModTypeId.JeanSea: 18>, 'Kaeya': <ModTypeId.Kaeya: 19>, 'KaeyaSailwind': <ModTypeId.KaeyaSailwind: 20>, 'Keqing': <ModTypeId.Keqing: 21>, 'KeqingOpulent': <ModTypeId.KeqingOpulent: 22>, 'Kirara': <ModTypeId.Kirara: 23>, 'KiraraBoots': <ModTypeId.KiraraBoots: 24>, 'Klee': <ModTypeId.Klee: 25>, 'KleeBlossomingStarlight': <ModTypeId.KleeBlossomingStarlight: 26>, 'Lisa': <ModTypeId.Lisa: 27>, 'LisaStudent': <ModTypeId.LisaStudent: 28>, 'Mona': <ModTypeId.Mona: 29>, 'MonaCN': <ModTypeId.MonaCN: 30>, 'Nilou': <ModTypeId.Nilou: 31>, 'NilouBreeze': <ModTypeId.NilouBreeze: 32>, 'Ningguang': <ModTypeId.Ningguang: 33>, 'NingguangOrchid': <ModTypeId.NingguangOrchid: 34>, 'Raiden': <ModTypeId.Raiden: 35>, 'RaidenBoss': <ModTypeId.RaidenBoss: 36>, 'Rosaria': <ModTypeId.Rosaria: 37>, 'RosariaCN': <ModTypeId.RosariaCN: 38>, 'Shenhe': <ModTypeId.Shenhe: 39>, 'ShenheFrostFlower': <ModTypeId.ShenheFrostFlower: 40>, 'Xiangling': <ModTypeId.Xiangling: 41>, 'XianglingCheer': <ModTypeId.XianglingCheer: 42>, 'Xingqiu': <ModTypeId.Xingqiu: 43>, 'XingqiuBamboo': <ModTypeId.XingqiuBamboo: 44>, 'Yelan': <ModTypeId.Yelan: 45>, 'YelanTranquil': <ModTypeId.YelanTranquil: 46>, 'YelanTranquilBody': <ModTypeId.YelanTranquilBody: 47>, 'YelanTranquilBang': <ModTypeId.YelanTranquilBang: 48>, 'YelanTranquilEye': <ModTypeId.YelanTranquilEye: 49>}
     def __eq__(self, other: typing.Any) -> bool:
         ...
     def __getstate__(self) -> int:
@@ -16014,6 +16183,32 @@ class RegFillMissing(BaseIniGraphEdit):
         
     """
     @staticmethod
+    def addBottomCover(graph: typing.Any, reg: str, fillMissing: typing.Any) -> typing.Any:
+        """
+        Fills a fresh BOTTOM :class:`IfContentPart` at each of 'graph''s roots, if 'reg' is missing in some
+        :class:`IfContentPart` of 'graph' -- :meth:`addCover`'s mirror image, for a register that has to run
+        after everything the root sets up (a draw call)
+        
+        Nothing is added at all when every root already fully covers 'reg'
+        
+        Parameters
+        ----------
+        graph: :class:`IniSectionGraph`
+            The graph to search
+        
+        reg: :class:`str`
+            The register to search
+        
+        fillMissing: Union[:class:`str`, List[Tuple[:class:`str`, :class:`str`]], Callable[[:class:`IfContentPart`], Any]]
+            How to modify the parts that are missing the desired register -- the same three shapes
+            :attr:`fillMissing` accepts
+        
+        Returns
+        -------
+        :class:`IniSectionGraph`
+            The same graph that was passed in, with its roots covered
+        """
+    @staticmethod
     def addCover(graph: typing.Any, reg: str, fillMissing: typing.Any) -> typing.Any:
         """
         Fills a fresh top :class:`IfContentPart` at each of 'graph''s roots, if 'reg' is missing in some
@@ -16068,11 +16263,12 @@ class RegFillMissing(BaseIniGraphEdit):
         """
         Fills the parts of 'graph' that are missing :attr:`reg`, by whichever strategy :attr:`fillMode`
         names -- :meth:`fillMissingGraph` for ``RegFillMissingMode.FillMissing``, :meth:`addCover` for
-        ``RegFillMissingMode.TopdownCover``
+        ``RegFillMissingMode.TopdownCover``, :meth:`addBottomCover` for ``RegFillMissingMode.BottomCover``
         
         'partFilter' restricts *which* parts get filled: it is asked once per candidate part, and an empty
         :class:`Ranges` result skips that one. Under ``RegFillMissingMode.TopdownCover`` it is asked once
-        per root instead, against that root's own first :class:`IfContentPart`. This is the same convention
+        per root instead, against that root's own first :class:`IfContentPart` (its last one under
+        ``RegFillMissingMode.BottomCover``). This is the same convention
         :class:`GraphGroupEdit` already applies to its register edits -- only *which* parts are chosen; a
         non-empty result's actual ranges are not consulted, since filling a part appends a whole `KVP`_
         rather than editing occurrences at particular order indices
@@ -17022,7 +17218,7 @@ class RemapBlendResource(RemapIniFixResource):
     Class for fixing some ``Blend.buf`` file used by the overall remap process
         
     """
-    def __init__(self, iniFolderPath: str, srcPath: str, fixedPath: str, vgRemap: VGRemap, type: str = 'resourceRemapBlend', fixFunc: collections.abc.Callable[[RemapBlendResource], bool] = None, blendElements: typing.Any = None) -> None:
+    def __init__(self, iniFolderPath: str, srcPath: str, fixedPath: str, vgRemap: VGRemap, type: str = 'resourceRemapBlend', fixFunc: typing.Any = None, blendElements: typing.Any = None) -> None:
         """
         Constructs a new blend resource
         
@@ -17076,12 +17272,12 @@ class RemapBlendResource(RemapIniFixResource):
             Whether the resource was fixed
         """
     @property
-    def fixFunc(self) -> collections.abc.Callable[[RemapBlendResource], bool]:
+    def fixFunc(self) -> typing.Any:
         """
         Optional[Callable[[:class:`RemapBlendResource`], :class:`bool`]]: Custom function for fixing the resource, overriding the default behavior if set
         """
     @fixFunc.setter
-    def fixFunc(self, arg0: collections.abc.Callable[[RemapBlendResource], bool]) -> None:
+    def fixFunc(self, arg1: typing.Any) -> None:
         ...
     @property
     def vgRemap(self) -> VGRemap:
@@ -17439,7 +17635,11 @@ class RemapService:
         Whether to stop the fix quietly when an exception is caught, rather than raising
     
     fromVersion: Optional[:class:`CppVersion`]
-        The game version the parsed .ini files originate from
+        The game version the parsed .ini files originate from -- picks the PARSER
+    
+    toVersion: Optional[:class:`CppVersion`]
+        The game version the .ini files are fixed to -- picks the FIXER. This is the pure-Python
+        API's ``version``
     
     toModTypeIds: Optional[Set[:class:`int`]]
         The :class:`ModTypeId` values to accept when fixing
@@ -17461,7 +17661,7 @@ class RemapService:
         Where the fix reports progress. ``None`` means nowhere
         
     """
-    def __init__(self, path: str | None = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, hideOrig: bool = False, readAllInis: bool = False, fromModTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, forcedModTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, defaultModTypeIds: typing.Any = None, handleExceptions: bool = False, fromVersion: FixRaidenBoss2.core.CppVersion | None = None, toModTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, proxy: str | None = None, downloadMode: typing.Any = None, gameTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, compressTextures: bool = False, logger: BaseLogger = None) -> None:
+    def __init__(self, path: str | None = None, keepBackups: bool = True, fixOnly: bool = False, undoOnly: bool = False, hideOrig: bool = False, readAllInis: bool = False, fromModTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, forcedModTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, defaultModTypeIds: typing.Any = None, handleExceptions: bool = False, fromVersion: FixRaidenBoss2.core.CppVersion | None = None, toVersion: FixRaidenBoss2.core.CppVersion | None = None, toModTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, proxy: str | None = None, downloadMode: typing.Any = None, gameTypeIds: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None = None, compressTextures: bool = False, logger: BaseLogger = None) -> None:
         ...
     def clear(self, clearLog: bool = True) -> None:
         """
@@ -17551,6 +17751,8 @@ class RemapService:
     def fromVersion(self) -> FixRaidenBoss2.core.CppVersion | None:
         """
         Optional[:class:`CppVersion`]: The game version the parsed .ini files originate from
+        
+        Picks the parser, and the hashes/indices the mod is read with
         """
     @fromVersion.setter
     def fromVersion(self, arg0: FixRaidenBoss2.core.CppVersion | None) -> None:
@@ -17646,6 +17848,18 @@ class RemapService:
         """
     @toModTypeIds.setter
     def toModTypeIds(self, arg0: collections.abc.Set[typing.SupportsInt | typing.SupportsIndex] | None) -> None:
+        ...
+    @property
+    def toVersion(self) -> FixRaidenBoss2.core.CppVersion | None:
+        """
+        Optional[:class:`CppVersion`]: The game version the .ini files are being fixed to
+        
+        Picks the fixer: the fix table is keyed ``{fromVersion, fromMod, toVersion, toMod}`` and every
+        shipped row is keyed from ``1.0``, so this half alone selects it. It is the pure-Python API's
+        ``version``, and what ``--version`` means on the command line
+        """
+    @toVersion.setter
+    def toVersion(self, arg0: FixRaidenBoss2.core.CppVersion | None) -> None:
         ...
     @property
     def undoOnly(self) -> bool:
@@ -20389,6 +20603,211 @@ class Token:
     @val.setter
     def val(self, arg0: str) -> None:
         ...
+class VGComponentBuffers:
+    """
+    
+    What one component gets out of a split: the vertices it draws and its buffers over them
+        
+    """
+    @property
+    def ibs(self) -> list[list[typing.Annotated[list[int], "FixedSize(3)"]]]:
+        """
+        List[List[List[:class:`int`]]]: Per source index buffer, the triangles this component draws -- renumbered into ``vertices`` for a cut, in the mod's numbering for negative index
+        """
+    @property
+    def indices(self) -> list[typing.Annotated[list[int], "FixedSize(4)"]]:
+        """
+        List[List[:class:`int`]]: Per kept vertex, its 4 bone indices in the component's numbering (negative sentinels for negative index)
+        """
+    @property
+    def live(self) -> list[bool]:
+        """
+        List[:class:`bool`]: Negative index only: per mod vertex, whether it carries no sentinel
+        """
+    @property
+    def stats(self) -> VGComponentSplitStats:
+        """
+        :class:`VGComponentSplitStats`: Counts worth reporting
+        """
+    @property
+    def vertices(self) -> list[int]:
+        """
+        List[:class:`int`]: The mod's vertex indices this component draws, ascending (every one for a negative-index component)
+        """
+    @property
+    def weights(self) -> list[typing.Annotated[list[float], "FixedSize(4)"]]:
+        """
+        List[List[:class:`float`]]: Per kept vertex, its 4 weights in the component's bones
+        """
+class VGComponentSpec:
+    """
+    
+    One target component of a skin made of several -- YelanTranquil's ``Body``, ``Bang`` and ``Eye`` --
+    and how a mod's vertex groups reach its bones
+    
+    Parameters
+    ----------
+    name: :class:`str`
+        The component's name
+    
+    remap: Union[:class:`VGRemap`, Dict[:class:`int`, :class:`int`]]
+        The mod's vertex group (source index) to this component's bone
+    
+    secondary: Optional[Dict[:class:`int`, :class:`int`]]
+        Further source groups the component has a bone for, honoured only on a vertex that also carries
+        one of ``remap``'s groups -- the reverse remap turned around. Only used by a negative-index
+        component :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    negativeIndex: :class:`bool`
+        ``True``: the negative-index strategy (the component draws the whole mod, other components'
+        bones become the ``-index-1`` sentinel, its index buffers are trimmed to fully-live triangles).
+        ``False``: the graph cut (the component takes the triangles the negative-index components leave,
+        shared out among the cut components by majority, every buffer filtered to the vertices it uses)
+        :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``False``
+        
+    """
+    def __init__(self, name: str, remap: typing.Any = None, secondary: typing.Any = None, negativeIndex: bool = False) -> None:
+        ...
+    @property
+    def name(self) -> str:
+        """
+        :class:`str`: The component's name
+        """
+    @name.setter
+    def name(self, arg0: str) -> None:
+        ...
+    @property
+    def negativeIndex(self) -> bool:
+        """
+        :class:`bool`: Whether this is a negative-index component rather than a cut one
+        """
+    @negativeIndex.setter
+    def negativeIndex(self, arg0: bool) -> None:
+        ...
+    @property
+    def remap(self) -> VGRemap:
+        """
+        :class:`VGRemap`: The mod's vertex group to this component's bone
+        """
+    @remap.setter
+    def remap(self, arg0: VGRemap) -> None:
+        ...
+    @property
+    def secondary(self) -> dict[int, int]:
+        """
+        Dict[:class:`int`, :class:`int`]: Further source groups, honoured only on an anchored vertex
+        """
+    @secondary.setter
+    def secondary(self, arg0: collections.abc.Mapping[typing.SupportsInt | typing.SupportsIndex, typing.SupportsInt | typing.SupportsIndex]) -> None:
+        ...
+class VGComponentSplit:
+    """
+    
+    Splits one mod's geometry across the components of a target skin
+    
+    The ``Blend.buf`` decides which component each vertex belongs to, the index buffers decide which
+    triangles go where, and every vertex buffer is then filtered to the vertices a component keeps -- so
+    the buffers of a mod cannot be split one at a time, which is what makes this a grouped resource's job
+    (see :class:`VGSplitGroupResource`). The strategies mirror ``Tools/VGRemapFinder``'s
+    ``ComponentSplit.py`` (its ``fill`` mode): the negative-index components first draw every triangle
+    all of whose corners are live in them, and the cut components share the rest out by majority
+    
+    Parameters
+    ----------
+    weights: List[List[:class:`float`]]
+        Per vertex, its 4 blend weights
+    
+    indices: List[List[:class:`int`]]
+        Per vertex, its 4 vertex group indices
+    
+    ibs: List[List[List[:class:`int`]]]
+        The mod's index buffers, one per drawn object, each a list of ``[a, b, c]`` triangles
+    
+    specs: List[:class:`VGComponentSpec`]
+        Every component of the target
+        
+    """
+    @staticmethod
+    def encodeBlend(weights: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex], "FixedSize(4)"]], indices: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(4)"]]) -> bytes:
+        """
+        Encodes weights and indices into ``Blend.buf`` bytes (4 floats then 4 signed ints per line)
+        """
+    @staticmethod
+    def encodeIb(triangles: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(3)"]]) -> bytes:
+        """
+        Encodes triangles into ``.ib`` bytes (3 unsigned ints per triangle)
+        """
+    @staticmethod
+    def keepLines(src: bytes, bytesPerLine: typing.SupportsInt | typing.SupportsIndex, lines: collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex]) -> bytes:
+        """
+        Keeps only the given lines of a fixed-stride buffer, in the order given
+        """
+    def __init__(self, weights: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex], "FixedSize(4)"]], indices: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(4)"]], ibs: collections.abc.Sequence[collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(3)"]]], specs: collections.abc.Sequence[VGComponentSpec]) -> None:
+        ...
+    def split(self, component: str) -> VGComponentBuffers:
+        """
+        Splits for one component
+        
+        Parameters
+        ----------
+        component: :class:`str`
+            The component's name
+        
+        Returns
+        -------
+        :class:`VGComponentBuffers`
+            The component's vertices and buffers
+        """
+    @property
+    def vertexCount(self) -> int:
+        """
+        :class:`int`: The mod's vertices
+        """
+class VGComponentSplitStats:
+    """
+    
+    Counts worth reporting about one component's split
+        
+    """
+    @property
+    def keptVertices(self) -> int:
+        """
+        :class:`int`: The vertices the component draws
+        """
+    @property
+    def neighbourSkinned(self) -> int:
+        """
+        :class:`int`: Cut only: vertices skinned to a neighbour's bone
+        """
+    @property
+    def renormalised(self) -> int:
+        """
+        :class:`int`: Cut only: vertices that lost foreign weight
+        """
+    @property
+    def sentinels(self) -> int:
+        """
+        :class:`int`: Negative index only: sentinel indices written
+        """
+    @property
+    def trianglesDropped(self) -> list[int]:
+        """
+        List[:class:`int`]: Per index buffer, the triangles left to the others
+        """
+    @property
+    def trianglesKept(self) -> list[int]:
+        """
+        List[:class:`int`]: Per index buffer, the triangles kept
+        """
+    @property
+    def vertexCount(self) -> int:
+        """
+        :class:`int`: The mod's vertices
+        """
 class VGRemap:
     """
     
@@ -20546,6 +20965,111 @@ class VGRemaps:
         """
         :class:`int`: The number of version columns
         """
+class VGSplitGroupResource(IniGroupedResource, RemapIniResourceMixin):
+    """
+    
+    This class inherits from :class:`IniGroupedResource` and :class:`RemapIniResourceMixin`
+    
+    A group of one mod's buffers -- its ``Blend.buf``, ``Position.buf``, ``Texcoord.buf`` and ``.ib``
+    files -- split for one component of a multi-component target, together
+    
+    The blend decides which vertices a component keeps, the index buffers decide which triangles, and
+    every vertex buffer then has to follow the same vertex set, renumbered the same way (issue #190) --
+    so the members are fixed from one :class:`VGComponentSplit` rather than one at a time. Members are
+    told apart by their ``type``: ``blend`` (exactly one), ``position`` and ``texcoord`` (at most one
+    each) and ``buf`` (the index buffers, any number), each read from its ``srcPath`` and written to its
+    ``fixedPath``. Built for :class:`ResGroupCollect` through an :class:`IniGroupedResBuilder`
+    
+    Parameters
+    ----------
+    name: :class:`str`
+        The name of the group
+    
+    resources: Optional[Dict[Any, Any]]
+        The group's members. If ``None``, a fresh empty ``dict`` is used :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    component: :class:`str`
+        The component this group's files are written for :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``""``
+    
+    specs: Optional[List[:class:`VGComponentSpec`]]
+        Every component of the target -- the split is joint :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    ibPaths: Optional[List[:class:`str`]]
+        The source ``.ib`` of every drawn object, in draw order, whether or not this group holds it: a
+        cut component's vertex set is the union over every object's kept triangles. ``None``: the
+        group's own ``buf`` members :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    texcoordLineEdit: Optional[Callable[[:class:`bytes`], :class:`bytes`]]
+        Applied to every line of the ``Texcoord.buf`` before filtering :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    positionLineEdit: Optional[Callable[[:class:`bytes`], :class:`bytes`]]
+        Applied to every line of the ``Position.buf`` before filtering :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    fixFunc: Optional[Callable[[:class:`IniGroupedResource`], :class:`bool`]]
+        Custom function for fixing the group, overriding the split if given :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    isBuilt: :class:`bool`
+        Whether the group is ready to be fixed :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``True``
+        
+    """
+    def __init__(self, name: str, resources: typing.Any = None, component: str = '', specs: typing.Any = None, ibPaths: typing.Any = None, texcoordLineEdit: typing.Any = None, positionLineEdit: typing.Any = None, fixFunc: collections.abc.Callable[[...], bool] = None, isBuilt: bool = True) -> None:
+        ...
+    @property
+    def component(self) -> str:
+        """
+        :class:`str`: The component this group's files are written for
+        """
+    @component.setter
+    def component(self, arg1: str) -> None:
+        ...
+    @property
+    def ibPaths(self) -> list[str]:
+        """
+        List[:class:`str`]: The source ``.ib`` of every drawn object, in draw order
+        """
+    @ibPaths.setter
+    def ibPaths(self, arg1: collections.abc.Sequence[str]) -> None:
+        ...
+    @property
+    def positionLineEdit(self) -> typing.Any:
+        """
+        Optional[Callable[[:class:`bytes`], :class:`bytes`]]: Applied to every line of the ``Position.buf``
+        """
+    @positionLineEdit.setter
+    def positionLineEdit(self, arg1: typing.Any) -> None:
+        ...
+    @property
+    def specs(self) -> list[VGComponentSpec]:
+        """
+        List[:class:`VGComponentSpec`]: Every component of the target
+        """
+    @specs.setter
+    def specs(self, arg1: collections.abc.Sequence[VGComponentSpec]) -> None:
+        ...
+    @property
+    def texcoordLineEdit(self) -> typing.Any:
+        """
+        Optional[Callable[[:class:`bytes`], :class:`bytes`]]: Applied to every line of the ``Texcoord.buf``
+        """
+    @texcoordLineEdit.setter
+    def texcoordLineEdit(self, arg1: typing.Any) -> None:
+        ...
 class VbFile(CppBufFile):
     """
     
