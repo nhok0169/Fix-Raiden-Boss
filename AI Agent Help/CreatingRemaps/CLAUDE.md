@@ -231,12 +231,383 @@ next remaps take. In order, with what each step needs and where it came from for
    `IniFixData/<Src>/<Src>Fixer.cpp` building a `GIMIComponentFixerConfig`, three (or however
    many) `ModTypeId`s as targets only, hash rows, `IniFixBuilderData` rows, and `runCompiled.py`
    against the prototype's output until every buffer is byte-identical.
-6. **Then hand the reverse direction on** -- see the next section.
+6. **Then do the reverse direction**, which is its own template -- see the next section.
 
-## The reverse direction is OPEN: a multi-component SOURCE onto a classic target
+## The reverse direction is COMPILED TOO: a multi-component SOURCE onto a classic target (2026-09-14)
 
-`YelanTranquil -> Yelan` was handed to another agent on 2026-09-13. What exists and what does
-not, so that agent starts from the right place:
+`YelanTranquil -> Yelan` is the **third fixer template**: `GIMIMergeFixerConfig` +
+`makeGIMIMergeFixer(config)` in `data/IniFixData/GIMIMergeFixer.{h,cpp}`, with YelanTranquil's own
+choices in `data/IniFixData/YelanTranquil/YelanTranquilFixer.cpp` and a
+`makeGIMIComponentParser` row in `data/IniParseData/YelanTranquil/YelanTranquilParser.cpp`. One
+`.ini` group out, always -- the target draws through ONE set of buffer hashes, so unlike the
+split there is nothing to write a second file for.
+
+Under it, in `core/`: `model/buffers/VGComponentMerge` (the inverse of `VGComponentSplit`),
+`model/iniresources/VGMergeGroupResource` and `.../graphGroupEdits/VGMergeGroupResBuilder`, each
+mirroring its split counterpart and reusing `VGComponentSplit`'s static codecs rather than
+restating them. Everything the forward direction learned still applies -- read "Yelan is COMPILED
+now" above first; what follows is only what the MERGE direction adds.
+
+**Acceptance, on three real mods** (the identity mod, YelanOutfitRecolor, an NSFW edit): every
+`TextureOverride` section of the compiled output equals the prototype's, with each bound resource
+reduced to the md5 of the file it names, and on the third -- which the prototype cannot fix at all
+-- the merged buffers are the three components laid end to end with the Eye's downloaded ones in
+place. The A/B driver is in the session scratchpad rather than the repo; it is thirty lines and the
+shape is in "Byte-identical buffers say nothing about the `.ini`" below.
+
+### The remap graph needs the COMPONENT names as SOURCES, not only as targets
+
+The first compiled run wrote **`hash = HashNotFound` into every section** while the buffers were
+byte-identical. The cause is one line of the remap graph, and it will hit every later
+multi-component skin the same way.
+
+`ModMappedAssets::replace` is reverse-then-forward. It resolves the source hash back to the row
+that owns it -- `("YelanTranquilBody", "ib")`, because a multi-component skin's rows are filed
+under the COMPONENT names -- and then asks the mod type's own map what *that* name remaps onto.
+`GIBuilder::makeRemapMap` built `{name: targets}` with the skin's name only, so the forward half
+found no key at all and the whole remap returned nothing.
+
+`ModTypeIdTools::getComponentIds(id)` now names a skin's components, and `makeRemapMap` files each
+of them as a source alongside the skin. The forward direction needed no such thing, because there
+the component ids are the *targets* and a target is named explicitly. **A remap graph is
+directional and a multi-component skin needs BOTH halves spelled out.**
+
+### Byte-identical buffers say nothing about the `.ini`
+
+Worth stating flatly, because it cost most of a session: the first compiled run produced buffers
+that were byte-for-byte the prototype's, and an `.ini` file with `HashNotFound` in all ten sections
+AND the SOURCE's `match_first_index` in four of them. A mod like that is well-formed, loads
+without a warning, and draws nothing.
+
+The `.ini` needs its own comparison, and it cannot be a text diff: the compiled fix suffixes a
+graph id onto every resource it generates (`...RemapBlend0_0_0_0` -> `..._B8g.buf`) where a
+prototype names them by hand, and it wraps a collected register in `if 1 ... endif`. What works, in
+about thirty lines: parse both remap blocks into `section -> [(key, value)]`, drop `if`/`endif`
+lines, and **replace every value naming a `Resource` section with the md5 of the file that resource
+names**. Two differently-named resources pointing at identical bytes then compare equal, and
+everything that actually reaches the game -- the hashes, the indices, the registers, their ORDER
+(the last binding of a register wins) and the bytes behind each one -- is compared exactly.
+
+### A per-register download is wrong when the register is not fixed across mods
+
+A download is keyed by `(mod object, REGISTER)` and fires when that ONE register is uncovered. That
+works for the classic shape because every mod of a pre-6.x character binds its face diffuse to
+`ps-t0`. A 6.x skin's mods split: of the three test mods, two bind `ps-t1` (the 6.x convention) and
+one binds `ps-t0` (a port that kept the old one). Whichever register the parser registered, the
+other half of the mods looked like they were MISSING a face -- and because the fixer then renames
+the face diffuse onto the target's register, the download and the mod's own texture ended up as two
+bindings of the same register, the download last. **The modder's face was silently replaced by a
+stock one.**
+
+There is no "either register" form of a download need (`GIMIParser::getDownloads` checks one at a
+time), so `makeGIMIComponentParser` registers **no** face download at all, with a comment saying
+why. Before adding a download, ask whether the register it keys on is the same in every mod of that
+character.
+
+### THE FIX LIBRARIES ARE INVOLUTIONS, SO THE RULE IS ONCE PER **PATH** (2026-09-14)
+
+Read this before touching `NNFix`, `ORFix` or `RegDelimitedAdd` anywhere. It is not a
+multi-component fact -- it moved both templates, and it had been wrong for every mod of a shape
+nobody had tested.
+
+The rule used to be "immediately before every `drawindexed`, and once at the end of a path that
+draws nothing". That is right only while **no path draws more than once**, and silently wrong
+otherwise, because these command lists do not *set* the registers -- they **re-slot the ones already
+bound**:
+
+```ini
+[CommandListNNFix]                     [CommandListReferenceNoNormal]    [CommandListLDX]
+run = CommandListReferenceNoNormal       ResourceDiffuse  = ref ps-t0      ps-t0 = ref ResourceLightmap
+run = CommandListFixLogic                ResourceLightmap = ref ps-t1      ps-t1 = ref ResourceDiffuse
+run = CommandListClear                   ResourceNormalMap = null          ps-t2 = ref ResourcePST2
+```
+
+It **swaps `ps-t0` and `ps-t1`**, and `CommandListClear` only nulls the `Resource*` refs -- the swap
+stays. Call it twice over one set of bindings and you are back where you started, with the LIGHT MAP
+sampled as the albedo: **the model renders flat green**.
+
+Three independent sources agree on the placement that avoids it. Mod authors write one `run =` at
+the top of a section, after the texture registers and before anything conditional, however many
+draws follow. The pure-Python original never inserts one at all -- it renames the modder's own to
+`tempNNFix` and back, which preserves wherever they put it. And measured over **33030** real
+`TextureOverride` sections, **none** rebind a `ps-t` register after drawing, so the draw is the only
+thing that can invalidate the call and no dataflow is needed.
+
+`RegDelimitedAddMode::PerPath` is that rule, and `makeGIMICharFixer` / `makeGIMIMergeFixer` both pass
+it now. Its four placement rules are in `RegDelimitedAdd`'s own description; the two non-obvious
+ones:
+
+- a section whose draws are **all** inside independent `if` blocks has no position inside any block
+  that serves the paths through the others, so the call moves up to the end of the header content;
+- and it must then NOT also land inside each block, which is what "once a part takes it, everything
+  downstream is covered" is for.
+
+**Why it never showed until now.** The shape that breaks it is `if` blocks that are INDEPENDENT --
+`$feet`, `$ears`, `$scarf`, `$top` all on at once -- rather than an exclusive chain. Ganyu's
+`$swapvar` branches are exclusive, and every compiled character's own test mod draws once per
+section. Over one real mod library, **66 sections across 14 mod folders** draw several times in a
+single pass.
+
+**Two counting mistakes to avoid, both made here first.** GIMI spells an exclusive chain `if` /
+`else if` / `endif` -- **two words, no `elif`** -- so a tally looking for `elif` reports every chain
+as a single branch. And a checker that counts calls per SECTION rather than per PATH then reports an
+exclusive chain's two calls as a violation. Only the per-path count means anything.
+
+**The invariant is per path per BINDING GENERATION, not simply per path (2026-09-15).** Re-stated
+after this library's own output tripped the coarse version: a call is undone by the next one only
+while the registers underneath it have not moved, so **re-binding a `ps-t` resets the count**. The
+merged head below emits one `ps-t0` / `ps-t1` / `run = NNFix` / `drawindexed` block PER MEMBER where
+the members need different textures -- two calls on one path, both correct, because the second acts
+on registers the first never saw. Three units, in order of increasing correctness:
+
+| unit | verdict on an exclusive `if`/`else if` chain | verdict on per-member binding blocks |
+| --- | --- | --- |
+| per section | **wrong** -- reports it (two calls, one runs) | wrong -- reports it |
+| per path | right | **wrong** -- reports it |
+| per path per binding generation | right | right |
+
+**Verification, if you touch this again**: fix a whole mod library into scratch copies and run
+`Tools/Misc/Diagnostics/fixCallPaths.py` over the output -- 157 mod folders, **7851 remapped
+sections across 867 fixed `.ini` files, 0 violations**. A unit test cannot see this one; it needs
+real mods with real toggles. `core/tests/RegDelimitedAdd_PerPath_test.cpp` pins the six placement
+shapes underneath it. That checker carries four synthetic cases it is proved against first (two
+that must fail, two that must pass); the one that must NOT be reported is the per-member shape, and
+an earlier draft of it reported three of five real mods until the distinction above was drawn.
+
+### A TARGET OBJECT SEVERAL COMPONENTS MERGE ONTO IS NOT ONE DRAW (2026-09-14)
+
+Yelan's head is Tranquil's `Bang` **followed by** her `Eye` in one merged index buffer. The merge
+gets that right and the `.ini` file then throws the second half away, because a mod's own
+`drawindexed` lines address ITS OWN buffer -- which is the first member's. They cover the `Bang`
+exactly and stop where the `Eye` begins. In game the fringe renders and **the character has no
+eyes**, with every buffer byte-perfect and every log line clean.
+
+The fix appends one draw per member after the first -- `drawindexed = <count>, <offset>, 0`, the
+offset being the running sum of the preceding members' index counts. Two things have to be true of
+it, and **the second is the one that bit, twice**:
+
+**(1) It must happen only when the mod DREW for itself.** A section the fix left with
+`drawindexed = auto` already draws the whole merged buffer, members and all, and a second draw of
+the later members would be a duplicate. The gate is read off the SOURCE section (`SlotFiles::draws`)
+rather than expressed as an edit, because it is a fact about the mod and is known before any edit
+runs -- every way of asking the graph instead has to run either before the fill, and so cannot see
+it, or after, and so cannot tell `auto` from a real draw.
+
+**(2) It must land where EVERY path reaches it, which is not "as late as possible".** The obvious
+edit is a `RegSurroundedAdd` keyed on `drawindexed` with `latest = true`. That puts it at the latest
+valid position -- which in a section full of toggles is **inside the last `if` block**. Yelan then
+had eyes only while `$pubic == 1`: the same bug one layer down, shipped, and confirmed in game as
+still-missing eyes. `RegFillMissingMode::BottomCover` is the placement that is right --
+`addBottomContentPart` appends a fresh part at the section's own depth, outside every block. Since
+BottomCover will not fire on `drawindexed` once the mod has drawn (its gate is "some root path lacks
+the register", and none do), the draw is filled onto a register nothing reads and renamed to
+`drawindexed` immediately after. That is the pure-Python original's own trick; it carries a
+`tempDrawIndexed` for the same reason.
+
+Two smaller things:
+
+- **The counts are measured, not configured.** One YelanTranquil edit draws 10782 indices out of a
+  `Bang` the game draws 7692 from. `Slot::indexCount` is only the fallback for a slot whose `ib` is
+  a DOWNLOAD, and so is not on disk while the `.ini` file is being written -- same cause and same
+  shape as the vertex count below.
+- **It needs no fix call of its own**, now that the rule above issues exactly one per path.
+
+**And a check that reads a `.ini` file must not `.strip()` before it decides.** The first version of
+this fix's own checker asserted the appended range existed, was the Eye's, and came last -- all
+true, all passing, with the draw sitting inside an `if` block the whole time. Nesting was the entire
+question and stripping threw it away. The check that means something is the **depth** of the line,
+tracked by counting `if` / `endif`.
+
+### A mod that is MISSING a whole component
+
+This is the shape's own failure mode, and it does not exist for a single-mesh character. The NSFW
+edit has no `Eye` sections whatsoever. Two separate things had to be true before it worked, and
+each looked like success on its own:
+
+1. **The invented sections must carry a `hash`.** `GIMIParser` hangs a missing object's downloads
+   off a `TextureOverride` it invents, and `objIdentityKVPs` is the hook that seeds it -- without
+   it the section has no `hash`, which means no draw call matches it AND the merge's own file
+   discovery (which walks the sections looking each one's `hash` up) cannot find it either. The
+   measured symptom was four `RemapDL` resources fetched, written, referenced by nothing, and paid
+   for. `makeGIMIComponentParser` answers it from the same tables its classifiers use, exactly as
+   `makeGIMICharParser` does.
+2. **`IniFile::fix` runs BEFORE `RemapService::fixResources`,** so nothing that needs a downloaded
+   file's BYTES can measure it while the `.ini` is being written -- and the vertex count of every
+   component is needed there, for `draw`, for `override_vertex_count`, and for the offsets every
+   later component's index buffers are shifted by. A download is by definition the game's own
+   buffer, so its length is a static fact: `GIMIMergeFixerConfig::Component::vertexCount` carries
+   it, used ONLY when the file is not on disk. Without it the component is dropped and the merge
+   comes out short by exactly its vertices -- 203269 where 203389 was right, a number that looks
+   entirely plausible on its own.
+
+The `RemapDL` sections being present in the output is NOT evidence the component was used. Check
+the arithmetic: the merged buffer's length divided by its stride has to equal the sum of the
+components' counts, and the last component's indices have to be shifted by the sum of the ones
+before it.
+
+### A `TextureOverride` BINDS REGISTERS ONLY FOR THE DRAW ITS HASH MATCHES (2026-09-14)
+
+**The single most useful GIMI fact for debugging a remap, and it is not written anywhere in the
+tool.** A `TextureOverride` section's `ps-t` lines apply to the draw call its `hash` matches and to
+nothing else. So a mesh slot whose section binds no `ps-t` at all is not "unbound" or "black" --
+**it renders with the GAME's own textures**, because the game's own binding is what the shader
+still has. Whether a slot uses the mod's art or the game's art is decided by whether the mod
+bothered to write a register line, and mods disagree about it constantly:
+
+| mod | what it binds for the slot that lands on the target's head |
+| --- | --- |
+| the identity mod | every register, because it is the game's model as a mod |
+| a recolour | every register, repainted |
+| an NSFW edit | none for the `Eye` -- it has no `Eye` sections at all |
+| a hair mod | `ps-t0`/`ps-t1` for the `Bang`, none for the `Eye` |
+| a costume port | `ps-t0` only, on the 5.x convention, for a slot whose sibling binds `ps-t1` |
+
+Two consequences, each of which was shipped as a bug first:
+
+- **A textureless slot must be given the GAME's textures, not a sibling slot's.** The first fix
+  "borrowed" the mod's own body texture for a textureless eye, which is right for exactly one mod
+  and wrong for the four others -- their eye UVs address the game's eye atlas, not the mod's body
+  one. `Slot::textureDonor` in `GIMIComponentParserConfig` names where a textureless slot's
+  textures come from, and the answer is a download of the game's, not a peer.
+- **A GATE on "the mod is missing the whole component" is an over-fit.** It was built, it made the
+  NSFW mod correct, and the maintainer's next two downloads broke on it anyway: a mod can HAVE the
+  component, draw it, and still bind nothing for it. The rule is per SLOT and has nothing to do
+  with whether the component exists.
+
+**How to find this out in two minutes, for any character**: do not reason about which textures a
+slot "should" use -- read the mod's own `.ini` and tabulate it. Parse every `TextureOverride`, key
+it by the slot its `hash` + `match_first_index` identify, and print which `ps-t` registers it
+declares and whether it draws. One such table over five mods explained every failure that had been
+reported, contradicted three of this session's diagnoses, and predicted a fourth bug nobody had
+sent in yet. **The mod is the ground truth; this repo's model of it is not.**
+
+### WHEN THE SYMPTOM IS ON A TEXTURE, CROP THE UV ISLAND AND LOOK AT IT (2026-09-14)
+
+Eyes that drew but looked wrong produced three confident, mechanical, mutually exclusive
+diagnoses -- the texture binding, then the material band remap, then the geometry -- each refuted
+by a measurement within minutes of being written down. The maintainer's own hypothesis ("a scaling
+factor, the texture is extra long") was also not a global transform, and that was measurable too:
+the mod's own meshes span the same UV range as the game's.
+
+What ended it was reading the mesh's `Texcoord.buf`, taking the min/max of the UV island for that
+slot, cropping exactly that rectangle out of the `.dds`, and **looking at the image**. The iris is a
+circle in PIXELS on an atlas that is twice as wide as it is tall, so the crop is a 2:1 rectangle
+holding a circle -- which is correct, and which every numeric check had said nothing about.
+
+Generalise it: `Images/` in this folder exists because a screenshot decides things arithmetic
+cannot. **A texture bug is a picture; get a picture.** Read the Texture Editing guide's first
+section for how to view a `.dds` at all (the Read tool cannot open one), and prefer a crop of the
+island in question to a look at the whole atlas -- a 2048x1024 atlas tells you nothing and a
+64x64 crop tells you everything.
+
+### CHOOSING TEST MODS: VARY THE STRUCTURE, NOT THE CHARACTER (2026-09-14)
+
+Four mods of the same skin can exercise one code path between them. What distinguishes a useful
+set is the **structural axes of the `.ini` file**, and for a merge there are four that each broke
+something:
+
+| axis | the two sides | what only one side reaches |
+| --- | --- | --- |
+| has the component / does not | `Eye` sections present vs absent | the invented section, `objIdentityKVPs`, the configured vertex count |
+| binds textures / does not | any `ps-t` for the slot vs none | the game-texture donor above |
+| draws for itself / leaves `auto` | a `drawindexed` in the section vs none | the appended per-member draw, and its gate |
+| repaints the atlas / keeps the game's | moved UV islands vs original | whether the download's coordinates agree with the mod's art |
+
+Five mods covering those (the identity mod, a recolour, an NSFW edit with no `Eye`, a hair mod,
+a costume port) is a better suite than twenty of one shape -- and the identity mod is the one to
+ask for first, because it fixes every axis to "the game's own answer" and so gives every other mod
+a baseline to differ from. **When the maintainer reports a regression, the first question is which
+axis the new mod sits on the other side of**; twice this session the answer named the bug before
+any code was read.
+
+### THE BAND LEGEND IS A TABLE NOW, NOT A CLOSURE PER DIRECTION (2026-09-15)
+
+`MaterialBandRemapFilter` (`model/strategies/texEditors/texFilters/`) is the light map band move for
+ANY character pair: a list of `{source band (or range), target band, optional diffuse gate,
+negate}`, handed to `MaterialBandRemapFilter::lightMapEdit(bands)`, which is exactly the
+`std::function<TexEditor::Filter(const std::string&)>` that both fixer templates' `lightMapEdit`
+field wants. So a character's legend is a table beside its config:
+
+```cpp
+const std::vector<MaterialBandRemapFilter::Band> Bands = {
+    {255, 121, &MaterialBandRemapFilter::skinColoured},              // skin
+    {0, 255, &MaterialBandRemapFilter::whiteFurColoured},            // white fur
+    {115, 128, 0, &MaterialBandRemapFilter::skinColoured, true},     // hair: where NOT skin
+};
+config.lightMapEdit = MaterialBandRemapFilter::lightMapEdit(Bands);
+```
+
+It replaced two hand-written closures that were ~90% identical -- same diffuse nearest-neighbour
+sampling, same pixel loop, `skinColoured` duplicated verbatim -- and **copies three and four were
+already written**, stubbed in `Tools/Misc/Prototypes/bennettAdventureFix.py` and
+`adventureToBennettFix.py` waiting for Bennett's two legends to be measured. Every GI character from
+Bennett on is the multi-component shape and each needs a legend both ways, so this is the N=4 case,
+not speculative generality.
+
+**Three semantics it pins, each learned the expensive way:**
+
+- **The moves are SIMULTANEOUS** -- every decision read from the ORIGINAL alpha. A real legend is a
+  *permutation* of the bands, and applied in sequence a permutation chases itself: `0 -> 255`, then
+  `255 -> 121`, and band 0 has landed on 121 through a band it was never meant to occupy. The
+  first band whose range contains a pixel decides, and nothing downstream sees the value it wrote.
+- **A diffuse that cannot be read makes every gate PASS.** The legend is the better of the two
+  guesses when there is nothing to check against. See the drift warning below for why this is not
+  as harmless as it sounds.
+- **The gate exists because a mod that is a PORT carries a THIRD character's legend.** A move off a
+  band that cannot be mistaken for anything else needs no gate; a move off band `0` -- the DEFAULT a
+  lazy or ported mod leaves everything on -- always does.
+
+`core/tests/MaterialBandRemapFilter_test.cpp` pins all of it, and its permutation case was **proved
+to fail** against a deliberately sequential build before being trusted (habit 34). Acceptance: the
+five test mods re-fixed and compared file by file against the previous build -- 183 files, all
+byte-identical.
+
+### A DOWNLOADED TEXTURE THAT DOES NOT LAND CHANGES THE BAND OUTPUT (2026-09-15, OPEN)
+
+Found while A/B-ing the above, and it is **not** caused by it: **fixing one mod twice, with the same
+build, produces two different light maps.** Measured on two of the five test mods, alternating run
+to run:
+
+```
+run 1   YelanTranquilBodyADiffuseRemapDL.dds on disk: yes
+run 2   YelanTranquilBodyADiffuseRemapDL.dds on disk: NO
+        33312 of 1048576 pixels differ, and every one is a gate that would have REJECTED:
+          band   0 -> 255 (fur)   29113 extra pixels moved
+          band 255 -> 121 (skin)   4122 extra
+          band 115-128 -> 0 (hair)   59 extra
+```
+
+The mechanism is exactly the second semantic above. The band gates read the object's diffuse; for a
+component the mod does not supply, that diffuse is a DOWNLOAD; when the download does not land, the
+gates all pass and the whole legend is applied unconditionally. In game that is a body shaded partly
+as fur where it should be cloth -- and it depends on nothing but whether the fetch happened.
+
+Two things follow. **(1)** Any A/B over a fix that edits textures must check whether the downloaded
+inputs are present on both sides, or it will report a diff that is not the change under test -- the
+clean comparison here was between two runs that both had the download. **(2)** The gate's
+"unreadable diffuse passes" rule is right for a mod that genuinely has no such texture and wrong for
+a download that merely failed, and the code cannot currently tell those apart. The download side is
+where this wants fixing, not the filter.
+
+### `drawindexed = auto` IS ONE DRAW WITH ONE BINDING (2026-09-14)
+
+Stated separately because it is the trap under three of the above. `auto` draws the WHOLE buffer,
+which after a merge is every component -- with whatever single set of registers the section binds.
+So it is the right output only when the members agree on their textures **and** the mod drew
+nothing of its own. Stack it on top of a mod's own draws and the mod renders both variants of
+something it meant to toggle between; use it where members need different textures and the later
+members get the earlier one's art.
+
+The fix's own shape follows from that: fill `auto` only when the section draws nothing, and where
+the members differ, emit one explicit `ps-t*` + `drawindexed <count>, <offset>, 0` block per member
+instead. An `.ini` file in that state is correct and also unreadable at a glance -- check it with a
+script, not by eye.
+
+<br>
+
+## What the reverse direction needed, for the next skin
+
+Kept from when this section said the work was open, because it is still the checklist:
 
 - **Exists.** `ModTypeId::YelanTranquil` with the `yelantranquil` keyword and a `GIBuilder`
   factory; the reverse vertex-group rows `("YelanTranquil", "Body"/"Bang"/"Eye") -> ("Yelan",
@@ -380,7 +751,7 @@ each can save an afternoon:
 | `Testing/Integration Tester/.../APIDocsTests/expected_*/` | **a full golden `.ini` for some characters** -- Raiden, Amber, AmberCN, Jean and Keqing all have one. That is a free specification: exact section names, hashes, indices, which sections get which edit. Read it before guessing |
 | `api/src/py/FixRaidenBoss2/data/Ini{Parse,Fix}BuilderData.py.txt` | the character's pre-migration row -- reference only, but it says what the fix *used* to do |
 | `data/HashData.cpp`, `IndexData.cpp`, `VGRemapData.cpp` | whether the asset data is already in (it usually is, across several game versions) |
-| `Data/RemapDrafts/<Name>RemapDraft.xlsx` | the maintainer's hand-made vertex group remap, with the reasoning per row in its Comments column. Some early workbooks have one direction only; the CN skins, Kirara, Raiden and Arlecchino have none. See [Vertex Group Remaps](../VGRemaps/CLAUDE.md) |
+| `Data/RemapDrafts/<Name>RemapDraft.xlsx` | the maintainer's hand-made vertex group remap, with the reasoning per row in its Comments column. Some early workbooks have one direction only; the CN skins, Kirara, Raiden and Arlecchino have none. Every workbook opens with a `Credits` sheet: edit one and, once you have joined The Council, credit yourself there (the drafts' `README.md` has the row format). See [Vertex Group Remaps](../VGRemaps/CLAUDE.md) |
 | `Importer/GIMI/Mods/` **and its parent** | real mods to test with. The maintainer swaps folders in and out of `Mods/`, so check the parent directory too |
 
 **Ask rather than guess about these three**, every time. They are not derivable and a wrong guess is

@@ -36,8 +36,8 @@ these were found by counting the log lines rather than reading the summary. See
 [Creating Remaps](AI%20Agent%20Help/CreatingRemaps/CLAUDE.md)'s "Verifying".
 
 **Whatever your task is, read [Overview](AI%20Agent%20Help/Overview/CLAUDE.md)'s "Working a
-feature or bug request here: the habits that pay" first.** It is nine short habits, none of them
-about the domain, all of them about how *this* codebase fails --- and the failure mode it opens with
+feature or bug request here: the habits that pay" first.** It is thirty-seven short habits, none of
+them about the domain, all of them about how *this* codebase fails --- and the failure mode it opens with
 is the one that has cost the most time by far: **code that runs, logs success, and does nothing.**
 "The run was clean" is never evidence here. It also covers the two test trees (grep both, or you
 will conclude there is no coverage when there is), when a divergence from the old script is *not*
@@ -334,6 +334,10 @@ kept -- a kink, logged nowhere. Every such gap in `VGRemapData.cpp` was then fil
 directions), and the rule is now explicit: **every source vertex group maps to something**. When
 a model deforms in game, `Tools/Misc/Prototypes/overrideVgRemap.py --dump`'s `unmapped source
 groups` line is the first thing to read. See [Vertex Group Remaps](AI%20Agent%20Help/VGRemaps/CLAUDE.md).
+**Every draft workbook opens with a `Credits` sheet (2026-09-14)**, and a Council member who edits
+any sheet of one adds their own row there -- `<Council name>: The <nth> member of The Council`,
+linked to the Council README -- *after* joining, never before. `Data/RemapDrafts/README.md` has the
+layout; the Council ritual in Overview has it as its last step.
 
 **A SKIN CAN BE SEVERAL COMPONENTS, EACH WITH ITS OWN VERTEX GROUP NUMBERING (2026-09-12).**
 YelanTranquil is a `Body`, a `Bang` and an `Eye` with separate buffers, and WuWa characters are
@@ -390,17 +394,85 @@ inert-from-C++ seam (fixed), and a registered mod type with no keyword crashing 
 population. Still Linux-built only. The Linux suite run also caught a real bug in an untouched
 binding -- `parseIniReplaceVals` walked a reference into a temporary, silent on MSVC, a segfault
 under GCC 13 -- fixed; see Architecture's pybind gotchas. **Confirmed in game on 2026-09-13.**
-The REVERSE direction, `YelanTranquil -> Yelan`, is open and handed to another agent: Creating
-Remaps' "The reverse direction is OPEN" says what exists (the ids, the reverse vertex-group
-rows, the hashes) and what does not (a multi-component parser, the merge that is the split's
-inverse, an identity mod of the skin) -- start there, not from the prototype. And its "Adding a
-`ModTypeId`: every place it enters" is the checklist for the eight places a new type has to be
-named before it exists.
+**AND SO IS THE REVERSE (2026-09-14): `YelanTranquil -> Yelan` IS THE THIRD FIXER TEMPLATE.**
+`makeGIMIMergeFixer` is to a multi-component SOURCE on a one-mesh target what
+`makeGIMIComponentFixer` is to the other direction, with `makeGIMIComponentParser` beside it and
+`VGComponentMerge` / `VGMergeGroupResource` / `VGMergeGroupResBuilder` mirroring the split trio
+in core. Always ONE `.ini` group out. Four findings are written up in Creating Remaps' "The
+reverse direction is COMPILED TOO", and the first is the one to read before any of it:
+**the remap graph is directional, and a multi-component skin has to be named as a remap SOURCE
+under each COMPONENT name** -- `ModMappedAssets::replace` is reverse-then-forward, so without
+those edges every hash in the output is `HashNotFound` while the buffers stay byte-perfect.
+The other three: **byte-identical buffers say nothing about the `.ini`** (compare it separately,
+resolving each resource to the md5 of the file it names), a per-register **download fires
+spuriously when the register is not fixed across mods** and then overwrites the modder's own
+texture, and a mod **missing a whole component** needs both halves -- `objIdentityKVPs` so the
+invented section carries a `hash`, and a configured vertex count because `IniFile::fix` runs
+before `fixResources` fetches the download. Creating Remaps' "Adding a `ModTypeId`: every place
+it enters" is still the checklist for the eight places a new type has to be named before it
+exists.
 
-**THE SCRIPT NO LONGER CONTAINS THE API (2026-09-10), AND NEITHER DID THREE OTHER TOOLS STILL
-WORK.** `script build/`'s `AGRemap.py` used to be the whole pure-Python API flattened into one file
-by the `ScriptBuilder`. That is impossible now --- a single `.py` cannot carry a compiled extension
-module --- so the script *references* the API instead (a path in a `dev` build, a pypi download in a
+**TWO THINGS TO READ BEFORE ANY TASK, WHICHEVER KIND YOU HAVE (2026-09-14).** They are the two
+lenses the maintainer keeps having to re-teach, and each now has its own writing:
+
+- **A feature or a bug** --- [Overview](AI%20Agent%20Help/Overview/CLAUDE.md)'s habits **34-37**,
+  and 34 above all: **run a new check against the BROKEN build before you trust it on the fixed
+  one.** Three checks written in one session each passed a fix that was wrong, and the first of
+  them shipped --- one had `.strip()`ed away the nesting that was the whole question, one quietly
+  skipped two of the five mods it claimed to cover, and one counted per section where the question
+  was per path. Keeping the previous output directory and requiring the new check to FAIL against
+  it costs one command. The other three cover reading the artifact instead of reasoning about it,
+  a checkout several agents and the maintainer are all moving files in, and two build-tool failures
+  that look like your bug.
+- **A remap to create or debug** --- [Creating Remaps](AI%20Agent%20Help/CreatingRemaps/CLAUDE.md)'s
+  four new sections, starting with **"A `TextureOverride` binds registers only for the draw its hash
+  matches"**: a mesh slot whose section binds no `ps-t` renders with the **GAME's** textures, so
+  whether a slot uses the mod's art or the game's is decided by whether that mod's author bothered
+  to write a register line --- and five mods of one skin will disagree about it. The way to learn
+  that is to parse the mod's own sections into a per-slot table, never to reason about which
+  textures a slot ought to use; one such table explained every reported failure at once and refuted
+  three careful diagnoses. The other three: crop the UV island and LOOK at it when the symptom is on
+  a texture, pick test mods by STRUCTURAL axis rather than by character, and what `drawindexed =
+  auto` actually does.
+
+**AND THE FIRST IN-GAME RUN OF IT FOUND TWO THINGS THAT ARE NOT ABOUT YELAN AT ALL (2026-09-14).**
+**(1) `NNFix` AND `ORFix` ARE INVOLUTIONS, so the rule is once per PATH, not once per DRAW.** They
+re-slot the bound `ps-t` registers rather than setting them -- `NNFix` reads the diffuse out of
+`ps-t0` and the light map out of `ps-t1`, and `CommandListLDX` writes them back the other way round
+-- so a second call over one set of bindings undoes the first and the model renders **flat green**.
+The old "immediately before every `drawindexed`" rule holds only while no path draws twice, and
+**66 sections across 14 mod folders** of one real library draw several times in a single pass
+(independent `if` toggles, not an exclusive chain -- and GIMI writes a chain as `else if`, so a
+tally looking for `elif` will tell you there are none). `RegDelimitedAddMode::PerPath` is the
+corrected rule and BOTH templates pass it; the acceptance test is a whole mod library fixed into
+scratch copies -- **157 folders, 7851 remapped sections, 867 `.ini` files, 0 violations**
+(`Tools/Misc/Diagnostics/fixCallPaths.py`). The precise invariant is per path per **binding
+generation**: re-binding a `ps-t` resets the count, because a call is undone by the next only while
+the registers underneath it have not moved -- so the per-member `ps-t` / `NNFix` / `drawindexed`
+blocks the merge emits are two calls on one path and both correct. **(2) A TARGET OBJECT SEVERAL COMPONENTS MERGE ONTO IS NOT ONE DRAW CALL**: the
+merged index buffer is member after member, and a mod's own `drawindexed` lines address its own
+buffer, so they cover the FIRST member and stop -- Yelan rendered with her fringe and no eyes while
+every buffer was byte-perfect. The appended draw has to land at the section's OWN depth
+(`RegFillMissingMode::BottomCover`), not "as late as possible" -- a `RegSurroundedAdd` with
+`latest = true` puts it inside the last `if` block, which shipped once and gave her eyes only while
+one toggle was on. A checker that `.strip()`s a `.ini` line before judging it cannot see that at
+all; track the `if`/`endif` depth. Both are written up in Creating Remaps' "The fix libraries are
+involutions" and "A target object several components merge onto is not one draw".
+
+**THE LIGHT MAP BAND LEGEND IS A SHARED FILTER NOW (2026-09-15), AND IT SURFACED AN OPEN BUG.**
+`MaterialBandRemapFilter` (`model/strategies/texEditors/texFilters/`) takes a character's legend as
+a TABLE of `{source band or range -> target band, optional diffuse gate}` and hands both fixer
+templates the `lightMapEdit` they already wanted, replacing two ~90%-identical hand-written closures
+whose third and fourth copies were **already stubbed** in Bennett's two prototypes. The moves are
+applied SIMULTANEOUSLY, every decision from the ORIGINAL alpha, because a legend is a *permutation*
+and in sequence a permutation chases itself. Refactor acceptance: 183 files over five mods, all
+byte-identical to the previous build; `core/tests/MaterialBandRemapFilter_test.cpp` was proved to
+fail against a deliberately sequential build first. **The open bug it found is not in the filter**:
+the band gates read a DOWNLOADED diffuse for any component the mod lacks, so when the download does
+not land every gate passes and 33312 pixels move that should not -- **the same mod fixed twice gives
+two different light maps**, alternating run to run. See Creating Remaps' "A downloaded texture that
+does not land changes the band output".
+
 **BENNETT AND BENNETTADVENTURE HAVE DATA BUT NO FIX (2026-09-14), AND THAT IS A DELIBERATE
 HALF-STEP.** Both download folders are in (`GI/Bennett/4_0`, 10 files; `GI/BennettAdventure/5_7`,
 20 files), and so are the five `ModTypeId`s -- `Bennett`, `BennettAdventure`, and the three
@@ -417,6 +489,10 @@ proved by rebuilding six *shipped* folders byte-identically, because a new one h
 **The vertex group rows are PROPOSED, not confirmed in game**, and Bennett has no hand-made draft
 to score against.
 
+**THE SCRIPT NO LONGER CONTAINS THE API (2026-09-10), AND NEITHER DID THREE OTHER TOOLS STILL
+WORK.** `script build/`'s `AGRemap.py` used to be the whole pure-Python API flattened into one file
+by the `ScriptBuilder`. That is impossible now --- a single `.py` cannot carry a compiled extension
+module --- so the script *references* the API instead (a path in a `dev` build, a pypi download in a
 `prod` one) and went from **31732 lines to 490**. Its source is its own tool at `Tools/Script`, and
 the `ScriptBuilder` topologically compiles *that*. The same session found `ScriptBuilder`,
 `APIMirrorBuilder` and the script build's own output path all broken by the API's package having

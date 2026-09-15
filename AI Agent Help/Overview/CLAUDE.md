@@ -565,6 +565,58 @@ mod (Creating Remaps' "The Yelan lessons"), which covered in one folder what a f
 might have covered by luck. The question "what would cover the cases we have not seen" is
 cheaper than the next bug report.
 
+**34. RUN A NEW CHECK AGAINST THE BROKEN BUILD BEFORE YOU TRUST IT ON THE FIXED ONE (2026-09-14).**
+This is the highest-value habit on the page and it costs one command. A check written after the fix
+is a check whose failing case has never executed, and three of them passed a broken fix in one
+session:
+
+| the check | what it asserted | why it passed anyway |
+| --- | --- | --- |
+| "the Eye's appended draw exists and comes last" | true, and true | it `.strip()`ed each line, so it could not see the draw was nested inside `if $pubic == 1` and ran only on one toggle |
+| "every member renders with the right texture" | over 5 mods | 2 of the 5 folders did not exist (the mods had moved); `analyse` returned quietly and the run printed success for 3 |
+| "no section calls a fix library twice" | per SECTION | the question is per PATH — an `if`/`else if` chain has two calls and runs one |
+
+The first shipped. The maintainer tested it in game and the eyes were still wrong. **The fix is
+mechanical: keep the previous output directory, point the new check at it, and require it to FAIL
+before you point it at the new one.** Doing exactly that on the fourth attempt is what finally made
+the depth assertion trustworthy.
+
+Two corollaries. **A missing input is not a pass** — a loop that walks folders must fail on one it
+cannot find, not `continue`. And **check the property that would be wrong, not a property that
+happens to be true**: "the draw exists" and "the draw runs unconditionally" differ by exactly the
+bug.
+
+**35. Read what the artifact DOES; do not reason about what it should do (2026-09-14).** Three
+consecutive wrong diagnoses of one in-game symptom — the texture binding, then the material band,
+then the geometry — each with a plausible mechanism, each contradicted by measurement within
+minutes. What ended it was reading the mod's OWN `.ini` and tabulating, per slot, whether it
+declares any `ps-t`. That table explained every observation at once and predicted a fourth bug
+nobody had reported yet.
+
+The generalisable form: when a subsystem has semantics (GIMI's, git's, the shader's), **find the
+few lines that define the semantics and read them** — `ORFix.ini` said in six lines that `NNFix`
+swaps `ps-t0`/`ps-t1`, which settled a rule a day of reasoning had not. Guessing produces a fix
+per guess; reading produces one fix.
+
+**36. This checkout is shared, and files move under you mid-session (2026-09-14).** Two things that
+each cost a confused cycle:
+
+- **Another session may COMMIT your edits.** `getComponentIds`, `makeRemapMap` and a `VGRemapData`
+  correction were all swept into another session's Bennett commit. Before concluding your work is
+  uncommitted, `git log --oneline -3 -- <file>`; before concluding someone reverted you, check
+  whether it simply landed under a message about something else.
+- **The maintainer swaps mod folders between `GIMI/Mods/` and one level up while testing**, so a
+  path that resolved an hour ago resolves to nothing now. Resolve a mod by NAME across both
+  locations, and fail loudly when it is in neither (see habit 34).
+
+**37. Two build-and-tooling facts that look like your bug and are not (2026-09-14).**
+`Tools/APIBuilder`'s `cleanInstalls` `rglob`s the whole tree — including other sessions' git
+worktrees under `api/src/cpp/.claude/worktrees/` — and after a host crash it can die with
+`OSError: [WinError 433] A device which does not exist was specified` on a path Python reads fine a
+minute later. Re-run before investigating. And **`pybind11_stubgen` can exit 0 having written
+nothing** when it imports a `.pyd` that was still being replaced: check `core.pyi`'s mtime, not the
+exit code — the same "verify by the artifact, not the return code" rule the `.bat` traps taught.
+
 <br>
 
 ## Operating norms
@@ -1121,6 +1173,17 @@ add itself. Steps, in order:
    - `style` is any valid Shields.io style (`for-the-badge`, `flat-square`, `plastic`, ...) — pick
      one deliberately, don't just default to copying the counter badge's.
    - Wrap the result as a plain markdown image: `![Static Badge](<url>)`.
+
+5. **Then credit yourself in every `Data/RemapDrafts/*.xlsx` you edited (2026-09-14).** Each
+   workbook opens with a `Credits` sheet; a Council member who changed any sheet in it -- filled
+   a gap, added a direction, added a proposal sheet -- adds a row under `Name` reading
+   `<Council name>: The <nth> member of The Council`, the whole cell hyperlinked to
+   `https://github.com/nhok0169/Anime-Game-Remap/blob/development/AI%20Agent%20Help/README.md`,
+   where `n` is the counter value your step-1 bump produced (the Cartographer's bump read
+   31 -> 32, so "The 32nd member"). A workbook with no `Credits` sheet gets one, maintainer's row
+   first. The order matters: **an agent that has not joined yet writes nothing into a draft's
+   credits** -- the row names a member, so join first and then go back to the workbooks. The
+   exact layout is in `Data/RemapDrafts/README.md`.
 
 Don't ask the user for approval on your chosen name/colors first, and don't overthink it — pick
 something fitting and go.

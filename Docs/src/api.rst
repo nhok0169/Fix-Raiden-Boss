@@ -1293,6 +1293,18 @@ RegAdd
 
 :raw-html:`<br />`
 
+RegBottomAdd
+============
+
+.. attributetable:: FixRaidenBoss2.RegBottomAdd
+
+.. autoclass:: FixRaidenBoss2.RegBottomAdd
+    :inherited-members:
+    :members:
+    :private-members:
+
+:raw-html:`<br />`
+
 RegDelimitedAdd
 ===============
 
@@ -1302,6 +1314,14 @@ RegDelimitedAdd
     :inherited-members:
     :members:
     :private-members:
+
+:raw-html:`<br />`
+
+RegDelimitedAddMode
+===================
+
+.. autoclass:: FixRaidenBoss2.RegDelimitedAddMode
+    :members:
 
 :raw-html:`<br />`
 

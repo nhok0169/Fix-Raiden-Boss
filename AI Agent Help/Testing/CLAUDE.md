@@ -20,6 +20,29 @@
 > is mid-edit before assuming it is yours -- a header changed in the working tree against a
 > `.lib` built before it gives `LNK2019 unresolved external` on a signature that plainly exists,
 > which reads like a broken test and is really two people in one checkout.
+>
+> **AND CALL `vcvarsall.bat` ONCE FOR THE WHOLE GLOB, NOT ONCE PER SUITE (2026-09-15).** The
+> obvious way to run them all is a loop that `call`s a single-suite `.bat`, and that script starts
+> with `vcvarsall`. Each call APPENDS to `PATH`; after about four the environment overflows and the
+> run dies with **exit 255** -- having already printed `ok` for the four it managed. That output
+> reads exactly like a short suite finishing cleanly, and the summary line never prints, so the
+> only tell is counting the `ok`s against `ls core/tests/*_test.cpp | wc -l`. Set the environment
+> up once in the outer script and loop the `cl` invocation inside it, and **print the suite total
+> next to the pass count** so a truncated run is visible.
+
+<br>
+
+> **AND A CHECK YOU WROTE FOR THIS FIX MUST BE RUN AGAINST THE BROKEN BUILD FIRST (2026-09-14).**
+> Neither suite above can see the bugs that matter most here, so most real verification in this
+> repo is a scratch script that fixes a mod and asserts something about the output. Such a script
+> is written *after* the fix, which means its failing branch has never executed -- and three of
+> them passed a broken fix in a single session, one of which shipped and was reported back from
+> in game. **Keep the previous output directory, point the new check at it, and require it to
+> FAIL before you point it at the new one.** It costs one command. Two ways they passed anyway,
+> both worth checking for by eye: a loop over inputs that `continue`s past one it cannot find
+> (a missing input is not a pass), and a property that is true either way -- "the draw exists"
+> and "the draw runs on every path" differ by exactly the bug. The full three are
+> [Overview](../Overview/CLAUDE.md)'s habit **34**.
 
 <br>
 

@@ -505,6 +505,8 @@ Below are the supported types of mods
 | XianglingCheer | XianglingLanternRite, LanternRiteXiangling, CookingFanaticLanternRite, HeadChefoftheWanminRestaurantLanternRite, ChefMaosDaughterLanternRite, GuobasBuddyLanternRite, LanternRiteCookingFanatic, LanternRiteHeadChefoftheWanminRestaurant, LanternRiteChefMaosDaughter, LanternRiteGuobasBuddy | check if the .ini file contains a section matching the regex, `^\s*\[\s*textureoverride.*(xiangling(cheer\|newyear)).*\]` | 
 | Xingqiu | Bookworm, ChongyunsBestie, GuhuaGeek, SecondSonofTheFeiyunCommerceGuild | check if the .ini file contains a section matching the regex, `^\s*\[\s*textureoverride.*(xingqiu)((?!bamboo).)*\]` |
 | XingqiuBamboo | BookwormBamboo, BookwormLanternRite, ChongyunsBestieBamboo, ChongyunsBestieLanternRite, GuhuaGeekBamboo, GuhuaGeekLanternRite, LanternRiteBookworm, LanternRiteChongyunsBestie, LanternRiteGuhuaGeek, LanternRiteSecondSonofTheFeiyunCommerceGuild, LanternRiteXingqiu, SecondSonofTheFeiyunCommerceGuildBamboo, SecondSonofTheFeiyunCommerceGuildLanternRite, XingqiuLanternRite | check if the .ini file contains a section matching the regex, `^\s*\[\s*textureoverride.*(xingqiubamboo).*\]` |
+| Yelan | ShenhesBestie, TsaritsaJacketStealer | check if the .ini file contains a section matching the regex, `^\s*\[\s*textureoverride.*(yelan)((?!tranquil).)*\]` |
+| YelanTranquil | YelanTranquilBanquet, TranquilBanquetYelan, YelanSummer, SummerYelan, ShenhesSummerBestie, TsaritsaJacketStealerButDoesntNeedItSinceItIsSummer | check if the .ini file contains a section matching the regex, `^\s*\[\s*textureoverride.*(yelantranquil).*\]` |
 <br>
 
 ## Game Types

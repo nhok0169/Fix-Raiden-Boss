@@ -403,6 +403,13 @@ ModTypeIdTools
 
 :raw-html:`<br />`
 
+RegDelimitedAddMode
+-------------------
+
+.. doxygenenum:: AGRemapCore::RegDelimitedAddMode
+
+:raw-html:`<br />`
+
 RegFillMissingMode
 ------------------
 
@@ -484,6 +491,17 @@ GraphRename
 .. cppattributetable:: AGRemapCore::GraphRename
 
 .. doxygenclass:: AGRemapCore::GraphRename
+    :members:
+    :protected-members:
+
+:raw-html:`<br />`
+
+RegBottomAdd
+------------
+
+.. cppattributetable:: AGRemapCore::RegBottomAdd
+
+.. doxygenclass:: AGRemapCore::RegBottomAdd
     :members:
     :protected-members:
 
@@ -1441,6 +1459,17 @@ InvertAlphaFilter
 .. cppattributetable:: AGRemapCore::InvertAlphaFilter
 
 .. doxygenclass:: AGRemapCore::InvertAlphaFilter
+    :members:
+    :protected-members:
+
+:raw-html:`<br />`
+
+MaterialBandRemapFilter
+-----------------------
+
+.. cppattributetable:: AGRemapCore::MaterialBandRemapFilter
+
+.. doxygenclass:: AGRemapCore::MaterialBandRemapFilter
     :members:
     :protected-members:
 

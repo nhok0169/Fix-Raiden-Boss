@@ -461,6 +461,20 @@ Below are the supported types of mods
        | XingqiuLanternRite
      - | check if the .ini file contains a section matching the regex, 
        | ``^\s*\[\s*textureoverride.*(xingqiubamboo).*\]``
+   * - **Yelan**
+     - | ShenhesBestie,
+       | TsaritsaJacketStealer
+     - | check if the .ini file contains a section matching the regex,
+       | ``^\s*\[\s*textureoverride.*(yelan)((?!tranquil).)*\]``
+   * - **YelanTranquil**
+     - | YelanTranquilBanquet,
+       | TranquilBanquetYelan,
+       | YelanSummer,
+       | SummerYelan,
+       | ShenhesSummerBestie,
+       | TsaritsaJacketStealerButDoesntNeedItSinceItIsSummer
+     - | check if the .ini file contains a section matching the regex,
+       | ``^\s*\[\s*textureoverride.*(yelantranquil).*\]``
 
 
 :raw-html:`<br />`
