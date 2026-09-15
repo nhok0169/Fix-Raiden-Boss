@@ -689,6 +689,18 @@ namespace AGRemapCore {
              */
             static IniParseBuilder::Factory yelan4_0();
 
+            /**
+             * @brief
+             @rst
+             The parser for a 5.7-era YelanTranquil ``.ini`` file :raw-html:`<br />` :raw-html:`<br />`
+
+             The FIRST parser for a skin of SEVERAL components -- a ``Body`` of three draw slots, a
+             ``Bang`` and an ``Eye``, each with its own buffers and its own hashes. See
+             ``data/IniParseData/YelanTranquil/YelanTranquilParser.cpp``
+             @endrst
+             */
+            static IniParseBuilder::Factory yelanTranquil5_7();
+
     };
 
     /**

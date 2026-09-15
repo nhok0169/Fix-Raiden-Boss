@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "AGRemapCore/constants/IniKeywords.h"
+#include "AGRemapCore/constants/RegDelimitedAddMode.h"
 #include "AGRemapCore/model/IniNamingTools.h"
 #include "AGRemapCore/model/iftemplate/IfTemplateRender.h"
 #include "AGRemapCore/model/strategies/iniFixers/GIMIFixer.h"
@@ -999,16 +1000,25 @@ namespace AGRemapCore {
 
                             // NNFix and ORFix are mandatory and keyed on the draw call instead.
                             //
-                            // pathEndOnlyWhenUndelimited: one call immediately before every draw,
-                            // and a single one at the end only for a graph that never draws (the
-                            // shape a character whose fix does not move the draw call has). Without
-                            // it a path that already drew picks up one more call after its last
-                            // draw, and ORFix swaps the diffuse and lightmap registers on every
-                            // call, so that surplus one leaves them swapped.
+                            // PerPath: ONE call per execution path, at the last position before
+                            // every draw on it. These command lists READ the bound ps-t registers
+                            // and write them back re-slotted, so a second call over the same
+                            // bindings undoes the first -- NNFix reads the diffuse out of ps-t0 and
+                            // the light map out of ps-t1, and CommandListLDX writes the light map
+                            // back to ps-t0 and the diffuse to ps-t1. A section whose draws sit in
+                            // independent `if` blocks issues several in ONE pass, and under the
+                            // per-segment rule every second one rendered with the light map as its
+                            // albedo -- flat green (2026-09-14). It is also what mod authors write
+                            // by hand, and what the pure-Python original preserves by renaming the
+                            // modder's own call out of the way rather than inserting one.
+                            //
+                            // pathEndOnlyWhenUndelimited is left true but is now redundant: "once
+                            // at the end of a path that never draws" is what PerPath already does.
                             auto add = std::make_unique<RegDelimitedAdd<>>(
                                 RegDelimitedAdd<>::Additions{{IniKeywords::Run, path}},
                                 RegDelimitedAdd<>::RegMap{{IniKeywords::DrawIndexed, {}}},
-                                /*pathEndOnlyWhenUndelimited*/ true);
+                                /*pathEndOnlyWhenUndelimited*/ true,
+                                RegDelimitedAddMode::PerPath);
 
                             fixCallAdapters_[entry.first].push_back(
                                 std::make_unique<GraphPartEdit<>>(add.get()));

@@ -121,6 +121,12 @@ namespace AGRemapCore {
 
                 // ===== Yelan (2026-09-12) =====
                 {{"4.0", ModTypeIdTools::getName(ModTypeId::Yelan)}, IniParseBuilderFuncs::yelan4_0()},
+
+                // ===== YelanTranquil (2026-09-14) =====
+                // The first row built by makeGIMIComponentParser rather than makeGIMICharParser: a
+                // mod OF a skin that is several components. Her components' hashes are filed under
+                // their own mod type names, which is why that parser builds one classifier each.
+                {{"5.7", ModTypeIdTools::getName(ModTypeId::YelanTranquil)}, IniParseBuilderFuncs::yelanTranquil5_7()},
             };
         }
     }

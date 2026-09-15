@@ -149,6 +149,10 @@ from .core import GIMICharParserConfig
 from .core import GIMICharFixerConfig
 from .core import makeGIMICharParser
 from .core import makeGIMICharFixer
+from .core import GIMIComponentParserConfig
+from .core import GIMIMergeFixerConfig
+from .core import makeGIMIComponentParser
+from .core import makeGIMIMergeFixer
 from .core import GIMIObjPartFilter
 from .core import RegAssetRemap
 from .core import RegNewVals
@@ -158,7 +162,9 @@ from .core import BaseIniGraphEdit
 from .core import GraphRename
 from .core import RegFillMissing
 from .core import RegSurroundedAdd
+from .core import RegBottomAdd
 from .core import RegDelimitedAdd
+from .core import RegDelimitedAddMode
 from .core import GraphRemove
 from .core import GraphInherit
 from .core import GraphGroupRemap
@@ -355,6 +361,7 @@ __all__ = ["CppListTools", "CppIntTools", "Ranges", "CppTrie", "CppAhoCorasickDF
            "BaseIniPartEdit", "BaseIniGraphPartEdit", "BaseRegEdit", "RegAdd", "RegAssetRemap", "RegNewVals", "RegRemap", "RegRemove",
            "GIMIObjPartFilter", "CppIniNamingTools",
            "GIMICharParserConfig", "GIMICharFixerConfig", "makeGIMICharParser", "makeGIMICharFixer",
+           "GIMIComponentParserConfig", "GIMIMergeFixerConfig", "makeGIMIComponentParser", "makeGIMIMergeFixer",
            "BaseIniGraphEdit", "GraphRename", "RegFillMissing",
            "GraphRemove", "GraphInherit", "GraphGroupRemap", "GraphGroupEdit",
            "BaseResEdit", "ResIdentity", "ResReplace", "ResCreate", "RemapBlendReplace", "TexCreate", "TexReplace", "ResRegCollect", "ResGroupCollect", "BaseIniGraphGroupEdit",
@@ -370,7 +377,7 @@ __all__ = ["CppListTools", "CppIntTools", "Ranges", "CppTrie", "CppAhoCorasickDF
            "BufDataType", "BufElementType", "BufBaseFloat", "BufFloat", "BufFloat16", "BufBaseInt", "BufSignedInt", "BufUnSignedInt", "BufType", "BufUnorm",
            "BufFile", "File", "TextureFile",
            "KeepFirstDict",
-           "RegSurroundedAdd", "RegDelimitedAdd",
+           "RegSurroundedAdd", "RegDelimitedAdd", "RegDelimitedAddMode", "RegBottomAdd",
            "IniFixBuilder",
            "IniParseBuilder",
            "CppBaseIniRemover", "BaseIniRemover", "CppIniRemoveBuilderArgs", "IniRemovalContext", "RemapIniRemover", "GlobalRemapIniRemover", "IniRemoveBuilder",
@@ -401,5 +408,15 @@ __all__ = ["CppListTools", "CppIntTools", "Ranges", "CppTrie", "CppAhoCorasickDF
 try:
     from .core import VGComponentSpec, VGComponentSplitStats, VGComponentBuffers, VGComponentSplit, VGSplitGroupResource, BufReplace
     __all__ += ["VGComponentSpec", "VGComponentSplitStats", "VGComponentBuffers", "VGComponentSplit", "VGSplitGroupResource", "BufReplace"]
+except ImportError:
+    pass
+
+# ----- Added 2026-09-14: the component MERGE, the split's inverse (a mod built for a skin of SEVERAL
+# components, onto a target of one). Guarded for the same reason as the block above.
+try:
+    from .core import (VGMergeComponentSpec, VGComponentMergeStats, VGMergeComponent, VGComponentMerge,
+                       VGMergeComponentFiles, VGMergeObject, VGMergeGroupResource)
+    __all__ += ["VGMergeComponentSpec", "VGComponentMergeStats", "VGMergeComponent", "VGComponentMerge",
+                "VGMergeComponentFiles", "VGMergeObject", "VGMergeGroupResource"]
 except ImportError:
     pass

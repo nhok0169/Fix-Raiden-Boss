@@ -313,6 +313,15 @@ namespace AGRemapCore {
                 {{"1.0", ModTypeIdTools::getName(ModTypeId::Yelan),
                   "6.1", ModTypeIdTools::getName(ModTypeId::YelanTranquilEye)}, IniFixBuilderFuncs::yelanTranquilEye6_1()},
 
+                // ===== YelanTranquil @ toVersion 6.1 (2026-09-14) =====
+                //
+                // ONE row where the direction above needs three: a skin of several components onto
+                // a target of ONE draws through one set of buffer hashes, so the components are
+                // merged rather than split and two source slots landing on one target object become
+                // one draw. See makeGIMIMergeFixer.
+                {{"1.0", ModTypeIdTools::getName(ModTypeId::YelanTranquil),
+                  "6.1", ModTypeIdTools::getName(ModTypeId::Yelan)}, IniFixBuilderFuncs::yelanTranquilToYelan6_1()},
+
                 // ===== Keqing @ toVersion 6.1 =====
                 //
                 // The pair: this one MERGES (Keqing's dress and head onto KeqingOpulent's head)

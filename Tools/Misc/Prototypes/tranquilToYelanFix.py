@@ -762,7 +762,8 @@ def makeFixer(components: List[str], vgRows: Dict[str, dict], skipTextures: bool
         shiftDown = FRB.RegRemap({"ps-t1": ["ps-t0"], "ps-t2": ["ps-t1"]})
         fillDraw = FRB.RegFillMissing("drawindexed", "auto", fillMode = FRB.RegFillMissingMode.BottomCover)
         removeDraw = FRB.RegRemove({"drawindexed": None})
-        addFix = FRB.RegDelimitedAdd([("run", NNFix)], {"drawindexed": []}, pathEndOnlyWhenUndelimited = True)
+        addFix = FRB.RegDelimitedAdd([("run", NNFix)], {"drawindexed": []}, pathEndOnlyWhenUndelimited = True,
+                                    mode = FRB.RegDelimitedAddMode.PerPath)   # ONE call per path: NNFix/ORFix re-slot the ps-t registers, so two undo each other
 
         group: Dict[tuple, list] = {}
         for obj, (component, slot) in rep.items():

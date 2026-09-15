@@ -63,7 +63,8 @@ class PyRegDelimitedAdd: public AGRC::RegDelimitedAdd<std::string, std::string> 
          * @param delimiterRegsObj The registers that delimit the segments, or ``None`` for none
          */
         PyRegDelimitedAdd(py::object additionsObj, py::object delimiterRegsObj,
-                           bool pathEndOnlyWhenUndelimited = false);
+                           bool pathEndOnlyWhenUndelimited = false,
+                           AGRemapCore::RegDelimitedAddMode mode = AGRemapCore::RegDelimitedAddMode::PerSegment);
 };
 
 

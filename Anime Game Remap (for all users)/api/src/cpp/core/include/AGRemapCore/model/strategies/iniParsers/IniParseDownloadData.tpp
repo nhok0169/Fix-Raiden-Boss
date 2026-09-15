@@ -38,6 +38,7 @@ namespace AGRemapCore {
     }
 
 
+
     template <typename K, typename V, typename KeyHash, typename KeyEqual>
     const FileDownload* DownloadData<K, V, KeyHash, KeyEqual>::download() const {
         return download_.get();

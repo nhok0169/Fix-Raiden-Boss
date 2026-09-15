@@ -1,0 +1,1371 @@
+// ##### Credits
+// ===== Anime Game Remap (AG Remap) =====
+// Authors: Albert Gold#2696, NK#1321
+//
+// if you used it to remap your mods pls give credit for "Albert Gold#2696" and "Nhok0169"
+// Special Thanks:
+//   nguen#2011 (for support)
+//   SilentNightSound#7430 (for internal knowdege so wrote the blendCorrection code)
+//   HazrateGolabi#1364 (for being awesome, and improving the code)
+// ##### EndCredits
+
+#include "AGRemapCore/data/IniFixData/GIMIMergeFixer.h"
+
+#include <algorithm>
+#include <filesystem>
+#include <memory>
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "AGRemapCore/constants/IniKeywords.h"
+#include "AGRemapCore/constants/RegDelimitedAddMode.h"
+#include "AGRemapCore/constants/RegFillMissingMode.h"
+#include "AGRemapCore/model/IniNamingTools.h"
+#include "AGRemapCore/tools/TextTools.h"
+#include "AGRemapCore/model/VGRemap.h"
+#include "AGRemapCore/model/buffers/VGComponentMerge.h"
+#include "AGRemapCore/model/files/IniFile.h"
+#include "AGRemapCore/model/iftemplate/IfTemplateRender.h"
+#include "AGRemapCore/model/iniresources/VGMergeGroupResource.h"
+#include "AGRemapCore/model/strategies/ModType.h"
+#include "AGRemapCore/model/strategies/iniFixers/GIMIFixer.h"
+#include "AGRemapCore/model/strategies/iniFixers/GIMIObjPartFilter.h"
+#include "AGRemapCore/model/strategies/iniFixers/IniFileFixContext.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphEdits/GraphRename.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphEdits/RegBottomAdd.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphEdits/RegDelimitedAdd.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphEdits/RegFillMissing.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/GraphGroupEdit.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/GraphGroupPartEdits.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/GraphGroupRemap.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/ResGroupCollect.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/ResRegCollect.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/VGMergeGroupResBuilder.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/resEdits/BufEdit.h"
+#include "AGRemapCore/model/strategies/iniFixers/graphGroupEdits/resEdits/TexEditorEdit.h"
+#include "AGRemapCore/model/strategies/iniFixers/regEdits/RegAssetRemap.h"
+#include "AGRemapCore/model/strategies/iniFixers/regEdits/RegNewVals.h"
+#include "AGRemapCore/model/strategies/iniFixers/regEdits/RegRemap.h"
+#include "AGRemapCore/model/strategies/iniFixers/regEdits/RegRemove.h"
+#include "AGRemapCore/model/strategies/iniParsers/BaseIniParser.h"
+#include "AGRemapCore/tools/StringTools.h"
+#include "AGRemapCore/tools/files/FileService.h"
+
+
+namespace AGRemapCore {
+    namespace {
+        using Fixer = GIMIFixer<>;
+        using ModObj = Fixer::ModObj;
+        using ObjGroupEdit = GraphGroupEdit<>;
+        using GraphId = BaseIniGraphGroupEdit<>::GraphId;
+        using Collector = ResRegCollect<>;
+        using GroupCollector = ResGroupCollect<>;
+        using ObjFilter = GIMIObjPartFilter<>;
+        using Template = IfTemplate<std::string, std::string>;
+
+        // NOT named 'GroupRemap' -- GIMIFixer inherits an alias of that name, which would win.
+        using SlotRemap = GraphGroupRemap<>;
+
+        const ModObj FaceObj{"", "face"};
+
+        const std::string IbHashKey = "ib";
+        const std::string PositionHashKey = "position_vb";
+        const std::string BlendHashKey = "blend_vb";
+        const std::string TexcoordHashKey = "texcoord_vb";
+        const std::string FaceDiffuseHashKey = "tex_face_diffuse";
+
+        const std::string DiffuseReg = "ps-t0";
+        const std::string LightMapReg = "ps-t1";
+        const std::string NormalShiftedDiffuseReg = "ps-t1";
+        const std::string NormalShiftedLightMapReg = "ps-t2";
+
+        const std::string OverrideByteStride = "override_byte_stride";
+        const std::string OverrideVertexCount = "override_vertex_count";
+        const std::string DrawIndexedAuto = "auto";
+
+        const std::size_t BlendStride = 32;
+
+        // Every ib this fix reads and writes is DXGI_FORMAT_R32_UINT -- four bytes an index. The
+        // merge's own output declares that format, and so does every source mod measured.
+        const std::size_t IbIndexStride = 4;
+
+
+
+        std::pair<std::string, RegRemap<>::KeyRemapValue> renameRule(const std::string& from, std::vector<std::string> to) {
+            RemapList<std::string, std::string> targets;
+            for (std::string& reg : to) {
+                targets.push_back(std::move(reg));
+            }
+
+            return {from, RegRemap<>::KeyRemapValue(std::move(targets))};
+        }
+
+
+        BaseResEdit<>::ResEditConfig makeResEditConfig() {
+            return BaseResEdit<>::ResEditConfig{
+                IniKeywords::Filename,
+                [](const std::string& value) { return value; },
+                [](const std::string& file) { return file; }
+            };
+        }
+
+
+        std::optional<std::string> firstVal(const Template& tpl, const std::string& key) {
+            for (const auto& part : tpl.parts()) {
+                const auto* content = dynamic_cast<const Template::ContentPart*>(part.get());
+                if (content == nullptr) {
+                    continue;
+                }
+
+                std::vector<std::string> vals = content->getVals(key);
+                if (!vals.empty()) {
+                    return std::string(StringTools::strip(vals.front()));
+                }
+            }
+
+            return std::nullopt;
+        }
+
+
+        std::size_t fileSize(const std::string& path) {
+            if (path.empty()) {
+                return 0;
+            }
+
+            std::error_code ec;
+            auto size = std::filesystem::file_size(FileService::strToPath(path), ec);
+            return ec ? 0 : static_cast<std::size_t>(size);
+        }
+
+
+        // ---- what one source SLOT's section names ----
+        struct SlotFiles {
+            std::string ib;
+            std::string diffuse;
+            std::string lightMap;
+            std::string diffuseRes;      // the .ini resource NAME, for a borrowing slot to reference
+            std::string lightMapRes;
+            bool found = false;
+
+            // How many indices this slot's ib holds -- measured, or the config's game-model
+            // fallback when the file is a download that is not on disk yet.
+            long long indexCount = 0;
+
+            // Whether the mod's own section for this slot issues ANY drawindexed. A mod that draws
+            // for itself has expressed what it wants drawn, and `drawindexed = auto` on top of that
+            // always draws something twice -- see where fillAdapter_ is applied.
+            bool draws = false;
+        };
+
+        // ---- what one source COMPONENT's sections name ----
+        struct ComponentFiles {
+            std::string position;
+            std::string blend;
+            std::string texcoord;
+            std::size_t vertexCount = 0;
+            std::size_t positionStride = 0;
+            std::unordered_map<std::string, SlotFiles> slots;     // by slot name
+        };
+
+
+        /**
+         * A mod of a skin of SEVERAL components, fixed onto a target of one.
+         *
+         * The inverse of GIMIComponentFixerImpl, and simpler in one structural way: there is always
+         * exactly ONE .ini group. The target draws through one set of buffer hashes, so the
+         * components' buffers become one merged set, and two source slots landing on one target
+         * object are concatenated into a single draw rather than spilling into a second file.
+         */
+        class GIMIMergeFixerImpl: public Fixer {
+            public:
+                GIMIMergeFixerImpl(BaseIniParser<>* parser, const std::string& toModName,
+                                    std::optional<int> modTypeId, GIMIMergeFixerConfig config):
+                    Fixer(parser, nullptr, {},
+                           toModName.empty() ? std::optional<std::vector<std::string>>(std::nullopt)
+                                             : std::optional<std::vector<std::string>>({toModName}),
+                           nullptr, makeConfig()),
+                    ctx_(parser != nullptr ? parser->getIniFile() : nullptr, modTypeId), toModName_(toModName),
+                    config_(std::move(config)) {
+                    this->setCtx(&ctx_);
+
+                    if (!readFiles()) {
+                        return;
+                    }
+
+                    resolveTargets();
+                    if (drawn_.empty()) {
+                        return;
+                    }
+
+                    buildSlotRemap();
+                    buildBorrowEdits();
+                    buildTexEdits();
+                    buildBufferCollect();
+                    buildIndexEdits();
+                    buildEdits();
+
+                    this->graphGroupEdits.clear();
+
+                    // BEFORE the slot remap, which is the point: these read a MEMBER's own graph,
+                    // and the remap folds those into the target's.
+                    for (auto& edit : preRemapTexGroupEdits_) {
+                        this->graphGroupEdits.push_back(edit);
+                    }
+
+                    this->graphGroupEdits.push_back(slotRemap_.get());
+
+                    if (borrowEdit_ != nullptr) {
+                        this->graphGroupEdits.push_back(borrowEdit_.get());
+                    }
+
+                    for (auto& edit : texGroupEdits_) {
+                        this->graphGroupEdits.push_back(edit);
+                    }
+
+                    if (bufferCollect_ != nullptr) {
+                        this->graphGroupEdits.push_back(bufferCollect_.get());
+                    }
+
+                    this->graphGroupEdits.push_back(&indexEdits_);
+                    this->graphGroupEdits.push_back(&mainEdits_);
+
+                    // Nothing hidden: source and target are different models with different hashes.
+                    this->copyPreamble = config_.copyPreamble;
+                }
+
+            protected:
+                // GIMIFixer's own hands every group edit a nullptr .ini file, which stops a collect
+                // ever building anything -- see GIMIComponentFixerImpl.
+                void applyGraphGroupEdits(const std::string& modName) override {
+                    if (this->graphGroups() == nullptr) {
+                        return;
+                    }
+
+                    for (Fixer::GroupEdit* edit : this->graphGroupEdits) {
+                        if (edit != nullptr) {
+                            edit->editFromIni(*this->graphGroups(), ctx_.getIniFile(), nullptr, modName);
+                        }
+                    }
+                }
+
+            private:
+                // ---- the mod's files, per SOURCE component ----
+                //
+                // Each component's hashes are filed under the COMPONENT's mod type name, so the
+                // reverse lookup is filtered to that rather than to the skin's own name -- the same
+                // asymmetry the parser has, and for the same reason.
+                bool readFiles() {
+                    IniFile* iniFile = ctx_.getIniFile();
+                    Hashes* hashes = ctx_.modTypeHashes();
+                    if (iniFile == nullptr || hashes == nullptr) {
+                        return false;
+                    }
+
+                    const std::optional<Version> version = ctx_.version();
+                    const std::string folder = iniFile->getFolder();
+                    const auto& templates = iniFile->getIfTemplates();
+
+                    auto resourceOf = [&](const std::optional<std::string>& resource) -> std::string {
+                        if (!resource.has_value() || resource->empty()
+                                || StringTools::equalsIgnoreCase(*resource, IniKeywords::Null)) {
+                            return "";
+                        }
+                        return *resource;
+                    };
+
+                    auto fileOf = [&](const std::string& resource) -> std::string {
+                        if (resource.empty()) {
+                            return "";
+                        }
+
+                        auto it = templates.find(resource);
+                        if (it == templates.end() || it->second == nullptr) {
+                            return "";
+                        }
+
+                        std::optional<std::string> file = firstVal(*it->second, IniKeywords::Filename);
+                        if (!file.has_value() || file->empty()) {
+                            return "";
+                        }
+
+                        return FileService::absPathOfRelPath(*file, folder);
+                    };
+
+                    for (const GIMIMergeFixerConfig::Component& component : config_.components) {
+                        ComponentFiles files;
+
+                        for (const auto& entry : templates) {
+                            if (entry.second == nullptr) {
+                                continue;
+                            }
+
+                            const Template& tpl = *entry.second;
+                            std::optional<std::string> hashVal = firstVal(tpl, IniKeywords::Hash);
+                            if (!hashVal.has_value()) {
+                                continue;
+                            }
+
+                            std::optional<std::vector<std::string>> hashKey = hashes->getKey(
+                                StringTools::toLower(*hashVal), version,
+                                std::vector<std::optional<std::string>>{componentModTypeName(component.name), std::nullopt}, false);
+                            if (!hashKey.has_value() || hashKey->empty()) {
+                                continue;
+                            }
+
+                            const std::string& hashType = hashKey->back();
+                            if (hashType == PositionHashKey) {
+                                if (files.position.empty()) {
+                                    files.position = fileOf(resourceOf(firstVal(tpl, IniKeywords::Vb0)));
+                                }
+                            } else if (hashType == BlendHashKey) {
+                                if (files.blend.empty()) {
+                                    files.blend = fileOf(resourceOf(firstVal(tpl, IniKeywords::Vb1)));
+                                }
+                            } else if (hashType == TexcoordHashKey) {
+                                if (files.texcoord.empty()) {
+                                    files.texcoord = fileOf(resourceOf(firstVal(tpl, IniKeywords::Vb1)));
+                                }
+                            } else if (hashType == FaceDiffuseHashKey) {
+                                if (faceFile_.empty()) {
+                                    faceFile_ = fileOf(resourceOf(firstVal(tpl, DiffuseReg)));
+                                }
+                            } else if (hashType == IbHashKey) {
+                                std::optional<std::string> index = firstVal(tpl, IniKeywords::MatchFirstIndex);
+                                if (!index.has_value()) {
+                                    continue;
+                                }
+
+                                for (const GIMIMergeFixerConfig::Slot& slot : component.slots) {
+                                    if (slot.index != *index || files.slots.count(slot.name) != 0) {
+                                        continue;
+                                    }
+
+                                    // The layout is read off the SECTION, not assumed from the
+                                    // config: a mod may bind its objects differently, and a slot
+                                    // with a ps-t2 is the three-register normal-map layout.
+                                    const bool normalMap = !resourceOf(firstVal(tpl, "ps-t2")).empty();
+                                    SlotFiles slotFiles;
+                                    slotFiles.found = true;
+                                    slotFiles.ib = fileOf(resourceOf(firstVal(tpl, IniKeywords::Ib)));
+                                    slotFiles.draws = firstVal(tpl, IniKeywords::DrawIndexed).has_value();
+
+                                    // Measured first, config second -- see Slot::indexCount. Only
+                                    // a target object several slots land on ever reads this.
+                                    slotFiles.indexCount =
+                                        static_cast<long long>(fileSize(slotFiles.ib) / IbIndexStride);
+                                    if (slotFiles.indexCount == 0) {
+                                        slotFiles.indexCount = slot.indexCount;
+                                    }
+                                    slotFiles.diffuseRes = resourceOf(firstVal(tpl, normalMap ? NormalShiftedDiffuseReg : DiffuseReg));
+                                    slotFiles.lightMapRes = resourceOf(firstVal(tpl, normalMap ? NormalShiftedLightMapReg : LightMapReg));
+                                    slotFiles.diffuse = fileOf(slotFiles.diffuseRes);
+                                    slotFiles.lightMap = fileOf(slotFiles.lightMapRes);
+                                    normalMap_[key(component.name, slot.name)] = normalMap;
+                                    files.slots[slot.name] = std::move(slotFiles);
+                                }
+                            }
+                        }
+
+                        files.vertexCount = fileSize(files.blend) / BlendStride;
+
+                        // Nothing on disk yet -- this component is one the mod does not have, and
+                        // its buffers are downloads the service has not fetched. Fall back to the
+                        // game model's own count; see Component::vertexCount. Without this the
+                        // component is dropped by resolveTargets and the merge comes out short by
+                        // exactly its vertices, with its downloads written, referenced by nothing
+                        // and paid for.
+                        if (files.vertexCount == 0 && component.vertexCount > 0) {
+                            files.vertexCount = static_cast<std::size_t>(component.vertexCount);
+                        }
+
+                        if (files.vertexCount != 0) {
+                            const std::size_t positionSize = fileSize(files.position);
+                            if (positionSize != 0) {
+                                files.positionStride = positionSize / files.vertexCount;
+                            }
+                        }
+
+                        files_[component.name] = std::move(files);
+                    }
+
+                    // A slot with no textures of its own borrows another's -- see Slot::borrowFrom.
+                    for (const GIMIMergeFixerConfig::Component& component : config_.components) {
+                        for (const GIMIMergeFixerConfig::Slot& slot : component.slots) {
+                            SlotFiles* files = slotFiles(component.name, slot.name);
+                            if (files == nullptr || !files->diffuseRes.empty() || !files->lightMapRes.empty()
+                                    || slot.borrowFrom.empty()) {
+                                continue;
+                            }
+
+                            const std::size_t sep = slot.borrowFrom.find(';');
+                            if (sep == std::string::npos) {
+                                continue;
+                            }
+
+                            SlotFiles* donor = slotFiles(slot.borrowFrom.substr(0, sep), slot.borrowFrom.substr(sep + 1));
+                            if (donor == nullptr) {
+                                continue;
+                            }
+
+                            files->diffuse = donor->diffuse;
+                            files->diffuseRes = donor->diffuseRes;
+                            files->lightMap = donor->lightMap;
+                            files->lightMapRes = donor->lightMapRes;
+                            // Added in the target's own layout, so nothing to shift afterwards.
+                            normalMap_[key(component.name, slot.name)] = false;
+                            borrowed_.push_back({component.name, slot.name});
+                        }
+                    }
+
+                    return !files_.empty();
+                }
+
+                // ---- which target object each source slot lands on, and who represents it ----
+                void resolveTargets() {
+                    for (const GIMIMergeFixerConfig::Component& component : config_.components) {
+                        const ComponentFiles* files = componentFiles(component.name);
+                        if (files == nullptr || files->vertexCount == 0) {
+                            continue;
+                        }
+
+                        mergeOrder_.push_back(component.name);
+                        offsets_[component.name] = totalVertices_;
+                        totalVertices_ += files->vertexCount;
+                        if (positionStride_ == 0 && files->positionStride != 0) {
+                            positionStride_ = files->positionStride;
+                        }
+
+                        for (const GIMIMergeFixerConfig::Slot& slot : component.slots) {
+                            if (files->slots.count(slot.name) == 0) {
+                                continue;
+                            }
+
+                            if (std::find(drawn_.begin(), drawn_.end(), slot.to) == drawn_.end()) {
+                                drawn_.push_back(slot.to);
+                                representative_[slot.to] = {component.name, slot.name};
+                            }
+
+                            members_[slot.to].push_back({component.name, slot.name});
+                        }
+                    }
+
+                    // The target's draw order, not the source's -- the .ini's sections come out in
+                    // the order the objects are listed.
+                    std::vector<std::string> ordered;
+                    for (const std::string& obj : config_.targetObjs) {
+                        if (std::find(drawn_.begin(), drawn_.end(), obj) != drawn_.end()) {
+                            ordered.push_back(obj);
+                        }
+                    }
+                    drawn_ = std::move(ordered);
+                }
+
+                // Do this object's members disagree about which textures they read? One section
+                // binds one set, so a disagreement is what forces a draw per member.
+                bool membersDiffer(const std::string& obj) {
+                    auto membersIt = members_.find(obj);
+                    auto repIt = representative_.find(obj);
+                    if (membersIt == members_.end() || repIt == representative_.end()) {
+                        return false;
+                    }
+
+                    const SlotFiles* repFiles = slotFiles(repIt->second.first, repIt->second.second);
+                    if (repFiles == nullptr) {
+                        return false;
+                    }
+
+                    for (const auto& member : membersIt->second) {
+                        const SlotFiles* files = slotFiles(member.first, member.second);
+                        if (files == nullptr) {
+                            continue;
+                        }
+
+                        if (files->diffuseRes != repFiles->diffuseRes
+                                || files->lightMapRes != repFiles->lightMapRes) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+
+                static std::string key(const std::string& component, const std::string& slot) {
+                    return component + ";" + slot;
+                }
+
+                std::string componentModTypeName(const std::string& component) const {
+                    // The skin's own name plus the component, which is how ModTypeId names them.
+                    return ctx_.modTypeName().value_or("") + component;
+                }
+
+                ComponentFiles* componentFiles(const std::string& component) {
+                    auto it = files_.find(component);
+                    return it == files_.end() ? nullptr : &it->second;
+                }
+
+                const ComponentFiles* componentFiles(const std::string& component) const {
+                    auto it = files_.find(component);
+                    return it == files_.end() ? nullptr : &it->second;
+                }
+
+                SlotFiles* slotFiles(const std::string& component, const std::string& slot) {
+                    ComponentFiles* files = componentFiles(component);
+                    if (files == nullptr) {
+                        return nullptr;
+                    }
+
+                    auto it = files->slots.find(slot);
+                    return it == files->slots.end() ? nullptr : &it->second;
+                }
+
+                const SlotFiles* slotFiles(const std::string& component, const std::string& slot) const {
+                    const ComponentFiles* files = componentFiles(component);
+                    if (files == nullptr) {
+                        return nullptr;
+                    }
+
+                    auto it = files->slots.find(slot);
+                    return it == files->slots.end() ? nullptr : &it->second;
+                }
+
+                // ---- 1. the graphs onto the target's, all in ONE .ini file ----
+                void buildSlotRemap() {
+                    SlotRemap::RemapList remap;
+                    const SlotRemap::RenameFunc keepName = [](const std::string& name) { return name; };
+                    const std::string& skeleton = mergeOrder_.front();
+
+                    for (const GIMIMergeFixerConfig::Component& component : config_.components) {
+                        const bool isSkeleton = (component.name == skeleton);
+
+                        for (const char* kind : {"ib", "blend", "position", "texcoord", "other"}) {
+                            std::vector<SlotRemap::RemapTarget> targets;
+                            if (isSkeleton) {
+                                targets.emplace_back(GraphId(0, "", kind), keepName);
+                            }
+                            remap.emplace_back(GraphId(0, component.name, kind), std::move(targets));
+                        }
+
+                        for (const GIMIMergeFixerConfig::Slot& slot : component.slots) {
+                            std::vector<SlotRemap::RemapTarget> targets;
+                            auto it = representative_.find(slot.to);
+                            if (it != representative_.end() && it->second.first == component.name
+                                    && it->second.second == slot.name) {
+                                targets.emplace_back(GraphId(0, "", slot.to));
+                            }
+                            remap.emplace_back(GraphId(0, component.name, slot.name), std::move(targets));
+                        }
+                    }
+
+                    std::vector<SlotRemap::RemapTarget> faceTargets;
+                    if (!config_.faceReg.empty()) {
+                        faceTargets.emplace_back(GraphId(0, FaceObj.first, FaceObj.second), keepName);
+                    }
+                    remap.emplace_back(GraphId(0, FaceObj.first, FaceObj.second), std::move(faceTargets));
+
+                    slotRemap_ = std::make_unique<SlotRemap>(std::move(remap));
+                }
+
+                // ---- 2. a borrowing slot gets its donor's registers ADDED, before any collect ----
+                void buildBorrowEdits() {
+                    if (borrowed_.empty()) {
+                        return;
+                    }
+
+                    std::vector<ObjGroupEdit::IniEdits> iniEdits(1);
+                    bool any = false;
+
+                    for (const auto& entry : borrowed_) {
+                        auto it = representative_.end();
+                        for (auto candidate = representative_.begin(); candidate != representative_.end(); ++candidate) {
+                            if (candidate->second.first == entry.first && candidate->second.second == entry.second) {
+                                it = candidate;
+                                break;
+                            }
+                        }
+                        if (it == representative_.end()) {
+                            continue;
+                        }
+
+                        const SlotFiles* files = slotFiles(entry.first, entry.second);
+                        if (files == nullptr || files->diffuseRes.empty() || files->lightMapRes.empty()) {
+                            continue;
+                        }
+
+                        // BEFORE THE FIRST DRAW ON EVERY PATH, which a plain append is not.
+                        //
+                        // This used to be a RegNewVals with addNewKVPs, and that puts the bindings at
+                        // the END of the part -- fine while a borrowing slot's section only declares
+                        // an ib and lets the fix supply `drawindexed = auto` at the bottom, which is
+                        // every mod this met until one turned up whose Bang declares an ib, no
+                        // textures, and its own literal draw. The bindings then landed AFTER that
+                        // draw and the hair rendered with whatever the previous draw had left bound
+                        // (2026-09-14).
+                        //
+                        // A texture binding has the same placement rule as the fix call that follows
+                        // it -- once per path, ahead of every draw on that path -- so it uses the
+                        // same machinery. Ordered before addFixCall_ so that NNFix, placed by the
+                        // same rule, ends up between these registers and the draw.
+                        auto edit = std::make_unique<RegDelimitedAdd<>>(
+                            RegDelimitedAdd<>::Additions{{DiffuseReg, files->diffuseRes},
+                                                          {LightMapReg, files->lightMapRes}},
+                            RegDelimitedAdd<>::RegMap{{IniKeywords::DrawIndexed, {}}},
+                            /*pathEndOnlyWhenUndelimited*/ true,
+                            RegDelimitedAddMode::PerPath);
+                        auto adapter = std::make_unique<GraphPartEdit<>>(edit.get());
+
+                        iniEdits[0].edits[ModObj("", it->first)] = {adapter.get()};
+                        iniEdits[0].trackKeys[ModObj("", it->first)] = false;
+
+                        borrowAdapters_.push_back(std::move(adapter));
+                        borrowRegEdits_.push_back(std::move(edit));
+                        any = true;
+                    }
+
+                    if (any) {
+                        borrowEdit_ = std::make_unique<ObjGroupEdit>(std::move(iniEdits), false);
+                    }
+                }
+
+                // ---- 3. the light map bands, at the register the SOURCE holds them in ----
+                void buildTexEdits() {
+                    if (!config_.lightMapEdit) {
+                        return;
+                    }
+
+                    for (const std::string& obj : drawn_) {
+                        auto it = representative_.find(obj);
+                        if (it == representative_.end()) {
+                            continue;
+                        }
+
+                        const SlotFiles* files = slotFiles(it->second.first, it->second.second);
+                        if (files == nullptr || files->lightMapRes.empty()) {
+                            continue;
+                        }
+
+                        TexEditor::Filter filter = config_.lightMapEdit(files->diffuse);
+                        if (!filter) {
+                            continue;
+                        }
+
+                        const bool normalMap = hasNormalMap(it->second.first, it->second.second);
+                        const std::string reg = normalMap ? NormalShiftedLightMapReg : LightMapReg;
+
+                        auto replace = std::make_unique<TexEditorReplace<>>(
+                            GraphId(0, "", obj + "RemapTexLightMap"),
+                            TexEditor({filter}, config_.compressTextures, config_.mipmaps), makeResEditConfig(),
+                            "resourceRemapTexEdit", std::string("LightMap"));
+
+                        auto collect = std::make_unique<Collector>();
+                        collect->srcRegs = {{GraphId(0, "", obj), reg}};
+                        collect->resEdits = {{"lightMap", replace.get()}};
+
+                        texGroupEdits_.push_back(collect.get());
+                        texReplaces_.push_back(std::move(replace));
+                        texCollects_.push_back(std::move(collect));
+                    }
+
+                    buildMemberTexEdits();
+                }
+
+                // ---- 3b. and the band edit for a member that brought its OWN light map ----
+                //
+                // The loop above edits one light map per target object, found through that object's
+                // graph and its register. A merged object can carry a second: a component the mod
+                // does not have is downloaded whole and uses the GAME's textures, which are still in
+                // the SOURCE skin's band space and need the same remap as everything else. Without
+                // it the eye whites keep Tranquil's band 0, which on Yelan is her hair.
+                //
+                // Collected from the MEMBER's own graph rather than the target's, because a target
+                // graph holds one register per name and the merged section now binds `ps-t1` twice.
+                // That graph only exists before slotRemap_ folds the members into the target, which
+                // is why these edits are applied ahead of it -- see the graphGroupEdits order.
+                void buildMemberTexEdits() {
+                    for (const std::string& obj : drawn_) {
+                        auto membersIt = members_.find(obj);
+                        auto repIt = representative_.find(obj);
+                        if (membersIt == members_.end() || repIt == representative_.end()) {
+                            continue;
+                        }
+
+                        const SlotFiles* repFiles = slotFiles(repIt->second.first, repIt->second.second);
+
+                        for (const auto& member : membersIt->second) {
+                            if (member == repIt->second) {
+                                continue;
+                            }
+
+                            const SlotFiles* files = slotFiles(member.first, member.second);
+                            if (files == nullptr || files->lightMapRes.empty() || repFiles == nullptr
+                                    || files->lightMapRes == repFiles->lightMapRes) {
+                                continue;
+                            }
+
+                            TexEditor::Filter filter = config_.lightMapEdit(files->diffuse);
+                            if (!filter) {
+                                continue;
+                            }
+
+                            const bool normalMap = hasNormalMap(member.first, member.second);
+                            const std::string reg = normalMap ? NormalShiftedLightMapReg : LightMapReg;
+
+                            auto replace = std::make_unique<TexEditorReplace<>>(
+                                GraphId(0, member.first, member.second + "RemapTexLightMap"),
+                                TexEditor({filter}, config_.compressTextures, config_.mipmaps), makeResEditConfig(),
+                                "resourceRemapTexEdit", std::string("LightMap"));
+
+                            auto collect = std::make_unique<Collector>();
+                            collect->srcRegs = {{GraphId(0, member.first, member.second), reg}};
+                            collect->resEdits = {{"lightMap", replace.get()}};
+
+                            preRemapTexGroupEdits_.push_back(collect.get());
+                            texReplaces_.push_back(std::move(replace));
+                            texCollects_.push_back(std::move(collect));
+                        }
+                    }
+                }
+
+                RegPartEdit<>* assetAdapterOf(const std::string& component) {
+                    auto it = assetAdapters_.find(component);
+                    return it == assetAdapters_.end() ? nullptr : it->second.get();
+                }
+
+                bool hasNormalMap(const std::string& component, const std::string& slot) const {
+                    auto it = normalMap_.find(key(component, slot));
+                    return it != normalMap_.end() && it->second;
+                }
+
+                // ---- 4. the buffers, as ONE merged resource group ----
+                void buildBufferCollect() {
+                    const ModType* modType = ctx_.modType();
+                    IniFile* iniFile = ctx_.getIniFile();
+                    if (modType == nullptr || modType->vgRemaps == nullptr) {
+                        return;
+                    }
+
+                    const std::string srcName = ctx_.modTypeName().value_or("");
+                    const std::optional<Version> fromVersion = ctx_.version();
+                    const std::optional<Version> toVersion = (iniFile == nullptr) ? std::nullopt : iniFile->toVersion;
+
+                    VGMergeGroupConfig mergeConfig;
+                    for (const std::string& component : mergeOrder_) {
+                        const ComponentFiles* files = componentFiles(component);
+                        if (files == nullptr) {
+                            return;
+                        }
+
+                        // Each component has a row of its OWN -- that is the whole reason they
+                        // cannot be remapped together.
+                        std::optional<VGRemap> remap = modType->vgRemaps->get(
+                            {srcName, component, toModName_, std::string("")}, {fromVersion, toVersion}, false);
+                        if (!remap.has_value()) {
+                            return;
+                        }
+
+                        VGMergeComponentFiles entry;
+                        entry.spec.name = component;
+                        entry.spec.remap = *remap;
+                        entry.blendPath = files->blend;
+                        entry.positionPath = files->position;
+                        entry.texcoordPath = files->texcoord;
+                        mergeConfig.components.push_back(std::move(entry));
+                    }
+
+                    std::vector<std::string> changedIbs;
+                    for (const std::string& obj : drawn_) {
+                        auto membersIt = members_.find(obj);
+                        auto repIt = representative_.find(obj);
+                        if (membersIt == members_.end() || repIt == representative_.end()) {
+                            continue;
+                        }
+
+                        VGMergeObject object;
+                        const SlotFiles* repFiles = slotFiles(repIt->second.first, repIt->second.second);
+                        object.srcPath = (repFiles == nullptr) ? "" : repFiles->ib;
+
+                        bool changed = membersIt->second.size() > 1;
+                        for (const auto& member : membersIt->second) {
+                            const SlotFiles* files = slotFiles(member.first, member.second);
+                            if (files == nullptr) {
+                                continue;
+                            }
+                            object.members.emplace_back(member.first, files->ib);
+                            if (offsets_[member.first] != 0) {
+                                changed = true;
+                            }
+                        }
+
+                        mergeConfig.objects.push_back(std::move(object));
+                        if (changed) {
+                            changedIbs.push_back(obj);
+                        }
+                    }
+
+                    builder_ = std::make_unique<VGMergeGroupResBuilder>(srcName + toModName_ + "Buffers", mergeConfig,
+                                                                        ctx_.getIniFile());
+
+                    GroupCollector::ByGraph<GroupCollector::ByGraph<std::string>> srcRegs;
+                    GroupCollector::ByGraph<tsl::ordered_map<std::string, GroupCollector::ResEdit*>> resEdits;
+
+                    const std::vector<std::pair<std::string, std::pair<GraphId, std::string>>> kinds = {
+                        {"blend", {GraphId(0, "", "blend"), IniKeywords::Vb1}},
+                        {"position", {GraphId(0, "", "position"), IniKeywords::Vb0}},
+                        {"texcoord", {GraphId(0, "", "texcoord"), IniKeywords::Vb1}}};
+
+                    for (const auto& kind : kinds) {
+                        std::string element = kind.first;
+                        element[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(element[0])));
+                        const GraphId resObj(0, "", "Merged" + element);
+
+                        auto replace = std::make_unique<BufReplace<>>(resObj, makeResEditConfig(), kind.first, std::nullopt);
+                        srcRegs[resObj] = {{kind.second.first, kind.second.second}};
+                        resEdits[resObj] = {{MergeGroupType, replace.get()}};
+                        bufReplaces_.push_back(std::move(replace));
+                    }
+
+                    // Only an index buffer the merge actually MOVES needs replacing: a target object
+                    // drawn by one slot of the component at offset 0 already addresses the right
+                    // vertices.
+                    for (const std::string& obj : changedIbs) {
+                        const GraphId resObj(0, "", obj + "MergedIb");
+                        auto replace = std::make_unique<BufReplace<>>(resObj, makeResEditConfig(), "ib",
+                                                                       std::optional<std::string>(obj));
+                        srcRegs[resObj] = {{GraphId(0, "", obj), IniKeywords::Ib}};
+                        resEdits[resObj] = {{MergeGroupType, replace.get()}};
+                        bufReplaces_.push_back(std::move(replace));
+                    }
+
+                    bufferCollect_ = std::make_unique<GroupCollector>(
+                        std::vector<std::string>{MergeGroupType}, std::move(srcRegs), std::move(resEdits),
+                        tsl::ordered_map<std::string, GroupCollector::GroupedResBuilder*>{{MergeGroupType, builder_.get()}},
+                        [](const std::string& sectionName) { return sectionName; }, 0);
+                }
+
+                // ---- 5. the target's index, windowed to the copied object's own KVPs ----
+                void buildIndexEdits() {
+                    IniFile* iniFile = ctx_.getIniFile();
+                    Indices* indices = ctx_.modTypeIndices();
+                    const std::optional<Version> toVersion = (iniFile == nullptr) ? std::nullopt : iniFile->toVersion;
+
+                    objFilter_ = std::make_unique<ObjFilter>(ctx_.modTypeHashes(), ctx_.modTypeIndices(),
+                                                              ObjFilter::KeySet{IbHashKey}, ctx_.version());
+
+                    std::vector<ObjGroupEdit::IniEdits> iniEdits(1);
+
+                    for (const std::string& obj : drawn_) {
+                        auto repIt = representative_.find(obj);
+                        if (repIt == representative_.end() || indices == nullptr) {
+                            continue;
+                        }
+
+                        // The TARGET's own rows, which a classic character does have -- the
+                        // IndexData note that keeps a skin's slots out of the table is about the
+                        // source side, not this one.
+                        std::optional<std::string> index = indices->get({toModName_, "", obj}, toVersion, false);
+                        if (!index.has_value()) {
+                            continue;
+                        }
+
+                        auto edit = std::make_unique<RegNewVals<>>(
+                            std::vector<std::pair<std::string, RegNewVals<>::NewValSpec>>{
+                                {IniKeywords::MatchFirstIndex, RegNewVals<>::NewValSpec(RegNewVals<>::NewVal(*index))}});
+                        auto adapter = std::make_unique<RegPartEdit<>>(edit.get());
+
+                        // NOT windowed by GIMIObjPartFilter, unlike the split's. That filter exists
+                        // because several of the split's objects share ONE slot graph and an
+                        // unwindowed write would set them all to one index. Here every target object
+                        // has a graph of its own, so there is nothing to tell apart -- and windowing
+                        // would in fact write nothing, since the filter identifies a mod object by
+                        // its Indices row and the source's slots deliberately have none.
+                        const ModObj objKey("", obj);
+                        iniEdits[0].edits[objKey] = {adapter.get()};
+                        iniEdits[0].trackKeys[objKey] = false;
+
+                        indexAdapters_.push_back(std::move(adapter));
+                        indexRegEdits_.push_back(std::move(edit));
+                    }
+
+                    indexEdits_ = ObjGroupEdit(std::move(iniEdits), false);
+                }
+
+                // ---- 6. everything else ----
+                void buildEdits() {
+                    IniFile* iniFile = ctx_.getIniFile();
+                    const std::optional<Version> toVersion = (iniFile == nullptr) ? std::nullopt : iniFile->toVersion;
+                    const std::string toModName = toModName_;
+
+                    renameGraph_ = std::make_unique<GraphRename<>>(
+                        [toModName](const std::string& n) { return IniNamingTools::getRemapFixName(n, toModName); });
+                    renameIbGraph_ = std::make_unique<GraphRename<>>(
+                        [toModName](const std::string& n) { return IniNamingTools::getRemapIbName(n, toModName); });
+                    renameBlendGraph_ = std::make_unique<GraphRename<>>(
+                        [toModName](const std::string& n) { return IniNamingTools::getRemapBlendName(n, toModName); });
+
+                    // ONE hash remap PER COMPONENT, because RegAssetRemap is reverse-then-forward
+                    // and the reverse half is filtered by the source's NAME -- and a multi-component
+                    // skin files each component's hashes under that COMPONENT's mod type name, not
+                    // under its own. Filtered to the skin's name, every lookup misses and every
+                    // section comes out `hash = HashNotFound`, which is what the first compiled run
+                    // did while its BUFFERS were already byte-identical to the prototype's.
+                    for (const std::string& component : mergeOrder_) {
+                        const std::string fromName = componentModTypeName(component);
+                        assetRemaps_[component] = std::make_unique<RegAssetRemap<>>(
+                            std::vector<std::pair<std::string, RegAssetRemap<>::AssetSpec>>{
+                                {IniKeywords::Hash, RegAssetRemap<>::AssetSpec(ctx_.modTypeHashes(), IniKeywords::HashNotFound)}},
+                            toModName_, fromName, ctx_.version(), toVersion);
+                        assetAdapters_[component] = std::make_unique<RegPartEdit<>>(assetRemaps_[component].get());
+                    }
+
+                    // The face's own, lenient remap: every component files the skin's face diffuse
+                    // under its own name with the same value, so the skeleton's serves.
+                    faceAssetRemap_ = std::make_unique<RegAssetRemap<>>(
+                        std::vector<std::pair<std::string, RegAssetRemap<>::AssetSpec>>{
+                            {IniKeywords::Hash, RegAssetRemap<>::AssetSpec(ctx_.modTypeHashes())}},
+                        toModName_, componentModTypeName(mergeOrder_.front()), ctx_.version(), toVersion);
+
+                    // The face diffuse onto the register the TARGET binds it to. A no-op when the
+                    // mod already agrees; the mods that do not are the pre-6.x ones still writing
+                    // ps-t0, which on a 6.x target replaces the face LIGHT MAP.
+                    if (config_.faceReg == LightMapReg) {
+                        faceRegFix_ = std::make_unique<RegRemap<>>(std::vector<std::pair<std::string, RegRemap<>::KeyRemapValue>>{
+                            renameRule(DiffuseReg, {LightMapReg})});
+                    } else if (config_.faceReg == DiffuseReg) {
+                        faceRegFix_ = std::make_unique<RegRemap<>>(std::vector<std::pair<std::string, RegRemap<>::KeyRemapValue>>{
+                            renameRule(LightMapReg, {DiffuseReg})});
+                    }
+
+                    auto isFixCall = [](long long, const std::string& value) {
+                        return value == IniKeywords::ORFixPath || value == IniKeywords::NNFixPath;
+                    };
+                    removeFixCalls_ = std::make_unique<RegRemove<>>(
+                        std::vector<std::pair<std::string, std::optional<RegRemove<>::RemoveKeyCheck>>>{
+                            {IniKeywords::Run, RegRemove<>::RemoveKeyCheck(isFixCall)}});
+
+                    // The target has no normal-map slot: drop it and shift the rest down.
+                    dropNormalMap_ = std::make_unique<RegRemove<>>(
+                        std::vector<std::pair<std::string, std::optional<RegRemove<>::RemoveKeyCheck>>>{
+                            {DiffuseReg, std::nullopt}});
+                    shiftDown_ = std::make_unique<RegRemap<>>(std::vector<std::pair<std::string, RegRemap<>::KeyRemapValue>>{
+                        renameRule(NormalShiftedDiffuseReg, {DiffuseReg}),
+                        renameRule(NormalShiftedLightMapReg, {LightMapReg})});
+
+                    removeDrawIndexed_ = std::make_unique<RegRemove<>>(
+                        std::vector<std::pair<std::string, std::optional<RegRemove<>::RemoveKeyCheck>>>{
+                            {IniKeywords::DrawIndexed, std::nullopt}});
+
+                    // BottomCover: the collects spliced their registers into `if 1 ... endif` blocks,
+                    // which split the section into parts, and the default fill would put the draw in
+                    // the FIRST part, ahead of the ib and the textures.
+                    fillDrawIndexed_ = std::make_unique<RegFillMissing<>>(
+                        IniKeywords::DrawIndexed,
+                        RegFillMissing<>::makeFillMissing(IniKeywords::DrawIndexed, DrawIndexedAuto),
+                        RegFillMissingMode::BottomCover);
+
+                    // NNFix and ORFix are mandatory and keyed on the draw call instead.
+                    //
+                    // PerPath, not the per-segment default: these command lists READ the bound
+                    // ps-t registers and write them back re-slotted, so a second call over the same
+                    // bindings undoes the first (NNFix reads the diffuse from ps-t0 and the light
+                    // map from ps-t1, then writes the light map to ps-t0 and the diffuse to ps-t1).
+                    // A section whose draws sit in independent `if` blocks issues several in one
+                    // pass, and every second one then rendered with the light map as its albedo --
+                    // flat green. See RegDelimitedAddMode::PerPath, and note that this mode makes
+                    // pathEndOnlyWhenUndelimited redundant: "once at the end of a path that never
+                    // draws" is what it already does.
+                    // ---- a target object SEVERAL source slots land on needs the later ones DRAWN ----
+                    //
+                    // The merge concatenates its members' index buffers, so the first member keeps
+                    // its own index range and every later one is pushed past it. A mod's
+                    // `drawindexed` lines address ITS OWN buffer, which is the first member's -- so
+                    // they cover the first member exactly and never reach the rest. Yelan's head is
+                    // her Bang followed by her Eye, and a mod that issues its own draws rendered the
+                    // fringe and no eyes at all (2026-09-14).
+                    //
+                    // TWO THINGS HAVE TO BE TRUE AND THE SECOND IS THE ONE THAT BIT.
+                    //
+                    // (1) It must happen only when the mod DREW FOR ITSELF. A section the fix leaves
+                    //     with `drawindexed = auto` already draws the whole merged buffer, members
+                    //     and all, and a second draw of the later members would be a duplicate. The
+                    //     gate is read off the source section rather than expressed as an edit --
+                    //     SlotFiles::draws -- because it is a fact about the mod, known here, and
+                    //     every way of asking the graph instead has to run either before the fill
+                    //     (and so cannot see it) or after (and so cannot tell `auto` from a real
+                    //     draw).
+                    //
+                    // (2) It must land where EVERY path reaches it. The obvious edit, a
+                    //     RegSurroundedAdd keyed on `drawindexed` with latest = true, puts it at the
+                    //     latest valid position -- which in a section full of toggles is inside the
+                    //     LAST `if` block. Yelan then had eyes only while `$pubic == 1`, which is
+                    //     the same bug one layer down and is invisible to any check that strips
+                    //     leading whitespace before looking. RegFillMissingMode::BottomCover is the
+                    //     placement that is right: `addBottomContentPart` appends a fresh part at
+                    //     the section's own depth, outside every block.
+                    //
+                    //     RegBottomAdd is that placement without RegFillMissing's missing-register
+                    //     gate, which is a different question and answers "do nothing" for a
+                    //     register the mod already has.
+                    //
+                    // The appended draw needs no fix call of its own: RegDelimitedAddMode::PerPath
+                    // issues exactly one for the whole path, ahead of every draw on it.
+                    for (const std::string& obj : drawn_) {
+                        auto membersIt = members_.find(obj);
+                        if (membersIt == members_.end() || membersIt->second.size() < 2) {
+                            continue;
+                        }
+
+                        auto repIt = representative_.find(obj);
+                        const SlotFiles* repFiles = (repIt == representative_.end())
+                                                     ? nullptr : slotFiles(repIt->second.first, repIt->second.second);
+                        if (repFiles == nullptr) {
+                            continue;
+                        }
+
+                        // Appended draws are needed when the mod draws for itself (its ranges reach
+                        // only the first member), and ALSO when the members end up on different
+                        // textures -- one draw binds one set, so members that disagree have to be
+                        // drawn separately whatever the mod did. Only when neither holds can
+                        // `drawindexed = auto` cover the whole merged buffer on its own.
+                        if (!repFiles->draws && !membersDiffer(obj)) {
+                            continue;
+                        }
+
+                        std::vector<std::string> extras;
+                        long long offset = 0;
+                        bool measured = true;
+
+                        for (std::size_t i = 0; i < membersIt->second.size(); ++i) {
+                            const auto& member = membersIt->second[i];
+                            const SlotFiles* files = slotFiles(member.first, member.second);
+                            const long long count = (files == nullptr) ? 0 : files->indexCount;
+
+                            if (count <= 0) {
+                                // Nothing to go on -- neither the file nor the config. Emitting a
+                                // draw from a guessed count would address whatever happens to sit
+                                // at that offset, so the member is left undrawn and said so.
+                                ctx_.log("could not size the '" + member.first + " " + member.second
+                                          + "' index buffer, so the '" + obj
+                                          + "' object will draw without it");
+                                measured = false;
+                                break;
+                            }
+
+                            if (i > 0) {
+                                extras.push_back(std::to_string(count) + ", " + std::to_string(offset) + ", 0");
+                            }
+
+                            offset += count;
+                        }
+
+                        if (!measured || extras.empty()) {
+                            continue;
+                        }
+
+                        // A MEMBER MAY NEED ITS OWN TEXTURES, AND THEN ITS OWN FIX CALL.
+                        //
+                        // One section binds one set of registers, and that set is the FIRST
+                        // member's -- right while every member reads the same textures. A component
+                        // A member that binds no textures of its own breaks it: the game draws such
+                        // a slot with the game's own atlas, so the parser downloads that donor
+                        // (GIMIComponentParserConfig::Slot::textureDonor) and the member ends up on
+                        // a different texture from the representative. Binding the representative's
+                        // for both aimed one mod's eye UVs at a repainted 4096x2048 atlas and
+                        // another mod's hair at a bunny costume (2026-09-14).
+                        //
+                        // So a member whose textures differ from the representative's gets its own
+                        // bindings ahead of its draw -- and its own fix call after them, because
+                        // rebinding ps-t0/ps-t1 starts a new binding epoch and NNFix re-slots
+                        // whatever is bound when it runs. This is the only place anything rebinds
+                        // mid-section, which is exactly why RegDelimitedAddMode::PerPath must not be
+                        // what places that second call: this block carries its own.
+                        RegBottomAdd<>::Additions block;
+
+                        for (std::size_t i = 0; i < extras.size(); ++i) {
+                            const auto& member = membersIt->second[i + 1];
+                            const SlotFiles* files = slotFiles(member.first, member.second);
+
+                            const bool ownTextures = (files != nullptr) && (repFiles != nullptr)
+                                                      && (!files->diffuseRes.empty() || !files->lightMapRes.empty())
+                                                      && (files->diffuseRes != repFiles->diffuseRes
+                                                           || files->lightMapRes != repFiles->lightMapRes);
+
+                            if (ownTextures) {
+                                if (!files->diffuseRes.empty()) {
+                                    block.emplace_back(DiffuseReg, files->diffuseRes);
+                                }
+
+                                if (!files->lightMapRes.empty()) {
+                                    // The name buildMemberTexEdits' own edit will produce, worked
+                                    // out with the very function that produces it rather than by
+                                    // copying the convention -- TexReplace::getFixResourceName is
+                                    // getRemapTexResourceName(resource, capitalize(modName) +
+                                    // capitalize(resSubType)), and the resSubType here is "LightMap".
+                                    const std::string edited =
+                                        config_.lightMapEdit
+                                            ? IniNamingTools::getRemapTexResourceName(
+                                                  files->lightMapRes, TextTools::capitalize(toModName_) + "LightMap")
+                                            : files->lightMapRes;
+
+                                    block.emplace_back(LightMapReg, edited);
+                                }
+
+                                block.emplace_back(IniKeywords::Run, IniKeywords::NNFixPath);
+                            }
+
+                            block.emplace_back(IniKeywords::DrawIndexed, extras[i]);
+                        }
+
+                        auto bottomAdd = std::make_unique<RegBottomAdd<>>(std::move(block));
+                        extraDrawAdapters_[obj] = std::make_unique<GraphPartEdit<>>(bottomAdd.get());
+                        extraDraws_.push_back(std::move(bottomAdd));
+                    }
+
+                    // An object whose members cannot share a draw needs the FIRST member's range
+                    // rather than `auto`, for the section that draws nothing of its own.
+                    for (const std::string& obj : drawn_) {
+                        auto membersIt = members_.find(obj);
+                        auto repIt = representative_.find(obj);
+                        if (membersIt == members_.end() || repIt == representative_.end()
+                                || membersIt->second.size() < 2 || !membersDiffer(obj)) {
+                            continue;
+                        }
+
+                        const SlotFiles* first = slotFiles(membersIt->second.front().first,
+                                                            membersIt->second.front().second);
+                        if (first == nullptr || first->indexCount <= 0) {
+                            continue;
+                        }
+
+                        const std::string range = std::to_string(first->indexCount) + ", 0, 0";
+                        auto fill = std::make_unique<RegFillMissing<>>(
+                            IniKeywords::DrawIndexed,
+                            RegFillMissing<>::makeFillMissing(IniKeywords::DrawIndexed, range),
+                            RegFillMissingMode::BottomCover);
+
+                        objFillAdapters_[obj] = std::make_unique<GraphPartEdit<>>(fill.get());
+                        objFills_.push_back(std::move(fill));
+                    }
+
+                    addFixCall_ = std::make_unique<RegDelimitedAdd<>>(
+                        RegDelimitedAdd<>::Additions{{IniKeywords::Run, IniKeywords::NNFixPath}},
+                        RegDelimitedAdd<>::RegMap{{IniKeywords::DrawIndexed, {}}},
+                        /*pathEndOnlyWhenUndelimited*/ true,
+                        RegDelimitedAddMode::PerPath);
+
+                    overrides_ = std::make_unique<RegNewVals<>>(
+                        std::vector<std::pair<std::string, RegNewVals<>::NewValSpec>>{
+                            {OverrideByteStride, RegNewVals<>::NewValSpec(RegNewVals<>::NewVal(std::to_string(positionStride_)))},
+                            {OverrideVertexCount, RegNewVals<>::NewValSpec(RegNewVals<>::NewVal(std::to_string(totalVertices_)))}},
+                        /*addNewKVPs*/ true);
+
+                    blendDraw_ = std::make_unique<RegNewVals<>>(
+                        std::vector<std::pair<std::string, RegNewVals<>::NewValSpec>>{
+                            {IniKeywords::Draw, RegNewVals<>::NewValSpec(RegNewVals<>::NewVal(std::to_string(totalVertices_) + ",0"))}});
+
+                    renameAdapter_ = std::make_unique<GraphPartEdit<>>(renameGraph_.get());
+                    renameIbAdapter_ = std::make_unique<GraphPartEdit<>>(renameIbGraph_.get());
+                    renameBlendAdapter_ = std::make_unique<GraphPartEdit<>>(renameBlendGraph_.get());
+                    faceAssetAdapter_ = std::make_unique<RegPartEdit<>>(faceAssetRemap_.get());
+                    if (faceRegFix_ != nullptr) {
+                        faceRegAdapter_ = std::make_unique<RegPartEdit<>>(faceRegFix_.get());
+                    }
+                    removeFixCallsAdapter_ = std::make_unique<RegPartEdit<>>(removeFixCalls_.get());
+                    dropNormalMapAdapter_ = std::make_unique<RegPartEdit<>>(dropNormalMap_.get());
+                    shiftDownAdapter_ = std::make_unique<RegPartEdit<>>(shiftDown_.get());
+                    removeDrawIndexedAdapter_ = std::make_unique<RegPartEdit<>>(removeDrawIndexed_.get());
+                    fillAdapter_ = std::make_unique<GraphPartEdit<>>(fillDrawIndexed_.get());
+                    addFixCallAdapter_ = std::make_unique<GraphPartEdit<>>(addFixCall_.get());
+                    overridesAdapter_ = std::make_unique<RegPartEdit<>>(overrides_.get());
+                    blendDrawAdapter_ = std::make_unique<RegPartEdit<>>(blendDraw_.get());
+
+                    std::vector<ObjGroupEdit::IniEdits> perGroup(1);
+                    ObjGroupEdit::IniEdits& iniEdits = perGroup[0];
+
+                    for (const std::string& obj : drawn_) {
+                        auto repIt = representative_.find(obj);
+                        const bool normalMap = (repIt != representative_.end())
+                                               && hasNormalMap(repIt->second.first, repIt->second.second);
+                        const SlotFiles* files = (repIt == representative_.end())
+                                                 ? nullptr : slotFiles(repIt->second.first, repIt->second.second);
+                        const bool hasTextures = (files != nullptr) && (!files->diffuseRes.empty() || !files->lightMapRes.empty());
+
+                        std::vector<ObjGroupEdit::PartEdit*> edits = {removeFixCallsAdapter_.get()};
+                        if (normalMap) {
+                            edits.push_back(dropNormalMapAdapter_.get());
+                            edits.push_back(shiftDownAdapter_.get());
+                        }
+                        // THE FILL IS FOR A SECTION THAT DRAWS NOTHING OF ITS OWN.
+                        //
+                        // `drawindexed = auto` draws the whole merged buffer, so adding it to a
+                        // section that already draws always draws something twice -- and one mod
+                        // whose Bang picks a hair variant out of an `if` chain had BOTH variants
+                        // rendered because RegFillMissing cannot prove such a chain exhaustive and
+                        // supplied `auto` anyway (2026-09-14). The mod drawing at all is the signal
+                        // that it has said what it wants drawn.
+                        //
+                        // And when the members disagree about textures, `auto` is not available
+                        // even then: it is one draw and they need one each. Such an object gets the
+                        // FIRST member's explicit range here, and the rest as appended blocks.
+                        auto repDrawIt = representative_.find(obj);
+                        const SlotFiles* repDrawFiles = (repDrawIt == representative_.end())
+                                                         ? nullptr
+                                                         : slotFiles(repDrawIt->second.first, repDrawIt->second.second);
+
+                        if (repDrawFiles != nullptr && !repDrawFiles->draws) {
+                            auto objFillIt = objFillAdapters_.find(obj);
+                            edits.push_back(objFillIt != objFillAdapters_.end() ? objFillIt->second.get()
+                                                                                : fillAdapter_.get());
+                        }
+
+                        // AFTER the fill: when the fill supplies the first member's draw, this
+                        // block has to follow it, and RegBottomAdd appends where the fill did.
+                        auto extraIt = extraDrawAdapters_.find(obj);
+                        if (extraIt != extraDrawAdapters_.end()) {
+                            edits.push_back(extraIt->second.get());
+                        }
+
+                        // No textures and no donor: no fix call either, or NNFix re-slots registers
+                        // this section never bound and scrambles what the game had set.
+                        if (hasTextures) {
+                            edits.push_back(addFixCallAdapter_.get());
+                        }
+                        // this object's OWN component's hash remap -- the head comes from the Bang,
+                        // whose hashes are filed under a different name than the Body's
+                        RegPartEdit<>* objAsset = assetAdapterOf(repIt == representative_.end() ? mergeOrder_.front()
+                                                                                                : repIt->second.first);
+                        if (objAsset != nullptr) {
+                            edits.push_back(objAsset);
+                        }
+
+                        const ModObj objKey("", obj);
+                        iniEdits.edits[objKey] = std::move(edits);
+                        iniEdits.trackKeys[objKey] = false;
+                    }
+
+                    RegPartEdit<>* skeletonAsset = assetAdapterOf(mergeOrder_.front());
+
+                    const ModObj ibObj("", "ib");
+                    iniEdits.edits[ibObj] = {renameIbAdapter_.get(), skeletonAsset, removeDrawIndexedAdapter_.get()};
+                    iniEdits.trackKeys[ibObj] = false;
+
+                    const ModObj blendObj("", "blend");
+                    iniEdits.edits[blendObj] = {renameBlendAdapter_.get(), skeletonAsset, blendDrawAdapter_.get()};
+                    iniEdits.trackKeys[blendObj] = false;
+
+                    for (const char* kind : {"position", "texcoord"}) {
+                        const ModObj objKey("", kind);
+                        iniEdits.edits[objKey] = {renameAdapter_.get(), skeletonAsset};
+                        iniEdits.trackKeys[objKey] = false;
+                    }
+
+                    const ModObj otherObj("", "other");
+                    iniEdits.edits[otherObj] = {renameAdapter_.get(), skeletonAsset, overridesAdapter_.get()};
+                    iniEdits.trackKeys[otherObj] = false;
+
+                    if (!config_.faceReg.empty()) {
+                        std::vector<ObjGroupEdit::PartEdit*> faceEdits = {renameAdapter_.get(), faceAssetAdapter_.get()};
+                        if (faceRegAdapter_ != nullptr) {
+                            faceEdits.push_back(faceRegAdapter_.get());
+                        }
+                        iniEdits.edits[FaceObj] = std::move(faceEdits);
+                        iniEdits.trackKeys[FaceObj] = false;
+                    }
+
+                    mainEdits_ = ObjGroupEdit(std::move(perGroup), false);
+                }
+
+                static FixerConfig makeConfig() {
+                    FixerConfig config{};
+                    config.sectionToStr = &renderIfTemplate;
+                    return config;
+                }
+
+                static const std::string MergeGroupType;
+
+                IniFileFixContext ctx_;
+                std::string toModName_;
+                GIMIMergeFixerConfig config_;
+
+                std::unordered_map<std::string, ComponentFiles> files_;
+                std::unordered_map<std::string, bool> normalMap_;
+                std::vector<std::pair<std::string, std::string>> borrowed_;
+                std::string faceFile_;
+
+                std::vector<std::string> mergeOrder_;
+                std::unordered_map<std::string, std::size_t> offsets_;
+                std::size_t totalVertices_ = 0;
+                std::size_t positionStride_ = 40;
+
+                std::vector<std::string> drawn_;
+                std::unordered_map<std::string, std::pair<std::string, std::string>> representative_;
+                std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> members_;
+
+                std::unique_ptr<SlotRemap> slotRemap_;
+                std::unique_ptr<ObjGroupEdit> borrowEdit_;
+                std::vector<std::unique_ptr<RegDelimitedAdd<>>> borrowRegEdits_;
+                std::vector<std::unique_ptr<GraphPartEdit<>>> borrowAdapters_;
+
+                std::vector<Fixer::GroupEdit*> texGroupEdits_;
+                std::vector<std::unique_ptr<TexEditorReplace<>>> texReplaces_;
+                std::vector<std::unique_ptr<Collector>> texCollects_;
+
+                std::unique_ptr<VGMergeGroupResBuilder> builder_;
+                std::vector<std::unique_ptr<BufReplace<>>> bufReplaces_;
+                std::unique_ptr<GroupCollector> bufferCollect_;
+
+                std::unique_ptr<ObjFilter> objFilter_;
+                std::vector<std::unique_ptr<RegNewVals<>>> indexRegEdits_;
+                std::vector<std::unique_ptr<RegPartEdit<>>> indexAdapters_;
+                ObjGroupEdit indexEdits_;
+
+                std::unique_ptr<GraphRename<>> renameGraph_;
+                std::unique_ptr<GraphRename<>> renameIbGraph_;
+                std::unique_ptr<GraphRename<>> renameBlendGraph_;
+                std::unordered_map<std::string, std::unique_ptr<RegAssetRemap<>>> assetRemaps_;
+                std::unordered_map<std::string, std::unique_ptr<RegPartEdit<>>> assetAdapters_;
+                std::unique_ptr<RegAssetRemap<>> faceAssetRemap_;
+                std::unique_ptr<RegRemap<>> faceRegFix_;
+                std::unique_ptr<RegRemove<>> removeFixCalls_;
+                std::unique_ptr<RegRemove<>> dropNormalMap_;
+                std::unique_ptr<RegRemap<>> shiftDown_;
+                std::unique_ptr<RegRemove<>> removeDrawIndexed_;
+                std::unique_ptr<RegFillMissing<>> fillDrawIndexed_;
+                std::vector<std::unique_ptr<RegFillMissing<>>> objFills_;
+                std::unordered_map<std::string, std::unique_ptr<GraphPartEdit<>>> objFillAdapters_;
+                std::vector<Fixer::GroupEdit*> preRemapTexGroupEdits_;
+                std::vector<std::unique_ptr<RegBottomAdd<>>> extraDraws_;
+                std::unordered_map<std::string, std::unique_ptr<GraphPartEdit<>>> extraDrawAdapters_;
+                std::unique_ptr<RegDelimitedAdd<>> addFixCall_;
+                std::unique_ptr<RegNewVals<>> overrides_;
+                std::unique_ptr<RegNewVals<>> blendDraw_;
+
+                std::unique_ptr<GraphPartEdit<>> renameAdapter_;
+                std::unique_ptr<GraphPartEdit<>> renameIbAdapter_;
+                std::unique_ptr<GraphPartEdit<>> renameBlendAdapter_;
+                std::unique_ptr<RegPartEdit<>> faceAssetAdapter_;
+                std::unique_ptr<RegPartEdit<>> faceRegAdapter_;
+                std::unique_ptr<RegPartEdit<>> removeFixCallsAdapter_;
+                std::unique_ptr<RegPartEdit<>> dropNormalMapAdapter_;
+                std::unique_ptr<RegPartEdit<>> shiftDownAdapter_;
+                std::unique_ptr<RegPartEdit<>> removeDrawIndexedAdapter_;
+                std::unique_ptr<GraphPartEdit<>> fillAdapter_;
+                std::unique_ptr<GraphPartEdit<>> addFixCallAdapter_;
+                std::unique_ptr<RegPartEdit<>> overridesAdapter_;
+                std::unique_ptr<RegPartEdit<>> blendDrawAdapter_;
+
+                ObjGroupEdit mainEdits_;
+        };
+
+        const std::string GIMIMergeFixerImpl::MergeGroupType = "merge";
+    }
+
+
+    IniFixBuilder::Factory makeGIMIMergeFixer(GIMIMergeFixerConfig config) {
+        return [config](BaseIniParser<>* parser, const std::string& toModName, std::optional<int> modTypeId) {
+            return std::make_shared<GIMIMergeFixerImpl>(parser, toModName, modTypeId, config);
+        };
+    }
+}

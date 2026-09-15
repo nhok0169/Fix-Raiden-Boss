@@ -107,13 +107,13 @@ void testTableShape() {
 
     // Counts taken straight from the pure-Python dicts, so a row silently dropped or duplicated
     // during the port shows up here.
-    check(IniParseBuilderData::repo()->size() == 56, "the parse table has all 53 rows from IniParseBuilderData.py, plus Raiden's 6.1 row, LisaStudent's 5.4 one and Yelan's 4.0 one");
+    check(IniParseBuilderData::repo()->size() == 57, "the parse table has all 53 rows from IniParseBuilderData.py, plus Raiden's 6.1 row, LisaStudent's 5.4 one, Yelan's 4.0 one and YelanTranquil's 5.7 one");
     // Counted by toVersion straight out of IniFixBuilderData.cpp on 2026-09-13: 78 historical rows
     // (the 73 Python ones fanned out per target mod, which is what replaced the pure-Python
     // MultiModFixer -- Jean/JeanCN/JeanSea carry TWO each) plus 46 at 6.1 that are this port's own,
     // Yelan's three per-component rows among them. Deliberately NOT a per-character list: the
     // enumeration that used to live here fell ten rows behind the literal without anything noticing.
-    check(IniFixBuilderData::repo()->size() == 124,
+    check(IniFixBuilderData::repo()->size() == 125,
           "the fix table has 124 rows -- 78 historical, plus the 46 at 6.1 this port added");
 
     // The remove table has no Python original -- one row per GI mod type, all at 4.0.

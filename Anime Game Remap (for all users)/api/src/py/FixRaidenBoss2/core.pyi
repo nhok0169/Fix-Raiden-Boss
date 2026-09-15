@@ -4,7 +4,7 @@ C++ internal core of AGRemap
 from __future__ import annotations
 import collections.abc
 import typing
-__all__: list[str] = ['BaseBufEditor', 'BaseDFA', 'BaseIniClassifier', 'BaseIniFixer', 'BaseIniGraphEdit', 'BaseIniGraphGroupEdit', 'BaseIniGraphPartEdit', 'BaseIniParser', 'BaseIniPartEdit', 'BaseIniRemover', 'BaseLogger', 'BaseRegEdit', 'BaseResEdit', 'BaseSLR1Parser', 'BaseTokenizer', 'BiMap', 'BinaryFile', 'BlendFile', 'BufBaseFloat', 'BufBaseInt', 'BufDataType', 'BufEditor', 'BufElementType', 'BufFloat', 'BufFloat16', 'BufReplace', 'BufSignedInt', 'BufType', 'BufUnSignedInt', 'BufUnorm', 'CachedFileStats', 'CallGraph', 'CppAhoCorasickDFA', 'CppAlgo', 'CppBaseIniFixer', 'CppBaseIniParser', 'CppBaseIniRemover', 'CppBasePixelTransform', 'CppBaseTexEditor', 'CppBaseTexFilter', 'CppBufFile', 'CppColour', 'CppColourRange', 'CppColourReplace', 'CppColourReplaceFilter', 'CppCorrectGamma', 'CppGammaFilter', 'CppGlobalModTypes', 'CppHashTools', 'CppHighlightShadow', 'CppHueAdjust', 'CppIniFixBuilderArgs', 'CppIniFixFactory', 'CppIniNamingTools', 'CppIniParseBuilderArgs', 'CppIniParseFactory', 'CppIniRemoveBuilderArgs', 'CppIntTools', 'CppInvertAlpha', 'CppInvertAlphaFilter', 'CppListTools', 'CppPixelFilter', 'CppRemapServiceCLI', 'CppStrategyOverrides', 'CppTempControl', 'CppTexCreator', 'CppTexEditor', 'CppTextureFile', 'CppTintTransform', 'CppTransparency', 'CppTransparencyAdjustFilter', 'CppTrie', 'CppVersion', 'DFA', 'FileDownload', 'FileStats', 'FilteredTokenizer', 'GIBuilder', 'GIMICharFixerConfig', 'GIMICharParserConfig', 'GIMIFixer', 'GIMIObjPartFilter', 'GIMIParser', 'GIMISectionClassifier', 'GameTypeId', 'GameTypeIdTools', 'GlobalRemapIniRemover', 'GraphGroupEdit', 'GraphGroupRemap', 'GraphInherit', 'GraphRemove', 'GraphRename', 'GraphTools', 'Hash128', 'Hash64', 'Hashes', 'IOrderedMultiMap', 'IbFile', 'IfContentPart', 'IfContentPartColourChange', 'IfContentPartColouring', 'IfPredParser', 'IfPredPart', 'IfPredTokenizer', 'IfTemplate', 'IfTemplateNode', 'IfTemplatePart', 'IfTemplateTree', 'Indices', 'IniClassifier', 'IniClassifyStats', 'IniDownloadModel', 'IniFile', 'IniFixBuilder', 'IniFixResource', 'IniFixResourceModel', 'IniFixingContext', 'IniGraphGroup', 'IniGroupedResource', 'IniParseBuilder', 'IniRemovalContext', 'IniRemoveBuilder', 'IniResource', 'IniResourceModel', 'IniSectionGraph', 'IniSectionGraphSectionIterator', 'IniSrcResourceModel', 'IniTexModel', 'KeyRemapData', 'Logger', 'ModAssets', 'ModDictAssets', 'ModMappedAssets', 'ModType', 'ModTypeId', 'ModTypeIdData', 'ModTypeIdTools', 'MultiModFixer', 'OrderedMultiMap', 'OrderedMultiMapIterator', 'OrderedMultiMapSqrt', 'OrderedMultiMapSqrtIterator', 'ParseContext', 'ParseNode', 'ParseTree', 'PositionFile', 'Ranges', 'RangesInt', 'RegAdd', 'RegAssetRemap', 'RegDelimitedAdd', 'RegFillMissing', 'RegNewVals', 'RegRemap', 'RegRemove', 'RegSurroundedAdd', 'RemapBlendReplace', 'RemapBlendResource', 'RemapIniDownload', 'RemapIniFixResource', 'RemapIniGroupedResource', 'RemapIniRemover', 'RemapIniResource', 'RemapIniResourceMixin', 'RemapService', 'RemapStats', 'RemapTexAddResource', 'RemapTexEditResource', 'RemappedKeyData', 'ReplaceIf', 'ReplaceList', 'ResCreate', 'ResGroupCollect', 'ResIdentity', 'ResRegCollect', 'ResReplace', 'SectionIterData', 'SectionIterDataIterator', 'SectionIterQueryData', 'SectionIterQueryDataIterator', 'SympyParser', 'SympyTokenizer', 'TexCreate', 'TexReplace', 'Token', 'VGComponentBuffers', 'VGComponentSpec', 'VGComponentSplit', 'VGComponentSplitStats', 'VGRemap', 'VGRemaps', 'VGSplitGroupResource', 'VbFile', 'VertexCounts', 'Z3Context', 'Z3Predicate', 'appendAllToOrderedMultiMap', 'makeGIMICharFixer', 'makeGIMICharParser']
+__all__: list[str] = ['BaseBufEditor', 'BaseDFA', 'BaseIniClassifier', 'BaseIniFixer', 'BaseIniGraphEdit', 'BaseIniGraphGroupEdit', 'BaseIniGraphPartEdit', 'BaseIniParser', 'BaseIniPartEdit', 'BaseIniRemover', 'BaseLogger', 'BaseRegEdit', 'BaseResEdit', 'BaseSLR1Parser', 'BaseTokenizer', 'BiMap', 'BinaryFile', 'BlendFile', 'BufBaseFloat', 'BufBaseInt', 'BufDataType', 'BufEditor', 'BufElementType', 'BufFloat', 'BufFloat16', 'BufReplace', 'BufSignedInt', 'BufType', 'BufUnSignedInt', 'BufUnorm', 'CachedFileStats', 'CallGraph', 'CppAhoCorasickDFA', 'CppAlgo', 'CppBaseIniFixer', 'CppBaseIniParser', 'CppBaseIniRemover', 'CppBasePixelTransform', 'CppBaseTexEditor', 'CppBaseTexFilter', 'CppBufFile', 'CppColour', 'CppColourRange', 'CppColourReplace', 'CppColourReplaceFilter', 'CppCorrectGamma', 'CppGammaFilter', 'CppGlobalModTypes', 'CppHashTools', 'CppHighlightShadow', 'CppHueAdjust', 'CppIniFixBuilderArgs', 'CppIniFixFactory', 'CppIniNamingTools', 'CppIniParseBuilderArgs', 'CppIniParseFactory', 'CppIniRemoveBuilderArgs', 'CppIntTools', 'CppInvertAlpha', 'CppInvertAlphaFilter', 'CppListTools', 'CppPixelFilter', 'CppRemapServiceCLI', 'CppStrategyOverrides', 'CppTempControl', 'CppTexCreator', 'CppTexEditor', 'CppTextureFile', 'CppTintTransform', 'CppTransparency', 'CppTransparencyAdjustFilter', 'CppTrie', 'CppVersion', 'DFA', 'FileDownload', 'FileStats', 'FilteredTokenizer', 'GIBuilder', 'GIMICharFixerConfig', 'GIMICharParserConfig', 'GIMIComponentParserConfig', 'GIMIFixer', 'GIMIMergeFixerConfig', 'GIMIObjPartFilter', 'GIMIParser', 'GIMISectionClassifier', 'GameTypeId', 'GameTypeIdTools', 'GlobalRemapIniRemover', 'GraphGroupEdit', 'GraphGroupRemap', 'GraphInherit', 'GraphRemove', 'GraphRename', 'GraphTools', 'Hash128', 'Hash64', 'Hashes', 'IOrderedMultiMap', 'IbFile', 'IfContentPart', 'IfContentPartColourChange', 'IfContentPartColouring', 'IfPredParser', 'IfPredPart', 'IfPredTokenizer', 'IfTemplate', 'IfTemplateNode', 'IfTemplatePart', 'IfTemplateTree', 'Indices', 'IniClassifier', 'IniClassifyStats', 'IniDownloadModel', 'IniFile', 'IniFixBuilder', 'IniFixResource', 'IniFixResourceModel', 'IniFixingContext', 'IniGraphGroup', 'IniGroupedResource', 'IniParseBuilder', 'IniRemovalContext', 'IniRemoveBuilder', 'IniResource', 'IniResourceModel', 'IniSectionGraph', 'IniSectionGraphSectionIterator', 'IniSrcResourceModel', 'IniTexModel', 'KeyRemapData', 'Logger', 'ModAssets', 'ModDictAssets', 'ModMappedAssets', 'ModType', 'ModTypeId', 'ModTypeIdData', 'ModTypeIdTools', 'MultiModFixer', 'OrderedMultiMap', 'OrderedMultiMapIterator', 'OrderedMultiMapSqrt', 'OrderedMultiMapSqrtIterator', 'ParseContext', 'ParseNode', 'ParseTree', 'PositionFile', 'Ranges', 'RangesInt', 'RegAdd', 'RegAssetRemap', 'RegBottomAdd', 'RegDelimitedAdd', 'RegDelimitedAddMode', 'RegFillMissing', 'RegNewVals', 'RegRemap', 'RegRemove', 'RegSurroundedAdd', 'RemapBlendReplace', 'RemapBlendResource', 'RemapIniDownload', 'RemapIniFixResource', 'RemapIniGroupedResource', 'RemapIniRemover', 'RemapIniResource', 'RemapIniResourceMixin', 'RemapService', 'RemapStats', 'RemapTexAddResource', 'RemapTexEditResource', 'RemappedKeyData', 'ReplaceIf', 'ReplaceList', 'ResCreate', 'ResGroupCollect', 'ResIdentity', 'ResRegCollect', 'ResReplace', 'SectionIterData', 'SectionIterDataIterator', 'SectionIterQueryData', 'SectionIterQueryDataIterator', 'SympyParser', 'SympyTokenizer', 'TexCreate', 'TexReplace', 'Token', 'VGComponentBuffers', 'VGComponentMerge', 'VGComponentMergeStats', 'VGComponentSpec', 'VGComponentSplit', 'VGComponentSplitStats', 'VGMergeComponent', 'VGMergeComponentFiles', 'VGMergeComponentSpec', 'VGMergeGroupResource', 'VGMergeObject', 'VGRemap', 'VGRemaps', 'VGSplitGroupResource', 'VbFile', 'VertexCounts', 'Z3Context', 'Z3Predicate', 'appendAllToOrderedMultiMap', 'makeGIMICharFixer', 'makeGIMICharParser', 'makeGIMIComponentParser', 'makeGIMIMergeFixer']
 class BaseBufEditor:
     """
     
@@ -6109,6 +6109,16 @@ class GIBuilder:
         Creates the :class:`ModType` for BarbaraSummerTime
         """
     @staticmethod
+    def bennett() -> ModType:
+        """
+        Creates the :class:`ModType` for Bennett
+        """
+    @staticmethod
+    def bennettAdventure() -> ModType:
+        """
+        Creates the :class:`ModType` for BennettAdventure
+        """
+    @staticmethod
     def cherryHutao() -> ModType:
         """
         Creates the :class:`ModType` for CherryHuTao
@@ -6585,6 +6595,211 @@ class GIMICharParserConfig:
     @texcoordStride.setter
     def texcoordStride(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
         ...
+class GIMIComponentParserConfig:
+    """
+    
+    What one SKIN OF SEVERAL COMPONENTS looks like, for :func:`makeGIMIComponentParser`
+    
+    A skin like ``YelanTranquil`` is a ``Body``, a ``Bang`` and an ``Eye`` with separate `blend`_,
+    position, texcoord and ``ib`` buffers, and the asset tables file each component's hashes under that
+    COMPONENT's mod type name. :func:`makeGIMICharParser` cannot express that --- its mod objects are
+    all ``("", obj)``, its index map has the single key ``ib``, and its hash filter names one mod type.
+    
+    The mod objects this produces are ``(component, kind)`` --- ``("Body", "blend")``,
+    ``("Bang", "position")`` --- and ``(component, slot)`` for a drawn object.
+        
+    """
+    class Component:
+        """
+        
+        One component of the skin --- its own buffers, its own slots, its own mod type name
+            
+        """
+        def __init__(self) -> None:
+            ...
+        @property
+        def modTypeName(self) -> str:
+            """
+            :class:`str`: The mod type NAME this component's hashes are filed under, eg. ``YelanTranquilBody``
+            
+            Each classifier is filtered to its own component's name, because a hash value is unique to one
+            character and so exactly one classifier can answer for any `section`_
+            """
+        @modTypeName.setter
+        def modTypeName(self, arg0: str) -> None:
+            ...
+        @property
+        def name(self) -> str:
+            """
+            :class:`str`: The component's name, eg. ``Body``
+            """
+        @name.setter
+        def name(self, arg0: str) -> None:
+            ...
+        @property
+        def slots(self) -> list[GIMIComponentParserConfig.Slot]:
+            """
+            List[:class:`GIMIComponentParserConfig.Slot`]: The component's drawn slots
+            """
+        @slots.setter
+        def slots(self, arg0: collections.abc.Sequence[GIMIComponentParserConfig.Slot]) -> None:
+            ...
+        @property
+        def texcoordStride(self) -> int:
+            """
+            :class:`int`: This component's texcoord stride --- they need not agree across a skin
+            
+            **Default**: ``20``
+            """
+        @texcoordStride.setter
+        def texcoordStride(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+            ...
+        @property
+        def vertexCount(self) -> int:
+            """
+            :class:`int`: The GAME model's vertex count for this component, for a downloaded `blend`_'s ``draw``
+            line --- ``0`` leaves the line out
+            
+            **Default**: ``0``
+            """
+        @vertexCount.setter
+        def vertexCount(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+            ...
+    class Slot:
+        """
+        
+        One drawn slot of a component --- a range of its ``ib``, told apart by ``match_first_index``
+            
+        """
+        def __init__(self) -> None:
+            ...
+        @property
+        def diffuseReg(self) -> str:
+            """
+            :class:`str`: The register this slot's diffuse is bound to. **Default**: ``"ps-t0"``
+            """
+        @diffuseReg.setter
+        def diffuseReg(self, arg0: str) -> None:
+            ...
+        @property
+        def index(self) -> str:
+            """
+            :class:`str`: The slot's ``match_first_index``, as a literal
+            
+            Kept here rather than in :class:`Indices` because that table's reverse lookup buckets every row
+            holding a value by version and searches only the newest bucket at or below the version asked --- a
+            slot filed as ``"0"`` at 5.7 would make the 5.7 bucket *the* bucket for ``"0"``, and every classic
+            character's head would resolve to a slot named ``A``
+            """
+        @index.setter
+        def index(self, arg0: str) -> None:
+            ...
+        @property
+        def lightMapReg(self) -> str:
+            """
+            :class:`str`: The register this slot's light map is bound to. **Default**: ``"ps-t1"``
+            """
+        @lightMapReg.setter
+        def lightMapReg(self, arg0: str) -> None:
+            ...
+        @property
+        def name(self) -> str:
+            """
+            :class:`str`: The slot's name, eg. ``A``
+            """
+        @name.setter
+        def name(self, arg0: str) -> None:
+            ...
+        @property
+        def noTextures(self) -> bool:
+            """
+            :class:`bool`: Whether this slot has no textures of its own and reads another slot's
+            
+            **Default**: ``False``
+            """
+        @noTextures.setter
+        def noTextures(self, arg0: bool) -> None:
+            ...
+        @property
+        def normalMapReg(self) -> str:
+            """
+            :class:`str`: The register this slot's normal map is bound to, or ``""`` for a slot without one
+            """
+        @normalMapReg.setter
+        def normalMapReg(self, arg0: str) -> None:
+            ...
+        @property
+        def textureDonor(self) -> str:
+            """
+            :class:`str`: The ``<Component>;<Slot>`` whose textures the GAME draws this slot with, for a slot
+            that binds none of its own --- ``""`` for a slot that always has them
+            
+            A GIMI ``TextureOverride`` binds registers for the draw call its hash matches and no other, so a
+            slot whose own `section`_ declares no ``ps-t`` renders with whatever the GAME had bound, however
+            thoroughly the mod repainted its own copy of the donor's atlas. Naming the donor here is what lets
+            those textures be DOWNLOADED rather than read out of the mod
+            """
+        @textureDonor.setter
+        def textureDonor(self, arg0: str) -> None:
+            ...
+    def __init__(self) -> None:
+        ...
+    @property
+    def blendStride(self) -> int:
+        """
+        :class:`int`: The `blend`_ stride, shared by every component. **Default**: ``32``
+        """
+    @blendStride.setter
+    def blendStride(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def components(self) -> list[GIMIComponentParserConfig.Component]:
+        """
+        List[:class:`GIMIComponentParserConfig.Component`]: Every component of the skin
+        """
+    @components.setter
+    def components(self, arg0: collections.abc.Sequence[GIMIComponentParserConfig.Component]) -> None:
+        ...
+    @property
+    def downloadCharFolder(self) -> str:
+        """
+        :class:`str`: The character folder the default downloads come from
+        """
+    @downloadCharFolder.setter
+    def downloadCharFolder(self, arg0: str) -> None:
+        ...
+    @property
+    def downloadPrefix(self) -> str:
+        """
+        :class:`str`: The prefix every downloaded file's name starts with
+        """
+    @downloadPrefix.setter
+    def downloadPrefix(self, arg0: str) -> None:
+        ...
+    @property
+    def downloadVersionFolder(self) -> str:
+        """
+        :class:`str`: The version folder the default downloads come from, eg. ``5_7``
+        """
+    @downloadVersionFolder.setter
+    def downloadVersionFolder(self, arg0: str) -> None:
+        ...
+    @property
+    def modTypeId(self) -> ModTypeId:
+        """
+        :class:`ModTypeId`: The skin this parses
+        """
+    @modTypeId.setter
+    def modTypeId(self, arg0: ModTypeId) -> None:
+        ...
+    @property
+    def positionStride(self) -> int:
+        """
+        :class:`int`: The position stride, shared by every component. **Default**: ``40``
+        """
+    @positionStride.setter
+    def positionStride(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+        ...
 class GIMIFixer(BaseIniFixer):
     """
     
@@ -6757,6 +6972,201 @@ class GIMIFixer(BaseIniFixer):
         """
     @prevFixer.setter
     def prevFixer(self, arg0: typing.Any) -> None:
+        ...
+class GIMIMergeFixerConfig:
+    """
+    
+    What a MULTI-COMPONENT SOURCE landing on a ONE-MESH TARGET does, for :func:`makeGIMIMergeFixer`
+    
+    The inverse of :func:`makeGIMIComponentFixer`'s direction, and the shape where several source
+    components merge onto one target: their `blend`_, position and texcoord buffers are laid end to
+    end, each component's `blend`_ remapped through its OWN reverse vertex-group row first, and every
+    object's ``ib`` offset by its component's first vertex. Always ONE ``.ini`` group out --- the target
+    draws through one set of buffer hashes, so unlike a split there is nothing to write a second file
+    for.
+        
+    """
+    class Component:
+        """
+        
+        One source component, in MERGE order
+            
+        """
+        def __init__(self) -> None:
+            ...
+        @property
+        def name(self) -> str:
+            """
+            :class:`str`: The component's name, eg. ``Body``
+            """
+        @name.setter
+        def name(self, arg0: str) -> None:
+            ...
+        @property
+        def slots(self) -> list[GIMIMergeFixerConfig.Slot]:
+            """
+            List[:class:`GIMIMergeFixerConfig.Slot`]: The component's draw slots
+            """
+        @slots.setter
+        def slots(self, arg0: collections.abc.Sequence[GIMIMergeFixerConfig.Slot]) -> None:
+            ...
+        @property
+        def vertexCount(self) -> int:
+            """
+            :class:`int`: The GAME model's vertex count for this component, used only when the mod does not have
+            the component at all
+            
+            A component the mod is missing is downloaded, and downloads are fetched AFTER the ``.ini`` file is
+            written --- so the count that goes into ``draw``, ``override_vertex_count`` and every later
+            component's vertex offset cannot be measured from the file. A downloaded buffer is the game's own,
+            so its length is this number
+            
+            **Default**: ``0``
+            """
+        @vertexCount.setter
+        def vertexCount(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+            ...
+    class Slot:
+        """
+        
+        One source slot, and which of the target's objects it lands on
+            
+        """
+        def __init__(self) -> None:
+            ...
+        @property
+        def borrowFrom(self) -> str:
+            """
+            :class:`str`: The ``<Component>;<Slot>`` this slot reads its textures from when it has none of its
+            own --- ``""`` for a slot that always has them
+            """
+        @borrowFrom.setter
+        def borrowFrom(self, arg0: str) -> None:
+            ...
+        @property
+        def index(self) -> str:
+            """
+            :class:`str`: The slot's ``match_first_index`` in the SOURCE, as a literal
+            """
+        @index.setter
+        def index(self, arg0: str) -> None:
+            ...
+        @property
+        def indexCount(self) -> int:
+            """
+            :class:`int`: The GAME model's index count for this slot, used only when the mod does not have the
+            slot's ``ib`` on disk
+            
+            Only ever read for a target object SEVERAL slots land on, which is the only place an index count is
+            needed. A slot the mod DOES have is measured from its own file, so a modded mesh of a different size
+            is unaffected
+            
+            **Default**: ``0``
+            """
+        @indexCount.setter
+        def indexCount(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+            ...
+        @property
+        def name(self) -> str:
+            """
+            :class:`str`: The slot's name, eg. ``A``
+            """
+        @name.setter
+        def name(self, arg0: str) -> None:
+            ...
+        @property
+        def normalMap(self) -> bool:
+            """
+            :class:`bool`: Whether this slot carries a normal map the target has no room for. **Default**: ``False``
+            """
+        @normalMap.setter
+        def normalMap(self, arg0: bool) -> None:
+            ...
+        @property
+        def to(self) -> str:
+            """
+            :class:`str`: The TARGET object this slot lands on, lowercase --- eg. ``body``, ``head``
+            
+            Two slots naming the same object are merged into one `section`_: their index buffers are
+            concatenated and drawn together
+            """
+        @to.setter
+        def to(self, arg0: str) -> None:
+            ...
+    def __init__(self) -> None:
+        ...
+    @property
+    def components(self) -> list[GIMIMergeFixerConfig.Component]:
+        """
+        List[:class:`GIMIMergeFixerConfig.Component`]: Every component of the source, in MERGE order
+        
+        The first takes vertex offset 0, so its index buffers pass through untouched --- worth putting the
+        biggest one there
+        """
+    @components.setter
+    def components(self, arg0: collections.abc.Sequence[GIMIMergeFixerConfig.Component]) -> None:
+        ...
+    @property
+    def compressTextures(self) -> bool:
+        """
+        :class:`bool`: Whether edited textures are block-compressed
+        
+        Off by default because BC7 blurs a material band across its boundary, and a band is read as an exact
+        value
+        
+        **Default**: ``False``
+        """
+    @compressTextures.setter
+    def compressTextures(self, arg0: bool) -> None:
+        ...
+    @property
+    def copyPreamble(self) -> str:
+        """
+        :class:`str`: The comment written at the top of each generated `section`_ group
+        """
+    @copyPreamble.setter
+    def copyPreamble(self, arg0: str) -> None:
+        ...
+    @property
+    def faceReg(self) -> str:
+        """
+        :class:`str`: The register the target binds its face diffuse to, or ``""`` to leave the face graph
+        alone
+        
+        GI 6.x swapped the face diffuse and the face light map, so a mod still writing the pre-6.x register
+        hands its diffuse to the light map slot --- the white shiny cheek spots
+        """
+    @faceReg.setter
+    def faceReg(self, arg0: str) -> None:
+        ...
+    @property
+    def lightMapEdit(self) -> collections.abc.Callable[[str], collections.abc.Callable[[...], None]]:
+        """
+        Optional[Callable[[:class:`str`], Callable]]: Builds the light map edit for one object, closed over
+        that object's diffuse path
+        
+        A light map's alpha is a material band and the legend differs per skin, so the bands have to be
+        moved. Conditioning each move on the DIFFUSE under the pixel is what keeps a PORT --- which carries
+        its source character's legend --- from being mangled
+        """
+    @lightMapEdit.setter
+    def lightMapEdit(self, arg0: collections.abc.Callable[[str], collections.abc.Callable[[...], None]]) -> None:
+        ...
+    @property
+    def mipmaps(self) -> bool:
+        """
+        :class:`bool`: Whether written textures carry a mip chain. **Default**: ``True``
+        """
+    @mipmaps.setter
+    def mipmaps(self, arg0: bool) -> None:
+        ...
+    @property
+    def targetObjs(self) -> list[str]:
+        """
+        List[:class:`str`]: The TARGET's drawn objects, lowercase, in draw order
+        """
+    @targetObjs.setter
+    def targetObjs(self, arg0: collections.abc.Sequence[str]) -> None:
         ...
 class GIMIObjPartFilter:
     """
@@ -13303,6 +13713,16 @@ class ModTypeId:
     
       BarbaraSummertime : Barbara summer skin from GI
     
+      Bennett : Bennett from GI
+    
+      BennettAdventure : Bennett outfit skin (Adventure) from GI -- three components (Body, Bang, Eye)
+    
+      BennettAdventureBody : BennettAdventure's Body component, as a fix target -- a skin of several components is fixed one component at a time, and each is a mod type for the tables' purposes
+    
+      BennettAdventureBang : BennettAdventure's Bang component, as a fix target
+    
+      BennettAdventureEye : BennettAdventure's Eye component, as a fix target
+    
       CherryHuTao : Hu Tao Lantern Rite skin from GI
     
       Diluc : Diluc from GI
@@ -13395,49 +13815,54 @@ class ModTypeId:
     AyakaSpringbloom: typing.ClassVar[ModTypeId]  # value = <ModTypeId.AyakaSpringbloom: 3>
     Barbara: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Barbara: 6>
     BarbaraSummertime: typing.ClassVar[ModTypeId]  # value = <ModTypeId.BarbaraSummertime: 7>
-    CherryHuTao: typing.ClassVar[ModTypeId]  # value = <ModTypeId.CherryHuTao: 8>
-    Diluc: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Diluc: 9>
-    DilucFlamme: typing.ClassVar[ModTypeId]  # value = <ModTypeId.DilucFlamme: 10>
-    Fischl: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Fischl: 11>
-    FischlHighness: typing.ClassVar[ModTypeId]  # value = <ModTypeId.FischlHighness: 12>
-    Ganyu: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Ganyu: 13>
-    GanyuTwilight: typing.ClassVar[ModTypeId]  # value = <ModTypeId.GanyuTwilight: 14>
-    HuTao: typing.ClassVar[ModTypeId]  # value = <ModTypeId.HuTao: 15>
-    Jean: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Jean: 16>
-    JeanCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.JeanCN: 17>
-    JeanSea: typing.ClassVar[ModTypeId]  # value = <ModTypeId.JeanSea: 18>
-    Kaeya: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Kaeya: 19>
-    KaeyaSailwind: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KaeyaSailwind: 20>
-    Keqing: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Keqing: 21>
-    KeqingOpulent: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KeqingOpulent: 22>
-    Kirara: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Kirara: 23>
-    KiraraBoots: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KiraraBoots: 24>
-    Klee: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Klee: 25>
-    KleeBlossomingStarlight: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KleeBlossomingStarlight: 26>
-    Lisa: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Lisa: 27>
-    LisaStudent: typing.ClassVar[ModTypeId]  # value = <ModTypeId.LisaStudent: 28>
-    Mona: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Mona: 29>
-    MonaCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.MonaCN: 30>
-    Nilou: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Nilou: 31>
-    NilouBreeze: typing.ClassVar[ModTypeId]  # value = <ModTypeId.NilouBreeze: 32>
-    Ningguang: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Ningguang: 33>
-    NingguangOrchid: typing.ClassVar[ModTypeId]  # value = <ModTypeId.NingguangOrchid: 34>
-    Raiden: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Raiden: 35>
-    RaidenBoss: typing.ClassVar[ModTypeId]  # value = <ModTypeId.RaidenBoss: 36>
-    Rosaria: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Rosaria: 37>
-    RosariaCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.RosariaCN: 38>
-    Shenhe: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Shenhe: 39>
-    ShenheFrostFlower: typing.ClassVar[ModTypeId]  # value = <ModTypeId.ShenheFrostFlower: 40>
-    Xiangling: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Xiangling: 41>
-    XianglingCheer: typing.ClassVar[ModTypeId]  # value = <ModTypeId.XianglingCheer: 42>
-    Xingqiu: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Xingqiu: 43>
-    XingqiuBamboo: typing.ClassVar[ModTypeId]  # value = <ModTypeId.XingqiuBamboo: 44>
-    Yelan: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Yelan: 45>
-    YelanTranquil: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquil: 46>
-    YelanTranquilBang: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilBang: 48>
-    YelanTranquilBody: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilBody: 47>
-    YelanTranquilEye: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilEye: 49>
-    __members__: typing.ClassVar[dict[str, ModTypeId]]  # value = {'Amber': <ModTypeId.Amber: 0>, 'AmberCN': <ModTypeId.AmberCN: 1>, 'Ayaka': <ModTypeId.Ayaka: 2>, 'AyakaSpringbloom': <ModTypeId.AyakaSpringbloom: 3>, 'Arlecchino': <ModTypeId.Arlecchino: 4>, 'ArlecchinoBoss': <ModTypeId.ArlecchinoBoss: 5>, 'Barbara': <ModTypeId.Barbara: 6>, 'BarbaraSummertime': <ModTypeId.BarbaraSummertime: 7>, 'CherryHuTao': <ModTypeId.CherryHuTao: 8>, 'Diluc': <ModTypeId.Diluc: 9>, 'DilucFlamme': <ModTypeId.DilucFlamme: 10>, 'Fischl': <ModTypeId.Fischl: 11>, 'FischlHighness': <ModTypeId.FischlHighness: 12>, 'Ganyu': <ModTypeId.Ganyu: 13>, 'GanyuTwilight': <ModTypeId.GanyuTwilight: 14>, 'HuTao': <ModTypeId.HuTao: 15>, 'Jean': <ModTypeId.Jean: 16>, 'JeanCN': <ModTypeId.JeanCN: 17>, 'JeanSea': <ModTypeId.JeanSea: 18>, 'Kaeya': <ModTypeId.Kaeya: 19>, 'KaeyaSailwind': <ModTypeId.KaeyaSailwind: 20>, 'Keqing': <ModTypeId.Keqing: 21>, 'KeqingOpulent': <ModTypeId.KeqingOpulent: 22>, 'Kirara': <ModTypeId.Kirara: 23>, 'KiraraBoots': <ModTypeId.KiraraBoots: 24>, 'Klee': <ModTypeId.Klee: 25>, 'KleeBlossomingStarlight': <ModTypeId.KleeBlossomingStarlight: 26>, 'Lisa': <ModTypeId.Lisa: 27>, 'LisaStudent': <ModTypeId.LisaStudent: 28>, 'Mona': <ModTypeId.Mona: 29>, 'MonaCN': <ModTypeId.MonaCN: 30>, 'Nilou': <ModTypeId.Nilou: 31>, 'NilouBreeze': <ModTypeId.NilouBreeze: 32>, 'Ningguang': <ModTypeId.Ningguang: 33>, 'NingguangOrchid': <ModTypeId.NingguangOrchid: 34>, 'Raiden': <ModTypeId.Raiden: 35>, 'RaidenBoss': <ModTypeId.RaidenBoss: 36>, 'Rosaria': <ModTypeId.Rosaria: 37>, 'RosariaCN': <ModTypeId.RosariaCN: 38>, 'Shenhe': <ModTypeId.Shenhe: 39>, 'ShenheFrostFlower': <ModTypeId.ShenheFrostFlower: 40>, 'Xiangling': <ModTypeId.Xiangling: 41>, 'XianglingCheer': <ModTypeId.XianglingCheer: 42>, 'Xingqiu': <ModTypeId.Xingqiu: 43>, 'XingqiuBamboo': <ModTypeId.XingqiuBamboo: 44>, 'Yelan': <ModTypeId.Yelan: 45>, 'YelanTranquil': <ModTypeId.YelanTranquil: 46>, 'YelanTranquilBody': <ModTypeId.YelanTranquilBody: 47>, 'YelanTranquilBang': <ModTypeId.YelanTranquilBang: 48>, 'YelanTranquilEye': <ModTypeId.YelanTranquilEye: 49>}
+    Bennett: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Bennett: 8>
+    BennettAdventure: typing.ClassVar[ModTypeId]  # value = <ModTypeId.BennettAdventure: 9>
+    BennettAdventureBang: typing.ClassVar[ModTypeId]  # value = <ModTypeId.BennettAdventureBang: 11>
+    BennettAdventureBody: typing.ClassVar[ModTypeId]  # value = <ModTypeId.BennettAdventureBody: 10>
+    BennettAdventureEye: typing.ClassVar[ModTypeId]  # value = <ModTypeId.BennettAdventureEye: 12>
+    CherryHuTao: typing.ClassVar[ModTypeId]  # value = <ModTypeId.CherryHuTao: 13>
+    Diluc: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Diluc: 14>
+    DilucFlamme: typing.ClassVar[ModTypeId]  # value = <ModTypeId.DilucFlamme: 15>
+    Fischl: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Fischl: 16>
+    FischlHighness: typing.ClassVar[ModTypeId]  # value = <ModTypeId.FischlHighness: 17>
+    Ganyu: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Ganyu: 18>
+    GanyuTwilight: typing.ClassVar[ModTypeId]  # value = <ModTypeId.GanyuTwilight: 19>
+    HuTao: typing.ClassVar[ModTypeId]  # value = <ModTypeId.HuTao: 20>
+    Jean: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Jean: 21>
+    JeanCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.JeanCN: 22>
+    JeanSea: typing.ClassVar[ModTypeId]  # value = <ModTypeId.JeanSea: 23>
+    Kaeya: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Kaeya: 24>
+    KaeyaSailwind: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KaeyaSailwind: 25>
+    Keqing: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Keqing: 26>
+    KeqingOpulent: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KeqingOpulent: 27>
+    Kirara: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Kirara: 28>
+    KiraraBoots: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KiraraBoots: 29>
+    Klee: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Klee: 30>
+    KleeBlossomingStarlight: typing.ClassVar[ModTypeId]  # value = <ModTypeId.KleeBlossomingStarlight: 31>
+    Lisa: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Lisa: 32>
+    LisaStudent: typing.ClassVar[ModTypeId]  # value = <ModTypeId.LisaStudent: 33>
+    Mona: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Mona: 34>
+    MonaCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.MonaCN: 35>
+    Nilou: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Nilou: 36>
+    NilouBreeze: typing.ClassVar[ModTypeId]  # value = <ModTypeId.NilouBreeze: 37>
+    Ningguang: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Ningguang: 38>
+    NingguangOrchid: typing.ClassVar[ModTypeId]  # value = <ModTypeId.NingguangOrchid: 39>
+    Raiden: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Raiden: 40>
+    RaidenBoss: typing.ClassVar[ModTypeId]  # value = <ModTypeId.RaidenBoss: 41>
+    Rosaria: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Rosaria: 42>
+    RosariaCN: typing.ClassVar[ModTypeId]  # value = <ModTypeId.RosariaCN: 43>
+    Shenhe: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Shenhe: 44>
+    ShenheFrostFlower: typing.ClassVar[ModTypeId]  # value = <ModTypeId.ShenheFrostFlower: 45>
+    Xiangling: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Xiangling: 46>
+    XianglingCheer: typing.ClassVar[ModTypeId]  # value = <ModTypeId.XianglingCheer: 47>
+    Xingqiu: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Xingqiu: 48>
+    XingqiuBamboo: typing.ClassVar[ModTypeId]  # value = <ModTypeId.XingqiuBamboo: 49>
+    Yelan: typing.ClassVar[ModTypeId]  # value = <ModTypeId.Yelan: 50>
+    YelanTranquil: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquil: 51>
+    YelanTranquilBang: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilBang: 53>
+    YelanTranquilBody: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilBody: 52>
+    YelanTranquilEye: typing.ClassVar[ModTypeId]  # value = <ModTypeId.YelanTranquilEye: 54>
+    __members__: typing.ClassVar[dict[str, ModTypeId]]  # value = {'Amber': <ModTypeId.Amber: 0>, 'AmberCN': <ModTypeId.AmberCN: 1>, 'Ayaka': <ModTypeId.Ayaka: 2>, 'AyakaSpringbloom': <ModTypeId.AyakaSpringbloom: 3>, 'Arlecchino': <ModTypeId.Arlecchino: 4>, 'ArlecchinoBoss': <ModTypeId.ArlecchinoBoss: 5>, 'Barbara': <ModTypeId.Barbara: 6>, 'BarbaraSummertime': <ModTypeId.BarbaraSummertime: 7>, 'Bennett': <ModTypeId.Bennett: 8>, 'BennettAdventure': <ModTypeId.BennettAdventure: 9>, 'BennettAdventureBody': <ModTypeId.BennettAdventureBody: 10>, 'BennettAdventureBang': <ModTypeId.BennettAdventureBang: 11>, 'BennettAdventureEye': <ModTypeId.BennettAdventureEye: 12>, 'CherryHuTao': <ModTypeId.CherryHuTao: 13>, 'Diluc': <ModTypeId.Diluc: 14>, 'DilucFlamme': <ModTypeId.DilucFlamme: 15>, 'Fischl': <ModTypeId.Fischl: 16>, 'FischlHighness': <ModTypeId.FischlHighness: 17>, 'Ganyu': <ModTypeId.Ganyu: 18>, 'GanyuTwilight': <ModTypeId.GanyuTwilight: 19>, 'HuTao': <ModTypeId.HuTao: 20>, 'Jean': <ModTypeId.Jean: 21>, 'JeanCN': <ModTypeId.JeanCN: 22>, 'JeanSea': <ModTypeId.JeanSea: 23>, 'Kaeya': <ModTypeId.Kaeya: 24>, 'KaeyaSailwind': <ModTypeId.KaeyaSailwind: 25>, 'Keqing': <ModTypeId.Keqing: 26>, 'KeqingOpulent': <ModTypeId.KeqingOpulent: 27>, 'Kirara': <ModTypeId.Kirara: 28>, 'KiraraBoots': <ModTypeId.KiraraBoots: 29>, 'Klee': <ModTypeId.Klee: 30>, 'KleeBlossomingStarlight': <ModTypeId.KleeBlossomingStarlight: 31>, 'Lisa': <ModTypeId.Lisa: 32>, 'LisaStudent': <ModTypeId.LisaStudent: 33>, 'Mona': <ModTypeId.Mona: 34>, 'MonaCN': <ModTypeId.MonaCN: 35>, 'Nilou': <ModTypeId.Nilou: 36>, 'NilouBreeze': <ModTypeId.NilouBreeze: 37>, 'Ningguang': <ModTypeId.Ningguang: 38>, 'NingguangOrchid': <ModTypeId.NingguangOrchid: 39>, 'Raiden': <ModTypeId.Raiden: 40>, 'RaidenBoss': <ModTypeId.RaidenBoss: 41>, 'Rosaria': <ModTypeId.Rosaria: 42>, 'RosariaCN': <ModTypeId.RosariaCN: 43>, 'Shenhe': <ModTypeId.Shenhe: 44>, 'ShenheFrostFlower': <ModTypeId.ShenheFrostFlower: 45>, 'Xiangling': <ModTypeId.Xiangling: 46>, 'XianglingCheer': <ModTypeId.XianglingCheer: 47>, 'Xingqiu': <ModTypeId.Xingqiu: 48>, 'XingqiuBamboo': <ModTypeId.XingqiuBamboo: 49>, 'Yelan': <ModTypeId.Yelan: 50>, 'YelanTranquil': <ModTypeId.YelanTranquil: 51>, 'YelanTranquilBody': <ModTypeId.YelanTranquilBody: 52>, 'YelanTranquilBang': <ModTypeId.YelanTranquilBang: 53>, 'YelanTranquilEye': <ModTypeId.YelanTranquilEye: 54>}
     def __eq__(self, other: typing.Any) -> bool:
         ...
     def __getstate__(self) -> int:
@@ -15984,6 +16409,93 @@ class RegAssetRemap(BaseRegEdit):
     @toModName.setter
     def toModName(self, arg0: str) -> None:
         ...
+class RegBottomAdd(BaseIniGraphEdit):
+    """
+    
+    This class inherits from :class:`BaseIniGraphEdit`
+    
+    Adds `KVPs`_ **at the bottom of every root** `section`_ of a caller/callee graph, at that
+    `section`_'s own nesting depth
+    
+    The additions land together, in the order given, in a fresh last :class:`IfContentPart`. Being at
+    the `section`_'s own depth is the whole point: a position inside an ``if`` block runs only when that
+    block is taken, and "as late as possible" is exactly such a position whenever the `section`_ ends in
+    one.
+    
+    .. code-block:: ini
+    
+        [TextureOverrideCharacterHead]
+        ...
+        drawindexed = 3252, 0, 0
+        if $accessory == 1
+           drawindexed = 618, 3252, 0
+        endif
+        ; the additions go HERE, outside the block, whatever the toggles are set to
+    
+    **What this is for**: a fix with something more to say after everything the mod does --- another
+    draw call, another texture binding, a trailing command --- that has to run unconditionally.
+    
+    .. note::
+        :class:`RegFillMissing` in ``BottomCover`` mode reaches the same position, but only for a
+        register the graph is MISSING. That is a different question, and it answers "do nothing" for a
+        register the mod already has
+        
+    """
+    def __init__(self, additions: typing.Any) -> None:
+        ...
+    def edit(self, graph: typing.Any, modType: typing.Any, modName: str = '', partFilter: typing.Any = None, trackKeys: bool = False, keysToTrack: typing.Any = None) -> typing.Any:
+        """
+        Adds :attr:`additions` at the bottom of every root `section`_ of 'graph', in a fresh last
+        :class:`IfContentPart` at the `section`_'s own depth
+        
+        .. note::
+            'trackKeys'/'keysToTrack' are the caller's key-tracking defaults, handed down by
+            :class:`BaseIniGraphEdit`'s contract. This edit never colours the graph, so it has no use for
+            them --- they are accepted only so the shared call convention keeps working
+        
+        Parameters
+        ----------
+        graph: :class:`IniSectionGraph`
+            The graph to edit
+        
+        modType: Optional[:class:`ModType`]
+            The mod type handed to 'partFilter'
+        
+        modName: :class:`str`
+            The name of the mod being fixed to :raw-html:`<br />` :raw-html:`<br />`
+        
+            **Default**: ``""``
+        
+        partFilter: Optional[Callable]
+            Asked about each root's existing last :class:`IfContentPart` --- the part a new one is appended
+            after --- and a root it rejects is left alone entirely :raw-html:`<br />` :raw-html:`<br />`
+        
+            **Default**: ``None``
+        
+        trackKeys: :class:`bool`
+            Unused --- see the note above :raw-html:`<br />` :raw-html:`<br />`
+        
+            **Default**: ``False``
+        
+        keysToTrack: Optional[Set[:class:`str`]]
+            Unused --- see the note above :raw-html:`<br />` :raw-html:`<br />`
+        
+            **Default**: ``None``
+        
+        Returns
+        -------
+        :class:`IniSectionGraph`
+            The same graph that was passed in
+        """
+    @property
+    def additions(self) -> list:
+        """
+        List[Tuple[:class:`str`, :class:`str`]]: The `KVP`_ entries to add, in order --- a single
+        ``(key, value)`` tuple may be assigned and reads back as a one-entry list
+        """
+    @additions.setter
+    def additions(self, arg1: typing.Any) -> None:
+        ...
 class RegDelimitedAdd(BaseIniGraphEdit):
     """
     
@@ -16050,7 +16562,7 @@ class RegDelimitedAdd(BaseIniGraphEdit):
         **Default**: ``None``
         
     """
-    def __init__(self, additions: typing.Any, delimiterRegs: typing.Any = None, pathEndOnlyWhenUndelimited: bool = False) -> None:
+    def __init__(self, additions: typing.Any, delimiterRegs: typing.Any = None, pathEndOnlyWhenUndelimited: bool = False, mode: RegDelimitedAddMode = ...) -> None:
         ...
     def edit(self, graph: typing.Any, modType: typing.Any, modName: str = '', partFilter: typing.Any = None, trackKeys: bool = False, keysToTrack: typing.Any = None) -> typing.Any:
         """
@@ -16117,6 +16629,17 @@ class RegDelimitedAdd(BaseIniGraphEdit):
     def delimiterRegs(self, arg1: typing.Any) -> None:
         ...
     @property
+    def mode(self) -> RegDelimitedAddMode:
+        """
+        :class:`RegDelimitedAddMode`: How many times one execution path gets :attr:`additions` -- prefer
+        ``PerPath`` for any addition whose effect accumulates
+        
+        **Default**: ``RegDelimitedAddMode.PerSegment``
+        """
+    @mode.setter
+    def mode(self, arg0: RegDelimitedAddMode) -> None:
+        ...
+    @property
     def pathEndOnlyWhenUndelimited(self) -> bool:
         """
         :class:`bool`: Whether a path that already contains a delimiter is left without a trailing
@@ -16133,6 +16656,62 @@ class RegDelimitedAdd(BaseIniGraphEdit):
         """
     @pathEndOnlyWhenUndelimited.setter
     def pathEndOnlyWhenUndelimited(self, arg0: bool) -> None:
+        ...
+class RegDelimitedAddMode:
+    """
+    
+    How often :class:`RegDelimitedAdd` places its addition along one execution path :raw-html:`<br />`
+    :raw-html:`<br />`
+    
+    Both modes place the addition **as late as possible**; they differ only in how many times a single
+    path gets it
+        
+    
+    Members:
+    
+      PerSegment : 
+    Once per **delimiter-free stretch** of every path -- immediately before every accepted delimiter,
+    plus once at the end of a path that has none
+            
+    
+      PerPath : 
+    Once per **path**, at the last position preceding every accepted delimiter on it :raw-html:`<br />`
+    :raw-html:`<br />`
+    
+    The mode for re-issuing GIMI's external fix libraries. ``NNFix``/``ORFix`` read the bound ``ps-t``
+    registers and write them back re-slotted, so a second call over the same bindings undoes the first;
+    a `section`_ whose draws sit in independent ``if`` blocks issues several in one pass, and under
+    :attr:`PerSegment` every second one renders with its light map as the albedo
+            
+    """
+    PerPath: typing.ClassVar[RegDelimitedAddMode]  # value = <RegDelimitedAddMode.PerPath: 1>
+    PerSegment: typing.ClassVar[RegDelimitedAddMode]  # value = <RegDelimitedAddMode.PerSegment: 0>
+    __members__: typing.ClassVar[dict[str, RegDelimitedAddMode]]  # value = {'PerSegment': <RegDelimitedAddMode.PerSegment: 0>, 'PerPath': <RegDelimitedAddMode.PerPath: 1>}
+    def __eq__(self, other: typing.Any) -> bool:
+        ...
+    def __getstate__(self) -> int:
+        ...
+    def __hash__(self) -> int:
+        ...
+    def __index__(self) -> int:
+        ...
+    def __init__(self, value: typing.SupportsInt | typing.SupportsIndex) -> None:
+        ...
+    def __int__(self) -> int:
+        ...
+    def __ne__(self, other: typing.Any) -> bool:
+        ...
+    def __repr__(self) -> str:
+        ...
+    def __setstate__(self, state: typing.SupportsInt | typing.SupportsIndex) -> None:
+        ...
+    def __str__(self) -> str:
+        ...
+    @property
+    def name(self) -> str:
+        ...
+    @property
+    def value(self) -> int:
         ...
 class RegFillMissing(BaseIniGraphEdit):
     """
@@ -20639,6 +21218,131 @@ class VGComponentBuffers:
         """
         List[List[:class:`float`]]: Per kept vertex, its 4 weights in the component's bones
         """
+class VGComponentMerge:
+    """
+    
+    Merges the geometry of a mod built for a skin of SEVERAL components onto a target of one -- the
+    inverse of :class:`VGComponentSplit`
+    
+    A single-component target draws through ONE set of buffer hashes, so the components' buffers have to
+    become one set: several ``.ini`` files each binding that hash to different bytes does not work,
+    because a hash binds once and the other components' index buffers then address the winner's vertices
+    
+    The components are laid end to end in the order given, so the first keeps its index buffers
+    unchanged. Each component's blend is remapped through its OWN row before the concatenation, and two
+    source objects landing on the same target object have their index buffers concatenated into one draw
+    
+    Parameters
+    ----------
+    components: List[:class:`VGMergeComponent`]
+        The source's components; the first takes offset 0
+        
+    """
+    @staticmethod
+    def padLines(src: bytes, lines: typing.SupportsInt | typing.SupportsIndex, to: typing.SupportsInt | typing.SupportsIndex) -> bytes:
+        """
+        A fixed-stride buffer widened, every line zero-padded at the END -- where a missing ``TEXCOORD1`` sits
+        """
+    @staticmethod
+    def remapIndices(indices: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(4)"]], weights: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex], "FixedSize(4)"]], remap: VGRemap) -> tuple[list[typing.Annotated[list[int], "FixedSize(4)"]], list[int]]:
+        """
+        One component's bone indices through its remap
+        
+        A slot is remapped only where it carries WEIGHT -- a zero-weight slot keeps its literal index, so
+        ``[0, 0, 0, 0]`` with weights ``[1, 0, 0, 0]`` comes out ``[64, 0, 0, 0]`` and not ``[64, 64, 64, 64]``
+        
+        Returns
+        -------
+        Tuple[List[List[:class:`int`]], List[:class:`int`]]
+            The remapped indices, and every weighted group that had no entry
+        """
+    def __init__(self, components: collections.abc.Sequence[VGMergeComponent]) -> None:
+        ...
+    def mergeIbs(self, members: collections.abc.Sequence[tuple[str, collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(3)"]]]]) -> list[typing.Annotated[list[int], "FixedSize(3)"]]:
+        """
+        One target object's index buffer: each member's triangles offset by its component's first vertex,
+        concatenated in the order given
+        
+        Parameters
+        ----------
+        members: List[Tuple[:class:`str`, List[List[:class:`int`]]]]
+            The source objects drawn through this target object, as ``(component, triangles)``
+        
+        Returns
+        -------
+        List[List[:class:`int`]]
+            The merged triangles
+        """
+    def offsetOf(self, component: str) -> int:
+        """
+        A component's first vertex in the merged buffers
+        """
+    @property
+    def blend(self) -> bytes:
+        """
+        :class:`bytes`: The merged ``Blend.buf``
+        """
+    @property
+    def position(self) -> bytes:
+        """
+        :class:`bytes`: The merged ``Position.buf``
+        """
+    @property
+    def stats(self) -> VGComponentMergeStats:
+        """
+        :class:`VGComponentMergeStats`: Counts worth reporting
+        """
+    @property
+    def texcoord(self) -> bytes:
+        """
+        :class:`bytes`: The merged ``Texcoord.buf``
+        """
+    @property
+    def vertexCount(self) -> int:
+        """
+        :class:`int`: The merged vertex count
+        """
+class VGComponentMergeStats:
+    """
+    
+    Counts worth reporting about a merge
+        
+    """
+    @property
+    def offsets(self) -> list[int]:
+        """
+        List[:class:`int`]: Per component, its first vertex in the merged buffers
+        """
+    @property
+    def order(self) -> list[str]:
+        """
+        List[:class:`str`]: The component names, in merge order
+        """
+    @property
+    def paddedComponents(self) -> int:
+        """
+        :class:`int`: How many components' texcoord lines had to be padded
+        """
+    @property
+    def texcoordStride(self) -> int:
+        """
+        :class:`int`: The merged ``Texcoord.buf``'s stride -- the widest component's
+        """
+    @property
+    def unmapped(self) -> list[tuple[str, int]]:
+        """
+        List[Tuple[:class:`str`, :class:`int`]]: Every ``(component, vertex group)`` that carries weight and has no remap -- each becomes a NEGATIVE bone index and kinks the model
+        """
+    @property
+    def vertexCount(self) -> int:
+        """
+        :class:`int`: The merged vertex count
+        """
+    @property
+    def vertices(self) -> list[int]:
+        """
+        List[:class:`int`]: Per component, how many vertices it brought
+        """
 class VGComponentSpec:
     """
     
@@ -20808,6 +21512,259 @@ class VGComponentSplitStats:
         """
         :class:`int`: The mod's vertices
         """
+class VGMergeComponent:
+    """
+    
+    One source component's decoded blend and its raw vertex buffers
+    
+    Parameters
+    ----------
+    spec: :class:`VGMergeComponentSpec`
+        The component and its own vertex group row
+    
+    weights: List[List[:class:`float`]]
+        Per vertex, its 4 blend weights
+    
+    indices: List[List[:class:`int`]]
+        Per vertex, its 4 vertex group indices, in THIS component's numbering
+    
+    position: :class:`bytes`
+        The whole ``Position.buf``, copied through unchanged
+    
+    texcoord: :class:`bytes`
+        The whole ``Texcoord.buf``, padded up to the widest component's stride
+        
+    """
+    def __init__(self, spec: VGMergeComponentSpec, weights: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex], "FixedSize(4)"]], indices: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(4)"]], position: bytes, texcoord: bytes) -> None:
+        ...
+    @property
+    def indices(self) -> list[typing.Annotated[list[int], "FixedSize(4)"]]:
+        """
+        List[List[:class:`int`]]: Per vertex, its 4 vertex group indices
+        """
+    @indices.setter
+    def indices(self, arg0: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsInt | typing.SupportsIndex], "FixedSize(4)"]]) -> None:
+        ...
+    @property
+    def position(self) -> bytes:
+        """
+        :class:`bytes`: The whole ``Position.buf``
+        """
+    @position.setter
+    def position(self, arg1: bytes) -> None:
+        ...
+    @property
+    def spec(self) -> VGMergeComponentSpec:
+        """
+        :class:`VGMergeComponentSpec`: The component and its row
+        """
+    @spec.setter
+    def spec(self, arg0: VGMergeComponentSpec) -> None:
+        ...
+    @property
+    def texcoord(self) -> bytes:
+        """
+        :class:`bytes`: The whole ``Texcoord.buf``
+        """
+    @texcoord.setter
+    def texcoord(self, arg1: bytes) -> None:
+        ...
+    @property
+    def weights(self) -> list[typing.Annotated[list[float], "FixedSize(4)"]]:
+        """
+        List[List[:class:`float`]]: Per vertex, its 4 blend weights
+        """
+    @weights.setter
+    def weights(self, arg0: collections.abc.Sequence[typing.Annotated[collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex], "FixedSize(4)"]]) -> None:
+        ...
+class VGMergeComponentFiles:
+    """
+    
+    One source component's files, as a :class:`VGMergeGroupResource` finds them on disk
+    
+    Parameters
+    ----------
+    spec: :class:`VGMergeComponentSpec`
+        The component and its own vertex group row
+    
+    blendPath: :class:`str`
+        This component's ``Blend.buf``
+    
+    positionPath: :class:`str`
+        This component's ``Position.buf``
+    
+    texcoordPath: :class:`str`
+        This component's ``Texcoord.buf``
+        
+    """
+    def __init__(self, spec: VGMergeComponentSpec, blendPath: str = '', positionPath: str = '', texcoordPath: str = '') -> None:
+        ...
+    @property
+    def blendPath(self) -> str:
+        """
+        :class:`str`: This component's ``Blend.buf``
+        """
+    @blendPath.setter
+    def blendPath(self, arg0: str) -> None:
+        ...
+    @property
+    def positionPath(self) -> str:
+        """
+        :class:`str`: This component's ``Position.buf``
+        """
+    @positionPath.setter
+    def positionPath(self, arg0: str) -> None:
+        ...
+    @property
+    def spec(self) -> VGMergeComponentSpec:
+        """
+        :class:`VGMergeComponentSpec`: The component and its row
+        """
+    @spec.setter
+    def spec(self, arg0: VGMergeComponentSpec) -> None:
+        ...
+    @property
+    def texcoordPath(self) -> str:
+        """
+        :class:`str`: This component's ``Texcoord.buf``
+        """
+    @texcoordPath.setter
+    def texcoordPath(self, arg0: str) -> None:
+        ...
+class VGMergeComponentSpec:
+    """
+    
+    One SOURCE component of a skin made of several -- YelanTranquil's ``Body``, ``Bang`` or ``Eye`` -- and
+    how its own vertex groups reach the target's bones
+    
+    Parameters
+    ----------
+    name: :class:`str`
+        The component's name
+    
+    remap: Union[:class:`VGRemap`, Dict[:class:`int`, :class:`int`]]
+        This component's vertex group (source index) to the target's bone. Each component has a row of
+        its OWN, which is the whole reason the components cannot be remapped together
+        
+    """
+    def __init__(self, name: str, remap: typing.Any = None) -> None:
+        ...
+    @property
+    def name(self) -> str:
+        """
+        :class:`str`: The component's name
+        """
+    @name.setter
+    def name(self, arg0: str) -> None:
+        ...
+    @property
+    def remap(self) -> VGRemap:
+        """
+        :class:`VGRemap`: This component's vertex group to the target's bone
+        """
+    @remap.setter
+    def remap(self, arg0: VGRemap) -> None:
+        ...
+class VGMergeGroupResource(IniGroupedResource, RemapIniResourceMixin):
+    """
+    
+    This class inherits from :class:`IniGroupedResource` and :class:`RemapIniResourceMixin`
+    
+    A group of one mod's buffers merged from a source of SEVERAL components onto a single-component
+    target, together -- the inverse of :class:`VGSplitGroupResource`
+    
+    A single-component target draws through one set of buffer hashes, so the components' buffers have to
+    become one set. Every component's index buffer then shifts by the vertices of the components before
+    it, which is why the members cannot be fixed one at a time. Members are told apart by their ``type``:
+    ``blend``, ``position`` and ``texcoord`` (at most one each) and ``buf`` (the index buffers, matched
+    to a :class:`VGMergeObject`'s ``srcPath``)
+    
+    Parameters
+    ----------
+    name: :class:`str`
+        The name of the group
+    
+    resources: Optional[Dict[Any, Any]]
+        The group's members. If ``None``, a fresh empty ``dict`` is used :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    components: Optional[List[:class:`VGMergeComponentFiles`]]
+        Every component of the source, in merge order -- the first takes offset 0 :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    objects: Optional[List[:class:`VGMergeObject`]]
+        The target's drawn objects :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    fixFunc: Optional[Callable[[:class:`IniGroupedResource`], :class:`bool`]]
+        Custom function for fixing the group, overriding the merge if given :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+    
+    isBuilt: :class:`bool`
+        Whether the group is ready to be fixed :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``True``
+        
+    """
+    def __init__(self, name: str, resources: typing.Any = None, components: typing.Any = None, objects: typing.Any = None, fixFunc: collections.abc.Callable[[...], bool] = None, isBuilt: bool = True) -> None:
+        ...
+    @property
+    def components(self) -> list[VGMergeComponentFiles]:
+        """
+        List[:class:`VGMergeComponentFiles`]: Every component of the source, in merge order
+        """
+    @components.setter
+    def components(self, arg1: collections.abc.Sequence[VGMergeComponentFiles]) -> None:
+        ...
+    @property
+    def objects(self) -> list[VGMergeObject]:
+        """
+        List[:class:`VGMergeObject`]: The target's drawn objects
+        """
+    @objects.setter
+    def objects(self, arg1: collections.abc.Sequence[VGMergeObject]) -> None:
+        ...
+class VGMergeObject:
+    """
+    
+    One object of the TARGET, and the source objects drawn through it
+    
+    Parameters
+    ----------
+    srcPath: :class:`str`
+        The source ``.ib`` this object's group member was collected from -- the representative, which is
+        ``members``' first entry. The member resource is matched by this path
+    
+    members: Optional[List[Tuple[:class:`str`, :class:`str`]]]
+        The source objects this target object draws, as ``(component, .ib path)``, in draw order. More
+        than one means a MERGE into a single draw -- YelanTranquil's ``Bang`` and ``Eye`` both land on
+        Yelan's head :raw-html:`<br />` :raw-html:`<br />`
+    
+        **Default**: ``None``
+        
+    """
+    def __init__(self, srcPath: str = '', members: typing.Any = None) -> None:
+        ...
+    @property
+    def members(self) -> list[tuple[str, str]]:
+        """
+        List[Tuple[:class:`str`, :class:`str`]]: The source objects drawn through this one, as ``(component, .ib path)``
+        """
+    @members.setter
+    def members(self, arg0: collections.abc.Sequence[tuple[str, str]]) -> None:
+        ...
+    @property
+    def srcPath(self) -> str:
+        """
+        :class:`str`: The source ``.ib`` the member was collected from
+        """
+    @srcPath.setter
+    def srcPath(self, arg0: str) -> None:
+        ...
 class VGRemap:
     """
     
@@ -21539,4 +22496,50 @@ def makeGIMICharParser(config: GIMICharParserConfig) -> CppIniParseFactory:
     -------
     :class:`CppIniParseFactory`
         The factory, for :meth:`CppStrategyOverrides.setParser`
+    """
+def makeGIMIComponentParser(config: GIMIComponentParserConfig) -> CppIniParseFactory:
+    """
+    Builds the parser for a mod of a SKIN MADE OF SEVERAL COMPONENTS
+    
+    One classifier per component, each filtered to that component's own mod type name, and a `section`_
+    offered to each in turn --- a hash value is unique to one character, so at most one answers. The
+    slot a drawn `section`_ belongs to is resolved from the config's literal ``match_first_index``
+    rather than by a reverse lookup, for the reason
+    :attr:`GIMIComponentParserConfig.Slot.index` records.
+    
+    Parameters
+    ----------
+    config: :class:`GIMIComponentParserConfig`
+        What this skin's components are
+    
+    Returns
+    -------
+    :class:`CppIniParseFactory`
+        The factory, for :meth:`CppStrategyOverrides.setParser`
+    """
+def makeGIMIMergeFixer(config: GIMIMergeFixerConfig) -> CppIniFixFactory:
+    """
+    Builds the fixer for a MULTI-COMPONENT SOURCE landing on a ONE-MESH TARGET
+    
+    The third fixer template, next to :func:`makeGIMICharFixer` (one mesh onto one mesh) and
+    :func:`makeGIMIComponentFixer` (one mesh onto several components). It merges the mod's buffers as
+    one resource group, re-slots every register the target lays out differently, moves the material
+    bands, and writes a single ``.ini`` group.
+    
+    .. note::
+        Two things it does that no other template needs. A target object SEVERAL components land on is
+        not one draw call: the merged index buffer is member after member, and a mod's own
+        ``drawindexed`` lines address only the first, so the rest are appended. And a member that binds
+        no textures of its own renders with the GAME's, which are downloaded --- so members that
+        disagree are drawn separately, each with its own bindings and its own fix call
+    
+    Parameters
+    ----------
+    config: :class:`GIMIMergeFixerConfig`
+        What this source's components are and where they land
+    
+    Returns
+    -------
+    :class:`CppIniFixFactory`
+        The factory, for :meth:`CppStrategyOverrides.setFixer`
     """

@@ -22,6 +22,7 @@
 #include <utility>
 #include <vector>
 
+#include "AGRemapCore/constants/RegDelimitedAddMode.h"
 #include "AGRemapCore/model/strategies/iniFixers/graphEdits/BaseIniGraphEdit.h"
 
 
@@ -36,7 +37,17 @@ namespace AGRemapCore {
      This class inherits from :cpp:class:`BaseIniGraphEdit`
 
      Adds a `KVP`_ into some caller/callee graph of :cpp:class:`IniSectionGraph` **exactly once
-     per delimiter-free stretch of every execution path** :raw-html:`<br />` :raw-html:`<br />`
+     per delimiter-free stretch of every execution path** -- or, in
+     :cpp:enumerator:`RegDelimitedAddMode::PerPath`, exactly once per execution path
+     :raw-html:`<br />` :raw-html:`<br />`
+
+     Read :cpp:enum:`RegDelimitedAddMode` before choosing: an addition whose effect ACCUMULATES
+     (GIMI's ``NNFix`` / ``ORFix``, which re-slot the ``ps-t`` registers and so undo themselves when
+     called twice) needs ``PerPath``, and the segment rule below silently renders every second draw
+     of a multi-draw `section`_ unfixed :raw-html:`<br />` :raw-html:`<br />`
+
+     The rest of this description is the ``PerSegment`` rule; ``PerPath``'s is at the end
+     :raw-html:`<br />` :raw-html:`<br />`
 
      Cut every execution path through the graph at each accepted occurence of a register in
      \ref delimiterRegs. That leaves `segments`: from the start of the path to its first
@@ -91,6 +102,30 @@ namespace AGRemapCore {
      own (a position the filter's ranges do not contain is simply skipped, never relocated), so a
      filter that excludes the only valid position of a segment breaks the invariant for that
      segment -- the filter is the caller's statement that the part must not be touched there
+     :raw-html:`<br />` :raw-html:`<br />`
+
+     **The** ``PerPath`` **rule.** Only the FIRST segment of each path is given the addition, so a
+     path receives it once however many times it delimits. The position is still as late as
+     possible, which is the frontier of the region no delimiter can have executed before:
+
+     1. a part that can be reached with nothing delimited yet, **on every path that reaches it**, is
+        a candidate -- the candidates form a prefix of the graph, and every path leaves that prefix
+        exactly once;
+     2. a candidate holding a delimiter takes the addition immediately before its FIRST one;
+     3. a candidate holding none takes it at its END, but only when it has to -- when it is a path
+        end, or when one of its successors is NOT a candidate (some path leaves the prefix there
+        without delimiting, and nothing further along could serve it);
+     4. otherwise it defers to its successors, and once a part has taken the addition everything
+        reachable from it is covered and takes none.
+
+     Rule 3 is what a `section`_ whose draws are all inside INDEPENDENT ``if`` blocks needs -- there
+     is no position inside the blocks that serves the paths through the other blocks, so the
+     addition lands at the end of the header content, which is exactly where a mod author writes it
+     by hand. Rule 4 is what stops that same `section`_ from also taking one inside each block
+     :raw-html:`<br />` :raw-html:`<br />`
+
+     \ref pathEndOnlyWhenUndelimited is IGNORED in this mode: "once at the end of a path that never
+     delimits" is what rules 1-3 already do
      @endrst
      */
     template <typename K = std::string, typename V = std::string, typename KeyHash = std::hash<K>, typename KeyEqual = std::equal_to<K>>
@@ -114,6 +149,11 @@ namespace AGRemapCore {
             using CallGraphType = typename Graph::CallGraphType;
 
             using Node = typename CallGraphType::Node;
+
+            /**
+             * @brief Hasher for ef Node
+             */
+            using NodeHash = typename CallGraphType::NodeHash;
 
             /**
              * @brief
@@ -186,20 +226,42 @@ namespace AGRemapCore {
             bool pathEndOnlyWhenUndelimited = false;
 
             /**
-             * @brief Constructs a new per-segment adding edit
+             * @brief
+             @rst
+             How many times one execution path gets \ref additions -- see
+             :cpp:enum:`RegDelimitedAddMode`, and prefer
+             :cpp:enumerator:`RegDelimitedAddMode::PerPath` for any addition whose effect
+             accumulates :raw-html:`<br />` :raw-html:`<br />`
+
+             **Default**: :cpp:enumerator:`RegDelimitedAddMode::PerSegment`
+             @endrst
+             */
+            RegDelimitedAddMode mode = RegDelimitedAddMode::PerSegment;
+
+            /**
+             * @brief Constructs a new delimiter-keyed adding edit
              *
              * @param additions The `KVP`_ entries to add, in order
              * @param delimiterRegs The registers that delimit the segments
              * @param pathEndOnlyWhenUndelimited
              @rst
              Whether to make the end-of-path addition only on a path that never delimits -- see
-             \ref pathEndOnlyWhenUndelimited :raw-html:`<br />` :raw-html:`<br />`
+             \ref pathEndOnlyWhenUndelimited. Ignored when 'mode' is
+             :cpp:enumerator:`RegDelimitedAddMode::PerPath` :raw-html:`<br />` :raw-html:`<br />`
 
              **Default**: ``false``
              @endrst
+             * @param mode
+             @rst
+             How many times one execution path gets the addition -- see \ref mode
+             :raw-html:`<br />` :raw-html:`<br />`
+
+             **Default**: :cpp:enumerator:`RegDelimitedAddMode::PerSegment`
+             @endrst
              */
             explicit RegDelimitedAdd(Additions additions = {}, RegMap delimiterRegs = {},
-                                      bool pathEndOnlyWhenUndelimited = false);
+                                      bool pathEndOnlyWhenUndelimited = false,
+                                      RegDelimitedAddMode mode = RegDelimitedAddMode::PerSegment);
 
             /**
              * @brief
@@ -227,6 +289,25 @@ namespace AGRemapCore {
              * @param part The part to check
              */
             static bool isPathEnd(const CallGraphType& callGraph, ContentPart* part);
+
+        private:
+
+            /**
+             * @brief
+             @rst
+             The :cpp:enumerator:`RegDelimitedAddMode::PerPath` half of ef edit -- see this
+             class's description for the four placement rules it implements
+             @endrst
+             *
+             * @param graph The graph being edited
+             * @param callGraph Its call graph, already built
+             * @param modType The mod type passed to ef edit, handed to 'partFilter'
+             * @param partFilter The filter passed to ef edit
+             */
+            void editPerPath(Graph& graph, const CallGraphType& callGraph, const ModType* modType,
+                              const PartFilter& partFilter);
+
+        public:
 
             // Inserts every entry of 'additions' at 'index' of 'part', keeping their order -- the
             // whole list lands together, as consecutive lines

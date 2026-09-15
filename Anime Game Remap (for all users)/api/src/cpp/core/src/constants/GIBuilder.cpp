@@ -338,11 +338,11 @@ namespace AGRemapCore {
     }
 
     ModType GIBuilder::yelan() {
-        return makeGIModType(ModTypeId::Yelan, {"Valley Orchid", "ValleyOrchid"});
+        return makeGIModType(ModTypeId::Yelan, {"ShenhesBestie", "TsaritsaJacketStealer"});
     }
 
     ModType GIBuilder::yelanTranquil() {
-        return makeGIModType(ModTypeId::YelanTranquil, {"YelanTranquilBanquet", "TranquilBanquetYelan", "YelanSummer", "SummerYelan", "ValleyOrchidTranquil"});
+        return makeGIModType(ModTypeId::YelanTranquil, {"YelanTranquilBanquet", "TranquilBanquetYelan", "YelanSummer", "SummerYelan", "ShenhesSummerBestie", "TsaritsaJacketStealerButDoesntNeedItSinceItIsSummer"});
     }
 
     std::vector<ModType> GIBuilder::all() {

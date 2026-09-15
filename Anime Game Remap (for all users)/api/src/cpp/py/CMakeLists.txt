@@ -102,6 +102,7 @@ pybind11_add_module(core
     src/model/strategies/iniFixers/regEdits/PyBaseRegEdit.cpp
     src/model/strategies/iniFixers/regEdits/PyRegAdd.cpp
     src/data/PyGIMICharBuilders.cpp
+    src/data/PyGIMIComponentBuilders.cpp
     src/model/PyIniNamingTools.cpp
     src/model/strategies/iniFixers/PyGIMIObjPartFilter.cpp
     src/model/strategies/iniFixers/regEdits/PyRegAssetRemap.cpp
@@ -112,6 +113,7 @@ pybind11_add_module(core
     src/model/strategies/iniFixers/graphEdits/PyGraphRename.cpp
     src/model/strategies/iniFixers/graphEdits/PyRegFillMissing.cpp
     src/model/strategies/iniFixers/graphEdits/PyRegSurroundedAdd.cpp
+    src/model/strategies/iniFixers/graphEdits/PyRegBottomAdd.cpp
     src/model/strategies/iniFixers/graphEdits/PyRegDelimitedAdd.cpp
     src/model/strategies/iniFixers/graphGroupEdits/PyIniGraphGroups.cpp
     src/model/strategies/iniFixers/graphGroupEdits/PyBaseIniGraphGroupEdit.cpp
@@ -156,6 +158,7 @@ pybind11_add_module(core
     src/model/files/PyBufFile.cpp
     src/model/PyVGRemap.cpp
     src/model/buffers/PyVGComponentSplit.cpp
+    src/model/buffers/PyVGComponentMerge.cpp
     src/model/files/PyBlendFile.cpp
     src/model/files/PyPositionFile.cpp
     src/model/files/PyIbFile.cpp
@@ -198,6 +201,7 @@ pybind11_add_module(core
     src/model/iniresources/PyRemapIniResource.cpp
     src/model/iniresources/PyRemapIniGroupedResource.cpp
     src/model/iniresources/PyVGSplitGroupResource.cpp
+    src/model/iniresources/PyVGMergeGroupResource.cpp
     src/model/iniresources/PyRemapBlendResource.cpp
     src/model/iniresources/PyRemapTexResource.cpp
 )

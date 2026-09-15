@@ -68,8 +68,8 @@ std::optional<PyRegDelimitedAdd::Core::KeySet> parseKeysToTrack(const py::object
 
 
 PyRegDelimitedAdd::PyRegDelimitedAdd(py::object additionsObj, py::object delimiterRegsObj,
-                                       bool pathEndOnlyWhenUndelimited):
-    Core(parseAdditions(additionsObj), parseRegMap(delimiterRegsObj), pathEndOnlyWhenUndelimited),
+                                       bool pathEndOnlyWhenUndelimited, AGRC::RegDelimitedAddMode mode):
+    Core(parseAdditions(additionsObj), parseRegMap(delimiterRegsObj), pathEndOnlyWhenUndelimited, mode),
     delimiterRegsObj(delimiterRegsObj.is_none() ? py::dict() : delimiterRegsObj.cast<py::dict>()) {}
 
 
@@ -138,12 +138,45 @@ delimiterRegs: Optional[Dict[:class:`str`, Optional[Callable[[:class:`str`], :cl
     **Default**: ``None``
     )doc");
 
+    // Bound as a plain py::enum_, unlike RegFillMissingMode -- that one mirrors a still-pure-Python
+    // Enum and has to be matched through '.value'; this one has no pure-Python original to mirror.
+    py::enum_<AGRC::RegDelimitedAddMode>(m, "RegDelimitedAddMode", R"doc(
+How often :class:`RegDelimitedAdd` places its addition along one execution path :raw-html:`<br />`
+:raw-html:`<br />`
+
+Both modes place the addition **as late as possible**; they differ only in how many times a single
+path gets it
+    )doc")
+        .value("PerSegment", AGRC::RegDelimitedAddMode::PerSegment, R"doc(
+Once per **delimiter-free stretch** of every path -- immediately before every accepted delimiter,
+plus once at the end of a path that has none
+        )doc")
+        .value("PerPath", AGRC::RegDelimitedAddMode::PerPath, R"doc(
+Once per **path**, at the last position preceding every accepted delimiter on it :raw-html:`<br />`
+:raw-html:`<br />`
+
+The mode for re-issuing GIMI's external fix libraries. ``NNFix``/``ORFix`` read the bound ``ps-t``
+registers and write them back re-slotted, so a second call over the same bindings undoes the first;
+a `section`_ whose draws sit in independent ``if`` blocks issues several in one pass, and under
+:attr:`PerSegment` every second one renders with its light map as the albedo
+        )doc");
+
     // py::init(factory), same as PyRegSurroundedAdd: the core holds std::function predicates
-    cls.def(py::init([](py::object additions, py::object delimiterRegs, bool pathEndOnlyWhenUndelimited) {
+    cls.def(py::init([](py::object additions, py::object delimiterRegs, bool pathEndOnlyWhenUndelimited,
+                         AGRC::RegDelimitedAddMode mode) {
         return std::make_unique<PyRegDelimitedAdd>(std::move(additions), std::move(delimiterRegs),
-                                                    pathEndOnlyWhenUndelimited);
+                                                    pathEndOnlyWhenUndelimited, mode);
     }), py::arg("additions"), py::arg("delimiterRegs") = py::none(),
-        py::arg("pathEndOnlyWhenUndelimited") = false);
+        py::arg("pathEndOnlyWhenUndelimited") = false,
+        py::arg("mode") = AGRC::RegDelimitedAddMode::PerSegment);
+
+    cls.def_readwrite("mode", &PyRegDelimitedAdd::mode,
+        py::doc(R"doc(
+:class:`RegDelimitedAddMode`: How many times one execution path gets :attr:`additions` -- prefer
+``PerPath`` for any addition whose effect accumulates
+
+**Default**: ``RegDelimitedAddMode.PerSegment``
+        )doc"));
 
     cls.def_readwrite("pathEndOnlyWhenUndelimited", &PyRegDelimitedAdd::pathEndOnlyWhenUndelimited,
         py::doc(R"doc(

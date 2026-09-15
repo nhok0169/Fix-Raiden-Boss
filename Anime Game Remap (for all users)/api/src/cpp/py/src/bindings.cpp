@@ -32,6 +32,7 @@
 #include "model/iftemplate/PyIfContentPart.h"
 #include "model/iftemplate/PyIfContentPartColour.h"
 #include "data/PyGIMICharBuilders.h"
+#include "data/PyGIMIComponentBuilders.h"
 #include "model/PyIniNamingTools.h"
 #include "model/PyVersion.h"
 #include "model/assets/PyModDictAssets.h"
@@ -83,6 +84,7 @@
 #include "model/strategies/iniFixers/graphEdits/PyGraphRename.h"
 #include "model/strategies/iniFixers/graphEdits/PyRegFillMissing.h"
 #include "model/strategies/iniFixers/graphEdits/PyRegSurroundedAdd.h"
+#include "model/strategies/iniFixers/graphEdits/PyRegBottomAdd.h"
 #include "model/strategies/iniFixers/graphEdits/PyRegDelimitedAdd.h"
 #include "model/strategies/iniFixers/graphGroupEdits/PyBaseIniGraphGroupEdit.h"
 #include "model/strategies/iniFixers/graphGroupEdits/PyGraphRemove.h"
@@ -123,6 +125,7 @@
 #include "model/files/PyBufFile.h"
 #include "model/PyVGRemap.h"
 #include "model/buffers/PyVGComponentSplit.h"
+#include "model/buffers/PyVGComponentMerge.h"
 #include "model/files/PyBlendFile.h"
 #include "model/files/PyPositionFile.h"
 #include "model/files/PyIbFile.h"
@@ -166,6 +169,7 @@
 #include "model/iniresources/PyRemapIniResource.h"
 #include "model/iniresources/PyRemapIniGroupedResource.h"
 #include "model/iniresources/PyVGSplitGroupResource.h"
+#include "model/iniresources/PyVGMergeGroupResource.h"
 #include "model/iniresources/PyRemapBlendResource.h"
 #include "model/iniresources/PyRemapTexResource.h"
 
@@ -214,10 +218,12 @@ PYBIND11_MODULE(core, m) {
     initCppVGRemap(m);
     initCppVGRemaps(m); // reads best after initCppVGRemap (its get() returns one); not order-critical
     initCppVGComponentSplit(m); // must come after initCppVGRemap (a VGComponentSpec holds one)
+    initCppVGComponentMerge(m); // must come after initCppVGRemap (a VGMergeComponentSpec holds one)
 
     initCppModType(m);
     initCppGlobalModTypes(m); // must come after initCppModType (its all() returns CppModTypes)
     initCppGIMICharBuilders(m); // must come after initCppTexEditor (a TexEdit filter) and before initCppStrategyOverrides (which recognises its factories)
+    initCppGIMIComponentBuilders(m); // must come after initCppGIMICharBuilders (shares its PyIniParseFactory/PyIniFixFactory wrappers)
     initCppStrategyOverrides(m); // takes Python factories; no ordering constraint of its own
     initCppGIBuilder(m); // must come after initCppModType (its methods return ModType) and initCppModTypeId (uses the ModTypeId enum)
     initCppIniClassifyStats(m);
@@ -260,6 +266,7 @@ PYBIND11_MODULE(core, m) {
     initCppGraphRename(m); // must come after initCppBaseIniGraphEdit (registers its base)
     initCppRegFillMissing(m); // must come after initCppBaseIniGraphEdit (registers its base) and initCppIfContentPart (the parts it fills)
     initCppRegSurroundedAdd(m); // must come after initCppBaseIniGraphEdit (registers its base)
+    initCppRegBottomAdd(m); // must come after initCppBaseIniGraphEdit (registers its base) and initCppRegSurroundedAdd (shares its parseAdditions/additionsToPy)
     initCppRegDelimitedAdd(m); // must come after initCppBaseIniGraphEdit (registers its base) and initCppRegSurroundedAdd (shares its parsers)
 
     // ----- iniFixers/graphGroupEdits (full replacement of the pure-Python graphGroupEdits
@@ -338,6 +345,7 @@ PYBIND11_MODULE(core, m) {
     initCppRemapIniFixResource(m); // must come after initCppIniFixResource/initCppRemapIniResourceMixin (registers its bases)
     initCppRemapIniGroupedResource(m); // must come after initCppIniGroupedResource/initCppRemapIniResourceMixin (registers PyIniGroupedResource/RemapIniResourceMixin, its real bases)
     initCppVGSplitGroupResource(m); // must come after initCppIniGroupedResource/initCppRemapIniResourceMixin (registers its bases) and initCppVGComponentSplit (its specs)
+    initCppVGMergeGroupResource(m); // must come after initCppIniGroupedResource/initCppRemapIniResourceMixin (registers its bases) and initCppVGComponentMerge (its specs)
     initCppRemapIniDownload(m); // must come after initCppRemapIniResource (registers its base) and initCppFileDownload (constructor takes ownership of a FileDownload instance)
     initCppRemapBlendResource(m); // must come after initCppRemapIniFixResource (registers its base); VGRemap/BufElementType already registered above
     initCppRemapTexAddResource(m); // must come after initCppRemapIniResource (registers its base); CppTexCreator already registered above

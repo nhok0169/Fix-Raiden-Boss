@@ -1270,6 +1270,20 @@ namespace AGRemapCore {
              */
             static IniFixBuilder::Factory yelanTranquilEye6_1();
 
+            /**
+             * @brief
+             @rst
+             The 6.1 fix remapping **YelanTranquil onto Yelan** -- the inverse of
+             :cpp:func:`yelanTranquilBody6_1` and the first remap of a skin of SEVERAL components
+             onto a target of ONE :raw-html:`<br />` :raw-html:`<br />`
+
+             ONE row, not three: the target draws through one set of buffer hashes, so the source's
+             components are merged into one ``.ini`` file over one set of buffers. See
+             :cpp:func:`makeGIMIMergeFixer` and ``data/IniFixData/YelanTranquil/YelanTranquilFixer.cpp``
+             @endrst
+             */
+            static IniFixBuilder::Factory yelanTranquilToYelan6_1();
+
     };
 
     /**
