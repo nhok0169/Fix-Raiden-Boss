@@ -665,7 +665,7 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
-             `(mod object) -> the KVPs that IDENTIFY a section for it`_, in the order they should
+             ``(mod object) -> the KVPs that IDENTIFY a section for it``, in the order they should
              be written -- empty for "cannot say" :raw-html:`<br />` :raw-html:`<br />`
 
              **Only used when this parser has to INVENT a section**, which it does when a mod is

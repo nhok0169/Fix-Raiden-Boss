@@ -145,21 +145,20 @@ How often :class:`RegDelimitedAdd` places its addition along one execution path 
 :raw-html:`<br />`
 
 Both modes place the addition **as late as possible**; they differ only in how many times a single
-path gets it
-    )doc")
-        .value("PerSegment", AGRC::RegDelimitedAddMode::PerSegment, R"doc(
-Once per **delimiter-free stretch** of every path -- immediately before every accepted delimiter,
-plus once at the end of a path that has none
-        )doc")
-        .value("PerPath", AGRC::RegDelimitedAddMode::PerPath, R"doc(
-Once per **path**, at the last position preceding every accepted delimiter on it :raw-html:`<br />`
-:raw-html:`<br />`
+path gets it :raw-html:`<br />` :raw-html:`<br />`
 
-The mode for re-issuing GIMI's external fix libraries. ``NNFix``/``ORFix`` read the bound ``ps-t``
-registers and write them back re-slotted, so a second call over the same bindings undoes the first;
-a `section`_ whose draws sit in independent ``if`` blocks issues several in one pass, and under
-:attr:`PerSegment` every second one renders with its light map as the albedo
-        )doc");
+:attr:`PerPath` is the mode for re-issuing GIMI's external fix libraries. ``NNFix``/``ORFix`` read
+the bound ``ps-t`` registers and write them back re-slotted, so a second call over the same bindings
+undoes the first; a `section`_ whose draws sit in independent ``if`` blocks issues several in one
+pass, and under :attr:`PerSegment` every second one renders with its light map as the albedo
+    )doc")
+        // A value docstring must be ONE line: pybind renders these as "  <name> : <doc>" under a
+        // "Members:" heading, so a multi-line one reads to docutils as a block quote that ends
+        // without a blank line, and warns twice. The prose lives in the enum docstring above.
+        .value("PerSegment", AGRC::RegDelimitedAddMode::PerSegment,
+               "Once per **delimiter-free stretch** of every path -- immediately before every accepted delimiter, plus once at the end of a path that has none")
+        .value("PerPath", AGRC::RegDelimitedAddMode::PerPath,
+               "Once per **path**, at the last position preceding every accepted delimiter on it");
 
     // py::init(factory), same as PyRegSurroundedAdd: the core holds std::function predicates
     cls.def(py::init([](py::object additions, py::object delimiterRegs, bool pathEndOnlyWhenUndelimited,

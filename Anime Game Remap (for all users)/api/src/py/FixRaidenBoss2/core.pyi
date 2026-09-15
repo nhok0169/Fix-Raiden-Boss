@@ -16664,25 +16664,19 @@ class RegDelimitedAddMode:
     :raw-html:`<br />`
     
     Both modes place the addition **as late as possible**; they differ only in how many times a single
-    path gets it
+    path gets it :raw-html:`<br />` :raw-html:`<br />`
+    
+    :attr:`PerPath` is the mode for re-issuing GIMI's external fix libraries. ``NNFix``/``ORFix`` read
+    the bound ``ps-t`` registers and write them back re-slotted, so a second call over the same bindings
+    undoes the first; a `section`_ whose draws sit in independent ``if`` blocks issues several in one
+    pass, and under :attr:`PerSegment` every second one renders with its light map as the albedo
         
     
     Members:
     
-      PerSegment : 
-    Once per **delimiter-free stretch** of every path -- immediately before every accepted delimiter,
-    plus once at the end of a path that has none
-            
+      PerSegment : Once per **delimiter-free stretch** of every path -- immediately before every accepted delimiter, plus once at the end of a path that has none
     
-      PerPath : 
-    Once per **path**, at the last position preceding every accepted delimiter on it :raw-html:`<br />`
-    :raw-html:`<br />`
-    
-    The mode for re-issuing GIMI's external fix libraries. ``NNFix``/``ORFix`` read the bound ``ps-t``
-    registers and write them back re-slotted, so a second call over the same bindings undoes the first;
-    a `section`_ whose draws sit in independent ``if`` blocks issues several in one pass, and under
-    :attr:`PerSegment` every second one renders with its light map as the albedo
-            
+      PerPath : Once per **path**, at the last position preceding every accepted delimiter on it
     """
     PerPath: typing.ClassVar[RegDelimitedAddMode]  # value = <RegDelimitedAddMode.PerPath: 1>
     PerSegment: typing.ClassVar[RegDelimitedAddMode]  # value = <RegDelimitedAddMode.PerSegment: 0>
