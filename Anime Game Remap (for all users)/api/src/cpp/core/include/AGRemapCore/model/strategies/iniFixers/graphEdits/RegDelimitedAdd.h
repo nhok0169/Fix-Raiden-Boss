@@ -151,7 +151,7 @@ namespace AGRemapCore {
             using Node = typename CallGraphType::Node;
 
             /**
-             * @brief Hasher for ef Node
+             * @brief Hasher for \ref Node
              */
             using NodeHash = typename CallGraphType::NodeHash;
 
@@ -295,14 +295,14 @@ namespace AGRemapCore {
             /**
              * @brief
              @rst
-             The :cpp:enumerator:`RegDelimitedAddMode::PerPath` half of ef edit -- see this
+             The :cpp:enumerator:`RegDelimitedAddMode::PerPath` half of \ref edit -- see this
              class's description for the four placement rules it implements
              @endrst
              *
              * @param graph The graph being edited
              * @param callGraph Its call graph, already built
-             * @param modType The mod type passed to ef edit, handed to 'partFilter'
-             * @param partFilter The filter passed to ef edit
+             * @param modType The mod type passed to \ref edit, handed to 'partFilter'
+             * @param partFilter The filter passed to \ref edit
              */
             void editPerPath(Graph& graph, const CallGraphType& callGraph, const ModType* modType,
                               const PartFilter& partFilter);

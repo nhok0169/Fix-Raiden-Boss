@@ -169,6 +169,9 @@ namespace AGRemapCore {
              difference is invisible except as a byte diff
              @endrst
              *
+             * @param indices The component's bone indices, one line of four per vertex
+             * @param weights The matching blend weights, used to tell a carried slot from padding
+             * @param remap The component's own reverse row, source group -> target group
              * @param unmapped Every weighted group with no entry is appended here, ascending
              */
             static Indices remapIndices(const Indices& indices, const Weights& weights, const VGRemap& remap,
