@@ -469,7 +469,7 @@ the same reason, which is what stops `benchmark.py` ever scoring the tool agains
 | | what it is | trust it for |
 | --- | --- | --- |
 | `core/src/data/VGRemapData.cpp` | **the live table**, 58 rows, both directions of every pair (Yelan/YelanTranquil as six component-keyed rows) | what ships. Confirmed against fresh frame dumps and, for the pairs with drafts, against the drafts |
-| `Data/RemapDrafts/*.xlsx` | the maintainer's hand-made drafts, one sheet per direction (`README.md` there has the format). **Ground truth for `benchmark.py`** | the intended mapping, with the reasoning in the Comments column. Some early workbooks had only one direction; the missing ones were added as **proposal sheets from the library's rows**, marked in cell `E1` |
+| `Data/RemapDrafts/*.xlsx` | the maintainer's hand-made drafts, one sheet per direction, opening with a `Credits` sheet (`README.md` there has the format, and the credit rule) | the intended mapping, with the reasoning in the Comments column. Some early workbooks had only one direction; the missing ones were added as **proposal sheets from the library's rows**, marked in cell `E1`. **Ground truth for `benchmark.py`** |
 | `Data/Mod Downloads/GI/<Name>/<X_Y>/` | a mod-folder copy of each skin's geometry (`Position.buf`, `Blend.buf`, `*.ib`) **at the library's versions** | **the geometry to run the finder over for anything touching the table** --- group counts match the rows exactly |
 | `GI-Model-Importer-Assets/PlayerCharacterData/<Name>/` | the asset repo's 3dmigoto dumps, **re-dumped Dec 2024** | hashes (`hash.json`), and geometry for the benchmark; but a newer dump can drift from the table (Xingqiu's has 74 groups, the row 92) |
 | a raw `FrameAnalysis-*` folder | thousands of files straight from the game | proving whether a bone *moved* in an update: `--fromHashes` picks the character out |
@@ -546,7 +546,14 @@ the whole index order.
    scratch-copy version because it skips a `RemapBlend.buf` the source already carries.
 8. **Add the draft sheets** (both directions) to `Data/RemapDrafts/<Name>RemapDraft.xlsx` if the
    maintainer wants them there; mark anything the tool wrote (`About` sheet for a whole workbook,
-   `E1` for one sheet) so `benchmark.py` never scores the tool against its own output.
+   `E1` for one sheet) so `benchmark.py` never scores the tool against its own output. **And
+   credit yourself in the workbook's `Credits` sheet** -- every workbook has one, a new one gets
+   one, and a Council member who changed any sheet adds `<Council name>: The <nth> member of The
+   Council` under `Name`, hyperlinked to the Council README (the drafts' `README.md` has the
+   exact layout). Not a member yet? Add nothing until you have joined, then come back. The
+   workbooks are edited through `openpyxl`, which round-trips the duplicate-index conditional
+   format, the autofilter and the frozen header of every data sheet; snapshot those before the
+   save and compare after, rather than trusting it.
 
 <br>
 
