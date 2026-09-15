@@ -24,6 +24,7 @@
 #include "AGRemapCore/data/IniFixData/GIMIComponentFixer.h"
 #include "AGRemapCore/model/files/TextureFile.h"
 #include "AGRemapCore/model/strategies/texEditors/TexEditor.h"
+#include "AGRemapCore/model/strategies/texEditors/texFilters/MaterialBandRemapFilter.h"
 
 
 namespace AGRemapCore {
@@ -45,83 +46,28 @@ namespace AGRemapCore {
         // Clorinde's bands, hair on 115-127 and skin on 50-99, and lifting that hair onto the skin
         // ramp put speckles all over it. So the skin lift is conditional on the DIFFUSE under the
         // pixel looking like skin; the fur move is not (a mod's 255 is never Tranquil-legend skin).
-        const std::uint8_t SkinBandLow = 115;
-        const std::uint8_t SkinBandHigh = 127;
-        const std::uint8_t TargetSkinBand = 255;
-        const std::uint8_t SourceFurBand = 255;
-        const std::uint8_t TargetFurBand = 0;
+        // Read as a MaterialBandRemapFilter table: source band (or range) -> target band, with an
+        // optional test on the diffuse under the pixel. Order matters only where two ranges would
+        // overlap; these do not.
+        const std::vector<MaterialBandRemapFilter::Band> Bands = {
+            // Yelan's fur onto Tranquil's fur. Unconditional: her 255 is never Tranquil-legend skin.
+            {255, 0},
+
+            // Yelan's skin onto Tranquil's, but ONLY where the diffuse agrees the pixel is skin --
+            // a Clorinde port keeps Clorinde's legend, with hair on 115-127, and lifting that onto
+            // the skin ramp speckled it.
+            {115, 127, 255, &MaterialBandRemapFilter::skinColoured},
+        };
 
         // Tranquil's shader darkens by the diffuse alpha; Yelan's ignores it. Alpha 1, not 0: the
         // maintainer's Copy28 recipe, confirmed in game.
         const int HeadDiffuseAlpha = 1;
 
 
-        bool skinColoured(int r, int g, int b) {
-            return r >= 96 && r >= g && g >= b && (r - b) >= 16 && (r - b) <= 140;
-        }
-
-
         void alphaOne(TextureFile& texFile) {
             TexEditor::setTransparency(texFile, HeadDiffuseAlpha);
         }
 
-
-        // The lightmap edit for one object, closed over that object's diffuse: fur 255 -> 0, then
-        // skin 115-127 -> 255 where the diffuse agrees the pixel is skin. The diffuse is sampled
-        // nearest-neighbour where the two textures differ in size.
-        TexEditor::Filter liftBands(const std::string& diffusePath) {
-            return [diffusePath](TextureFile& texFile) {
-                const int width = texFile.getWidth();
-                const int height = texFile.getHeight();
-                std::vector<std::uint8_t> pixels = texFile.getPixels();
-                if (width <= 0 || height <= 0 || pixels.size() < static_cast<std::size_t>(width) * height * 4) {
-                    return;
-                }
-
-                std::vector<std::uint8_t> diffuse;
-                int diffuseWidth = 0;
-                int diffuseHeight = 0;
-                if (!diffusePath.empty()) {
-                    TextureFile diffuseFile(diffusePath);
-                    diffuseFile.open();
-                    if (diffuseFile.hasImage()) {
-                        diffuse = diffuseFile.getPixels();
-                        diffuseWidth = diffuseFile.getWidth();
-                        diffuseHeight = diffuseFile.getHeight();
-                    }
-                }
-
-                const bool haveDiffuse = !diffuse.empty() && diffuseWidth > 0 && diffuseHeight > 0;
-
-                for (int y = 0; y < height; ++y) {
-                    for (int x = 0; x < width; ++x) {
-                        std::uint8_t& alpha = pixels[(static_cast<std::size_t>(y) * width + x) * 4 + 3];
-
-                        if (alpha == SourceFurBand) {
-                            alpha = TargetFurBand;
-                            continue;
-                        }
-
-                        if (alpha < SkinBandLow || alpha > SkinBandHigh) {
-                            continue;
-                        }
-
-                        if (haveDiffuse) {
-                            const int dx = static_cast<int>(static_cast<long long>(x) * diffuseWidth / width);
-                            const int dy = static_cast<int>(static_cast<long long>(y) * diffuseHeight / height);
-                            const std::size_t at = (static_cast<std::size_t>(dy) * diffuseWidth + dx) * 4;
-                            if (at + 2 < diffuse.size() && !skinColoured(diffuse[at], diffuse[at + 1], diffuse[at + 2])) {
-                                continue;
-                            }
-                        }
-
-                        alpha = TargetSkinBand;
-                    }
-                }
-
-                texFile.setPixels(std::move(pixels), width, height);
-            };
-        }
 
 
         GIMIComponentFixerConfig yelanTranquilConfig() {
@@ -176,7 +122,7 @@ namespace AGRemapCore {
             // an sRGB header samples as, since a created texture is written untagged -- and every
             // texture with its mip chain.
             config.diffuseEdits = {{"head", &alphaOne}};
-            config.lightMapEdit = &liftBands;
+            config.lightMapEdit = MaterialBandRemapFilter::lightMapEdit(Bands);
 
             // The generated second, third and fourth files explain themselves.
             config.copyPreamble = IniComments::GIMIObjMergerPreamble;

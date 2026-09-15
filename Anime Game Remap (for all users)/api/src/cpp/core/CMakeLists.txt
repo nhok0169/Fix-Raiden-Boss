@@ -110,14 +110,20 @@ add_library(AGRemapCore STATIC
     src/data/IniParseData/KeqingOpulent/KeqingOpulentParser.cpp
     src/data/IniFixData/GIMIComponentFixer.cpp
     src/data/IniFixData/Yelan/YelanFixer.cpp
+    src/data/IniFixData/GIMIMergeFixer.cpp
+    src/data/IniFixData/YelanTranquil/YelanTranquilFixer.cpp
     src/data/IniParseData/Yelan/YelanParser.cpp
+    src/data/IniParseData/GIMIComponentParser.cpp
+    src/data/IniParseData/YelanTranquil/YelanTranquilParser.cpp
     src/model/strategies/iniFixers/graphGroupEdits/VGSplitGroupResBuilder.cpp
+    src/model/strategies/iniFixers/graphGroupEdits/VGMergeGroupResBuilder.cpp
     src/data/IniFixData/Shenhe/ShenheFixer.cpp
     src/data/IniFixData/ShenheFrostFlower/ShenheFrostFlowerFixer.cpp
     src/data/IniParseData/Shenhe/ShenheParser.cpp
     src/data/IniParseData/ShenheFrostFlower/ShenheFrostFlowerParser.cpp
     src/model/iniresources/RemapPositionResource.cpp
     src/model/iniresources/VGSplitGroupResource.cpp
+    src/model/iniresources/VGMergeGroupResource.cpp
     src/data/IniFixData/Xiangling/XianglingFixer.cpp
     src/data/IniParseData/Xiangling/XianglingParser.cpp
     src/data/IniFixData/XianglingCheer/XianglingCheerFixer.cpp
@@ -182,6 +188,7 @@ add_library(AGRemapCore STATIC
     src/model/buffers/BufUnorm.cpp
     src/model/buffers/BufElementType.cpp
     src/model/buffers/VGComponentSplit.cpp
+    src/model/buffers/VGComponentMerge.cpp
     src/model/files/BufFileErrors.cpp
     src/model/files/BinaryFile.cpp
     src/model/files/BufFile.cpp
@@ -218,6 +225,7 @@ add_library(AGRemapCore STATIC
     src/model/strategies/texEditors/texFilters/ColourReplaceFilter.cpp
     src/model/strategies/texEditors/texFilters/TransparencyAdjustFilter.cpp
     src/model/strategies/texEditors/texFilters/InvertAlphaFilter.cpp
+    src/model/strategies/texEditors/texFilters/MaterialBandRemapFilter.cpp
     src/model/strategies/texEditors/texFilters/HueAdjust.cpp
     src/model/strategies/texEditors/texFilters/PixelFilter.cpp
     src/model/strategies/texEditors/BaseTexEditor.cpp
