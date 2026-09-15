@@ -397,6 +397,8 @@ that. Read them through here, never off #resources
         <argsstring>()</argsstring>
         <name>_fix</name>
         <qualifiedname>AGRemapCore::IniGroupedResource::_fix</qualifiedname>
+        <reimplementedby refid="class_a_g_remap_core_1_1_v_g_merge_group_resource_1a0d11b77152476bbf6f327f4c936bb0a5">_fix</reimplementedby>
+        <reimplementedby refid="class_a_g_remap_core_1_1_v_g_split_group_resource_1a379cdbb292000313b31b99161b90cbf0">_fix</reimplementedby>
         <briefdescription>
 <para>Fixes the resource. </para>
         </briefdescription>
@@ -432,6 +434,18 @@ it&apos;s actually used directly/bare rather than through a dedicated leaf subcl
         <label>AGRemapCore::RemapIniGroupedResource</label>
         <link refid="class_a_g_remap_core_1_1_remap_ini_grouped_resource"/>
         <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>AGRemapCore::VGMergeGroupResource</label>
+        <link refid="class_a_g_remap_core_1_1_v_g_merge_group_resource"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>AGRemapCore::VGSplitGroupResource</label>
+        <link refid="class_a_g_remap_core_1_1_v_g_split_group_resource"/>
+        <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

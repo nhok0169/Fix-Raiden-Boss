@@ -119,7 +119,7 @@ always yields ``long long``, an unsigned one ``unsigned long long`` and a
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="428" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="428" bodyend="-1"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="473" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="473" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_a_g_remap_core_1_1_buf_file_1adf1c0236185dd52140d2844ba1bcff9e" prot="private" static="no" mutable="no">
         <type>std::vector&lt; std::unique_ptr&lt; <ref refid="class_a_g_remap_core_1_1_buf_element_type" kindref="compound">BufElementType</ref> &gt; &gt;</type>
@@ -133,7 +133,7 @@ always yields ``long long``, an unsigned one ``unsigned long long`` and a
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="429" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="429" bodyend="-1"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="474" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="474" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_a_g_remap_core_1_1_buf_file_1a90cc6195110d6415184e903263fceab5" prot="private" static="no" mutable="no">
         <type>std::vector&lt; std::string &gt;</type>
@@ -147,7 +147,7 @@ always yields ``long long``, an unsigned one ``unsigned long long`` and a
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="430" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="430" bodyend="-1"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="475" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="475" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_a_g_remap_core_1_1_buf_file_1ae472031fa1c8c311b573659f0dd6f86b" prot="private" static="no" mutable="no">
         <type>std::size_t</type>
@@ -162,7 +162,7 @@ always yields ``long long``, an unsigned one ``unsigned long long`` and a
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="431" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="431" bodyend="-1"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="476" column="25" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="476" bodyend="-1"/>
       </memberdef>
     </sectiondef>
     <sectiondef kind="public-func">
@@ -728,6 +728,82 @@ source is skipped
         </inbodydescription>
         <location file="include/AGRemapCore/model/files/BufFile.h" line="313" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="390" bodyend="438"/>
       </memberdef>
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_buf_file_1a7c915ab0ed85cd3e85087a0efe8437f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AGRemapCore::BufFile::append</definition>
+        <argsstring>(const std::vector&lt; const BufFile * &gt; &amp;bufFiles)</argsstring>
+        <name>append</name>
+        <qualifiedname>AGRemapCore::BufFile::append</qualifiedname>
+        <param>
+          <type>const std::vector&lt; const <ref refid="class_a_g_remap_core_1_1_buf_file_1a2cf5225088541e98e4574bb6cfaeade2" kindref="member">BufFile</ref> * &gt; &amp;</type>
+          <declname>bufFiles</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>embed:rst 
+Appends every line of several other ``.buf`` files onto the end of this one
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The **vertical** counterpart to :cpp:func:`merge`: where that one widens a line by
+concatenating a matching line out of each source, this one *lengthens* the file, so
+the result holds this file&apos;s lines followed by each source&apos;s lines in the order given
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Each source&apos;s elements must be a **superset** of this file&apos;s -- for every one of this
+file&apos;s elements, the source must carry an element with the same key (see #getElements)
+and the same :cpp:class:`BufDataType`\\s. The source may carry as many further elements
+as it likes, and in any order; those are simply dropped, and each appended line is
+rebuilt in **this** file&apos;s element order. So a full ``.vb`` can be appended onto a
+``Position.buf`` and contributes only its positions :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+.. note::
+   Only the data types have to match, not
+   :cpp:func:`BufElementType::getFormatName` -- the format name is 3dmigoto&apos;s label
+   for a layout, and two elements spelling it differently still occupy the same bytes
+
+.. note::
+   A matched element&apos;s bytes are copied straight across rather than decoded and
+   re-encoded, so nothing an appended value goes through can perturb it :raw-html:`&lt;br /&gt;`
+   :raw-html:`&lt;br /&gt;`
+
+Every source is checked against this file **before** any byte is copied, so a source
+that breaks the superset rule leaves this file exactly as it was rather than partly
+appended to. A null source is skipped, and a source is allowed to be this file itself
+</verbatim></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bufFiles</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <computeroutput>.buf</computeroutput> files whose lines to append, in the order they should appear after this file&apos;s own lines</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if a source is missing one of this file&apos;s elements, or carries it with different data types</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>BadBufData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the appended bytes do not divide evenly into lines (only reachable when this file&apos;s own data was not a whole number of lines) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="358" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="530" bodyend="595"/>
+      </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_buf_file_1a7932596085360312bfd789ca6084105a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
         <definition>std::string AGRemapCore::BufFile::getDumpStr</definition>
@@ -774,7 +850,7 @@ differs by the kind of buffer being dumped :raw-html:`&lt;br /&gt;` :raw-html:`&
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="340" column="25" bodyfile="src/model/files/BufFile.cpp" bodystart="440" bodyend="508"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="385" column="25" bodyfile="src/model/files/BufFile.cpp" bodystart="597" bodyend="665"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_buf_file_1a73af1870c0837ad41b65100886559056" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -813,7 +889,7 @@ opposed to the per-element form :cpp:func:`getDumpStr` produces for a vertex buf
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="357" column="25" bodyfile="src/model/files/BufFile.cpp" bodystart="510" bodyend="554"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="402" column="25" bodyfile="src/model/files/BufFile.cpp" bodystart="667" bodyend="711"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_buf_file_1a60c94d25b1c7ad9b794635f09cbbe823" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -867,7 +943,7 @@ dropped, so every block always contributes exactly #getBytesPerLine bytes
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="383" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="634" bodyend="717"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="428" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="791" bodyend="874"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_buf_file_1a8f19682d8f4323ec5b363c4ef073eb2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -925,7 +1001,7 @@ file works too: a header line is recognised by containing a ``:`` (every line of
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="401" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="719" bodyend="791"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="446" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="876" bodyend="948"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_buf_file_1ad4933bfa4601410cdbc01286655b5d31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -976,7 +1052,7 @@ and re-reads from it, so the usual :cpp:func:`read` validation applies
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/files/BufFile.h" line="425" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="793" bodyend="841"/>
+        <location file="include/AGRemapCore/model/files/BufFile.h" line="470" column="18" bodyfile="src/model/files/BufFile.cpp" bodystart="950" bodyend="998"/>
       </memberdef>
     </sectiondef>
     <briefdescription>
@@ -1038,8 +1114,9 @@ no header or footer, just the lines themselves back-to-back
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="include/AGRemapCore/model/files/BufFile.h" line="42" column="5" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="42" bodyend="432"/>
+    <location file="include/AGRemapCore/model/files/BufFile.h" line="42" column="5" bodyfile="include/AGRemapCore/model/files/BufFile.h" bodystart="42" bodyend="477"/>
     <listofallmembers>
+      <member refid="class_a_g_remap_core_1_1_buf_file_1a7c915ab0ed85cd3e85087a0efe8437f3" prot="public" virt="non-virtual"><scope>AGRemapCore::BufFile</scope><name>append</name></member>
       <member refid="class_a_g_remap_core_1_1_binary_file_1a2bd5a0dea0d3721e3924febb7e916ed9" prot="public" virt="non-virtual"><scope>AGRemapCore::BufFile</scope><name>BinaryFile</name></member>
       <member refid="class_a_g_remap_core_1_1_buf_file_1aaf2af92e66c98e4c78c57642d42487ea" prot="public" virt="non-virtual"><scope>AGRemapCore::BufFile</scope><name>BufColumn</name></member>
       <member refid="class_a_g_remap_core_1_1_buf_file_1a2cf5225088541e98e4574bb6cfaeade2" prot="public" virt="non-virtual"><scope>AGRemapCore::BufFile</scope><name>BufFile</name></member>

@@ -66,13 +66,17 @@ Stub for the pure-Python ``IniParseBuilderFuncs.amberCN4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.ayaka4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Ayaka** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+Alone in her batch she needs no register overrides: her own downloads are already on the
+modern ``ps-t0``/``ps-t1``, and it is her SKIN that sits a slot higher. See
+``data/IniParseData/Ayaka/AyakaParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="86" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="31" bodyend="31"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="90" column="45" bodyfile="src/data/IniParseData/Ayaka/AyakaParser.cpp" bodystart="25" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a7175ead9f596a1062d86a0640f21ee11" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -84,13 +88,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ayaka4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.ayakaSpringbloom4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **AyakaSpringbloom** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Her head and body sit a slot higher; only the dress is on the modern layout. See
+``data/IniParseData/AyakaSpringbloom/AyakaSpringbloomParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="95" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="32" bodyend="32"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="102" column="45" bodyfile="src/data/IniParseData/AyakaSpringbloom/AyakaSpringbloomParser.cpp" bodystart="56" bodyend="63"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a7a7226eb0776e2ea2a2672d73f2c5ec7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -102,13 +109,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ayakaSpringbloom4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.barbara4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Barbara** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Three drawn objects -- head, body and dress -- and her fix moves the shared
+``drawindexed``. See ``data/IniParseData/Barbara/BarbaraParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="104" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="33" bodyend="33"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="114" column="45" bodyfile="src/data/IniParseData/Barbara/BarbaraParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a06ca7c90da051e5dc2d06e5cb7e3561f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -120,13 +130,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.barbara4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.barbaraSummertime4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **BarbaraSummertime** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The same three objects as Barbara; this pair is one-to-one. See
+``data/IniParseData/BarbaraSummertime/BarbaraSummertimeParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="113" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="34" bodyend="34"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="126" column="45" bodyfile="src/data/IniParseData/BarbaraSummertime/BarbaraSummertimeParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a9ed2e127fe638c494b02fea1167370a6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -138,13 +151,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.barbaraSummertime4_0`` -- return
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.diluc4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Diluc** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head and body, stride 12. DilucFlamme adds the dress his coat becomes. See
+``data/IniParseData/Diluc/DilucParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="122" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="35" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="138" column="45" bodyfile="src/data/IniParseData/Diluc/DilucParser.cpp" bodystart="23" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a90dd86e40c82ef949659459afe1e8ddd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -156,13 +172,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.diluc4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.dilucFlamme4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **DilucFlamme** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head, body and dress, stride 20 where Diluc&apos;s is 12. See
+``data/IniParseData/DilucFlamme/DilucFlammeParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="131" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="36" bodyend="36"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="150" column="45" bodyfile="src/data/IniParseData/DilucFlamme/DilucFlammeParser.cpp" bodystart="23" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a25c723344a4afc25cd6dee4b991b6c4f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -174,13 +193,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.dilucFlamme4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.fischl4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Fischl** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head, body and dress -- she is the one WITH the dress, the opposite way round
+from the Diluc pair. See ``data/IniParseData/Fischl/FischlParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="140" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="37" bodyend="37"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="162" column="45" bodyfile="src/data/IniParseData/Fischl/FischlParser.cpp" bodystart="23" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1acd3eb09da006d479979d7b5e8b5480a5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -192,13 +214,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.fischl4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.fischlHighness4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **FischlHighness** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head and body, stride 12. See
+``data/IniParseData/FischlHighness/FischlHighnessParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="149" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="38" bodyend="38"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="174" column="45" bodyfile="src/data/IniParseData/FischlHighness/FischlHighnessParser.cpp" bodystart="23" bodyend="38"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ab42907d4554e611728b738e79c3a0914" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -218,7 +243,7 @@ The standard GIMI character shape. See ``data/IniParseData/Ganyu/GanyuParser.cpp
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="160" column="45" bodyfile="src/data/IniParseData/Ganyu/GanyuParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="185" column="45" bodyfile="src/data/IniParseData/Ganyu/GanyuParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1aeebc7e425eb78900d9c78bb796b8c7a3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -230,13 +255,16 @@ The standard GIMI character shape. See ``data/IniParseData/Ganyu/GanyuParser.cpp
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.hutao4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **HuTao** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+Draws ``head``/``body``, two fewer than her skin. See
+``data/IniParseData/HuTao/HuTaoParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="169" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="39" bodyend="39"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="197" column="45" bodyfile="src/data/IniParseData/HuTao/HuTaoParser.cpp" bodystart="23" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a0b323b1ec314ac49ae5b05743b29298f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -254,7 +282,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jean4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="178" column="45" bodyfile="src/data/IniParseData/Jean/JeanParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="206" column="45" bodyfile="src/data/IniParseData/Jean/JeanParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ab3b6237fbb2821397b3c994628ea2bd1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -272,7 +300,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jeanCN4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="187" column="45" bodyfile="src/data/IniParseData/JeanCN/JeanCNParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="215" column="45" bodyfile="src/data/IniParseData/JeanCN/JeanCNParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ab838f53a93fae925bdfca1942e1f5ac7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -290,7 +318,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jeanSea4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="196" column="45" bodyfile="src/data/IniParseData/JeanSea/JeanSeaParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="224" column="45" bodyfile="src/data/IniParseData/JeanSea/JeanSeaParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1adb2979e5e4d865d5cb71f4f223824c13" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -302,13 +330,17 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jeanSea4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kaeya4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Kaeya** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Three drawn objects and FOUR indices: IndexData gives him an ``extra`` that no
+Kaeya ``.ini`` declares and that only KaeyaSailwind&apos;s dress split fills. See
+``data/IniParseData/Kaeya/KaeyaParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="205" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="40" bodyend="40"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="237" column="45" bodyfile="src/data/IniParseData/Kaeya/KaeyaParser.cpp" bodystart="23" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1acb15558c737cd8dad771eefad08046e2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -320,13 +352,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.kaeya4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kaeyaSailwind4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **KaeyaSailwind** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The same three objects as Kaeya; the asymmetry is all on the fix side. See
+``data/IniParseData/KaeyaSailwind/KaeyaSailwindParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="214" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="41" bodyend="41"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="249" column="45" bodyfile="src/data/IniParseData/KaeyaSailwind/KaeyaSailwindParser.cpp" bodystart="23" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a8f3fd51c10e3e4163d5bb85a512170c5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -347,7 +382,7 @@ The standard GIMI character shape, drawing ``head``/``body``/``dress``. See
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="226" column="45" bodyfile="src/data/IniParseData/Keqing/KeqingParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="261" column="45" bodyfile="src/data/IniParseData/Keqing/KeqingParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1aadd76e32555037e03f58686fafce1935" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -369,7 +404,7 @@ the remap to and from Keqing a merge in one direction and a split in the other. 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="239" column="45" bodyfile="src/data/IniParseData/KeqingOpulent/KeqingOpulentParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="274" column="45" bodyfile="src/data/IniParseData/KeqingOpulent/KeqingOpulentParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a5e75c4373a12ae83a2ef9992f5e448d2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -381,13 +416,17 @@ the remap to and from Keqing a merge in one direction and a split in the other. 
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kirara4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Kirara** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+THREE different download layouts in one character: her head and body carry a normal map
+on ``ps-t0`` and sit a slot higher, her dress sits a slot higher with no normal map. See
+``data/IniParseData/Kirara/KiraraParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="248" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="42" bodyend="42"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="287" column="45" bodyfile="src/data/IniParseData/Kirara/KiraraParser.cpp" bodystart="49" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1aa2ea4776713f06c25dad1f96ce85af54" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -399,13 +438,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.kirara4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.klee4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Klee** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Her texcoord stride is 12 where most of this batch is 20. See
+``data/IniParseData/Klee/KleeParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="257" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="43" bodyend="43"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="299" column="45" bodyfile="src/data/IniParseData/Klee/KleeParser.cpp" bodystart="23" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a625ba4f2c8f33e671f4e80c7287139ed" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -417,13 +459,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.klee4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kleeBlossomingStarlight4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **KleeBlossomingStarlight** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+She has no Face component in the assets repo, so no face diffuse hash. See
+``data/IniParseData/KleeBlossomingStarlight/KleeBlossomingStarlightParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="266" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="44" bodyend="44"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="311" column="45" bodyfile="src/data/IniParseData/KleeBlossomingStarlight/KleeBlossomingStarlightParser.cpp" bodystart="23" bodyend="43"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a17a9366bd031c0726f56b54a41882463" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -435,13 +480,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.kleeBlossomingStarlight4_0`` -- 
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.lisa4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Lisa** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head, body and dress; the dress is what LisaStudent has nowhere to put. See
+``data/IniParseData/Lisa/LisaParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="275" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="45" bodyend="45"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="323" column="45" bodyfile="src/data/IniParseData/Lisa/LisaParser.cpp" bodystart="23" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a5e0e8d3c12a797ee525dd5afe57415e1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -453,13 +501,17 @@ Stub for the pure-Python ``IniParseBuilderFuncs.lisa4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.lisaStudent4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **LisaStudent** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head and body only, and her downloads bind the diffuse to ``ps-t1`` because
+``ps-t0`` is her normal map. See
+``data/IniParseData/LisaStudent/LisaStudentParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="284" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="46" bodyend="46"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="336" column="45" bodyfile="src/data/IniParseData/LisaStudent/LisaStudentParser.cpp" bodystart="56" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a965947e4ccfeb3487a53d74c717bf1d2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -477,7 +529,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.mona4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="293" column="45" bodyfile="src/data/IniParseData/Mona/MonaParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="345" column="45" bodyfile="src/data/IniParseData/Mona/MonaParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1af77157f3eef27fc14605beda38503e27" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -495,7 +547,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.monaCN4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="302" column="45" bodyfile="src/data/IniParseData/MonaCN/MonaCNParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="354" column="45" bodyfile="src/data/IniParseData/MonaCN/MonaCNParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a7ece50a08ec244f427dd711faaba9194" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -507,13 +559,17 @@ Stub for the pure-Python ``IniParseBuilderFuncs.monaCN4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.nilou4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Nilou** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+The standard GIMI shape, with one thing spelled out: a 4.0-era shader reads its diffuse
+from ``ps-t1`` and its lightmap from ``ps-t2``, so her downloads say so. See
+``data/IniParseData/Nilou/NilouParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="311" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="47" bodyend="47"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="367" column="45" bodyfile="src/data/IniParseData/Nilou/NilouParser.cpp" bodystart="48" bodyend="62"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ab3c14a4759ca9a1cf2a4fce09ae02f3e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -531,7 +587,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ningguang4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="320" column="45" bodyfile="src/data/IniParseData/Ningguang/NingguangParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="376" column="45" bodyfile="src/data/IniParseData/Ningguang/NingguangParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a155a078f9f48dedb7e81dee3c9ae4936" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -549,7 +605,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ningguangOrchid4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="329" column="45" bodyfile="src/data/IniParseData/NingguangOrchid/NingguangOrchidParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="385" column="45" bodyfile="src/data/IniParseData/NingguangOrchid/NingguangOrchidParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a93059e5c526ef4a195bbd10609c8515d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -567,7 +623,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.giDefault`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="338" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="48" bodyend="48"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="394" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="32" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a2a2c464c3d071c5db498850094459e1c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -585,7 +641,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.rosaria4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="347" column="45" bodyfile="src/data/IniParseData/Rosaria/RosariaParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="403" column="45" bodyfile="src/data/IniParseData/Rosaria/RosariaParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1aba5d21fbe2290687a020692917d97814" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -603,7 +659,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.rosariaCN4_0`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="356" column="45" bodyfile="src/data/IniParseData/RosariaCN/RosariaCNParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="412" column="45" bodyfile="src/data/IniParseData/RosariaCN/RosariaCNParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ac45679f6579c3c1a2125c3400c02ea79" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -624,7 +680,7 @@ The standard GIMI character shape, drawing ``head``/``body``/``dress``. See
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="368" column="45" bodyfile="src/data/IniParseData/Shenhe/ShenheParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="424" column="45" bodyfile="src/data/IniParseData/Shenhe/ShenheParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a5acf8837fe50a8ad50ce63816b491988" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -636,13 +692,16 @@ The standard GIMI character shape, drawing ``head``/``body``/``dress``. See
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.xiangling4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Xiangling** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+Draws ``head``/``body``/``dress``, one more than her skin. See
+``data/IniParseData/Xiangling/XianglingParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="377" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="49" bodyend="49"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="436" column="45" bodyfile="src/data/IniParseData/Xiangling/XianglingParser.cpp" bodystart="23" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a57cbc5fb84578adff9dab12a9515bcee" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -654,13 +713,15 @@ Stub for the pure-Python ``IniParseBuilderFuncs.xiangling4_0`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.xingqiu4_0`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.0-era **Xingqiu** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+Draws ``head``/``body``. See ``data/IniParseData/Xingqiu/XingqiuParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="386" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="50" bodyend="50"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="447" column="45" bodyfile="src/data/IniParseData/Xingqiu/XingqiuParser.cpp" bodystart="23" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ac812c1ba08f807191021aae223c24084" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -681,7 +742,7 @@ The standard GIMI character shape. See
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="398" column="45" bodyfile="src/data/IniParseData/GanyuTwilight/GanyuTwilightParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="459" column="45" bodyfile="src/data/IniParseData/GanyuTwilight/GanyuTwilightParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a29d6a9fd985eedcc12e74228995af0b7" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -702,7 +763,7 @@ FOUR drawn objects -- ``head``/``body``/``dress``/``extra`` -- one more than She
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="410" column="45" bodyfile="src/data/IniParseData/ShenheFrostFlower/ShenheFrostFlowerParser.cpp" bodystart="23" bodyend="35"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="471" column="45" bodyfile="src/data/IniParseData/ShenheFrostFlower/ShenheFrostFlowerParser.cpp" bodystart="23" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a59be7b22f1f0563f617eaeaeeecad7df" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -714,13 +775,16 @@ FOUR drawn objects -- ``head``/``body``/``dress``/``extra`` -- one more than She
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.xingqiuBamboo4_4`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.4-era **XingqiuBamboo** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Draws ``head``/``body``/``dress``. See
+``data/IniParseData/XingqiuBamboo/XingqiuBambooParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="419" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="51" bodyend="51"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="483" column="45" bodyfile="src/data/IniParseData/XingqiuBamboo/XingqiuBambooParser.cpp" bodystart="23" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a45eabec0264b18cd3dbbb59355f07022" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -732,13 +796,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.xingqiuBamboo4_4`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kiraraBoots4_8`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.8-era **KiraraBoots** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The same three-layout split her base has. See
+``data/IniParseData/KiraraBoots/KiraraBootsParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="428" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="52" bodyend="52"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="495" column="45" bodyfile="src/data/IniParseData/KiraraBoots/KiraraBootsParser.cpp" bodystart="40" bodyend="53"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a8f4a396367361d1871ede8e216738ded" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -750,13 +817,17 @@ Stub for the pure-Python ``IniParseBuilderFuncs.kiraraBoots4_8`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.nilouBreeze4_8`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 4.8-era **NilouBreeze** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The standard GIMI shape with nothing added: the skin shipped after GI moved the diffuse
+and lightmap down, so the defaults are already right. See
+``data/IniParseData/NilouBreeze/NilouBreezeParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="437" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="53" bodyend="53"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="508" column="45" bodyfile="src/data/IniParseData/NilouBreeze/NilouBreezeParser.cpp" bodystart="23" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a682b003af4ab40d2f2f58ac015af37c1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -768,13 +839,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.nilouBreeze4_8`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.cherryHutao5_3`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.3-era **CherryHuTao** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+FOUR drawn objects, and a texcoord stride of 28 that nothing else in the table uses.
+See ``data/IniParseData/CherryHuTao/CherryHuTaoParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="446" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="54" bodyend="54"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="520" column="45" bodyfile="src/data/IniParseData/CherryHuTao/CherryHuTaoParser.cpp" bodystart="23" bodyend="42"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ad48f0d06423104df2add0e45e3b8c0b4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -786,13 +860,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.cherryHutao5_3`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.xianglingCheer5_3`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.3-era **XianglingCheer** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Draws ``head``/``body`` only. See
+``data/IniParseData/XianglingCheer/XianglingCheerParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="455" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="55" bodyend="55"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="532" column="45" bodyfile="src/data/IniParseData/XianglingCheer/XianglingCheerParser.cpp" bodystart="23" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1aedc30a01d309a33aa3a28a6e856a425d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -804,13 +881,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.xianglingCheer5_3`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.arlecchino5_4`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.4-era **Arlecchino** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Head, body and dress at stride 20, and the only character in the table with **no
+download assets at all**. See ``data/IniParseData/Arlecchino/ArlecchinoParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="464" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="56" bodyend="56"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="544" column="45" bodyfile="src/data/IniParseData/Arlecchino/ArlecchinoParser.cpp" bodystart="23" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a2a366644c291201ad8aed3aea609aa66" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -828,7 +908,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jean5_5`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="473" column="45" bodyfile="src/data/IniParseData/Jean/JeanParser.cpp" bodystart="46" bodyend="48"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="553" column="45" bodyfile="src/data/IniParseData/Jean/JeanParser.cpp" bodystart="46" bodyend="48"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a733ff7ae38e26c46982dd4b890cc32d3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -846,7 +926,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jeanCN5_5`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="482" column="45" bodyfile="src/data/IniParseData/JeanCN/JeanCNParser.cpp" bodystart="46" bodyend="48"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="562" column="45" bodyfile="src/data/IniParseData/JeanCN/JeanCNParser.cpp" bodystart="46" bodyend="48"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a09100cb463cc1d53172cc98183fb2762" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -858,13 +938,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.jeanCN5_5`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.ayakaSpringbloom5_6`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.6-era **AyakaSpringbloom** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+Same downloads as 4.0 -- the version exists because her TEXTURE EDITS changed. See
+``data/IniParseData/AyakaSpringbloom/AyakaSpringbloomParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="491" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="57" bodyend="57"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="574" column="45" bodyfile="src/data/IniParseData/AyakaSpringbloom/AyakaSpringbloomParser.cpp" bodystart="66" bodyend="73"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a21c6704a0c99820f9d2284d9667c307f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -876,13 +959,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ayakaSpringbloom5_6`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.ayakaSpringbloom5_7`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.7-era **AyakaSpringbloom** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+By 5.7 her head and body have moved down to ``ps-t0``/``ps-t1``, the default. See
+``data/IniParseData/AyakaSpringbloom/AyakaSpringbloomParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="500" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="58" bodyend="58"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="586" column="45" bodyfile="src/data/IniParseData/AyakaSpringbloom/AyakaSpringbloomParser.cpp" bodystart="76" bodyend="80"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a44763d34f5898c8b0cab9f3deb794661" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -900,7 +986,7 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ganyuTwilight5_7`` -- returns
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="509" column="45" bodyfile="src/data/IniParseData/GanyuTwilight/GanyuTwilightParser.cpp" bodystart="49" bodyend="51"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="595" column="45" bodyfile="src/data/IniParseData/GanyuTwilight/GanyuTwilightParser.cpp" bodystart="49" bodyend="51"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a74b17e79acb1867c28a6853ba5a9dd1c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -912,13 +998,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.ganyuTwilight5_7`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kirara5_7`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.7-era **Kirara** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+Her body and dress have moved to the modern ``ps-t0``/``ps-t1`` by 5.7; her HEAD has
+not. See ``data/IniParseData/Kirara/KiraraParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="518" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="59" bodyend="59"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="607" column="45" bodyfile="src/data/IniParseData/Kirara/KiraraParser.cpp" bodystart="64" bodyend="73"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a408cabf161789f3d16c79287a51b67d2" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -930,13 +1019,39 @@ Stub for the pure-Python ``IniParseBuilderFuncs.kirara5_7`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.kiraraBoots5_7`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.7-era **KiraraBoots** ``.ini`` file -- **not** a stub
+:raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The MIRROR of :cpp:func:`kirara5_7`: here the head and body have moved to
+``ps-t0``/``ps-t1`` and the DRESS is the one left behind. See
+``data/IniParseData/KiraraBoots/KiraraBootsParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="527" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="60" bodyend="60"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="620" column="45" bodyfile="src/data/IniParseData/KiraraBoots/KiraraBootsParser.cpp" bodystart="56" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a5eee4b72bf3705fb59ce164a00094b41" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
+        <definition>IniParseBuilder::Factory AGRemapCore::IniParseBuilderFuncs::lisaStudent5_4</definition>
+        <argsstring>()</argsstring>
+        <name>lisaStudent5_4</name>
+        <qualifiedname>AGRemapCore::IniParseBuilderFuncs::lisaStudent5_4</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>embed:rst 
+Stub for the pure-Python ``IniParseBuilderFuncs.lisaStudent5_7`` -- returns
+:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+</verbatim><verbatim>embed:rst 
+LisaStudent&apos;s 5.4 parser -- the same shifted registers as 4.0, but reading her
+re-dumped assets out of their own ``5_4`` folder. See
+:cpp:func:`LisaStudentParser::v5_4`
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="637" column="45" bodyfile="src/data/IniParseData/LisaStudent/LisaStudentParser.cpp" bodystart="67" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1afa731ff64faf335aab4d3cf3d179ea74" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -947,14 +1062,10 @@ Stub for the pure-Python ``IniParseBuilderFuncs.kiraraBoots5_7`` -- returns
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.lisaStudent5_7`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
-</verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="536" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="61" bodyend="61"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="639" column="45" bodyfile="src/data/IniParseData/LisaStudent/LisaStudentParser.cpp" bodystart="80" bodyend="89"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1aca6552e16c9d3969446cb18e9116c575" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -966,13 +1077,16 @@ Stub for the pure-Python ``IniParseBuilderFuncs.lisaStudent5_7`` -- returns
         </briefdescription>
         <detaileddescription>
 <para><verbatim>embed:rst 
-Stub for the pure-Python ``IniParseBuilderFuncs.nilou5_7`` -- returns
-:cpp:func:`IniParseBuilder::defaultFactory`, see this class&apos;s own warning
+The parser for a 5.7-era **Nilou** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+Identical to :cpp:func:`nilou4_0` except that GI has moved the diffuse and lightmap down
+to ``ps-t0``/``ps-t1``, which is the default. See ``data/IniParseData/Nilou/NilouParser.cpp``
 </verbatim> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="545" column="45" bodyfile="src/data/IniParseBuilderData.cpp" bodystart="62" bodyend="62"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="651" column="45" bodyfile="src/data/IniParseData/Nilou/NilouParser.cpp" bodystart="65" bodyend="69"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a28f7e4e4c8baaff955923a47b7ee747e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
@@ -1008,7 +1122,49 @@ attributed to several mod objects -- see the constructed parser&apos;s own comme
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="572" column="45" bodyfile="src/data/IniParseData/Raiden/RaidenParser.cpp" bodystart="108" bodyend="142"/>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="678" column="45" bodyfile="src/data/IniParseData/Raiden/RaidenParser.cpp" bodystart="108" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ad2295a98e4a4012930182f549a649b3d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
+        <definition>IniParseBuilder::Factory AGRemapCore::IniParseBuilderFuncs::yelan4_0</definition>
+        <argsstring>()</argsstring>
+        <name>yelan4_0</name>
+        <qualifiedname>AGRemapCore::IniParseBuilderFuncs::yelan4_0</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>embed:rst 
+The parser for a 4.0-era **Yelan** ``.ini`` file -- **not** a stub :raw-html:`&lt;br /&gt;`
+:raw-html:`&lt;br /&gt;`
+
+The standard GIMI character shape, drawing ``head`` / ``body`` / ``dress`` / ``extra``.
+See ``data/IniParseData/Yelan/YelanParser.cpp``
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="690" column="45" bodyfile="src/data/IniParseData/Yelan/YelanParser.cpp" bodystart="23" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a7d30d1abce22b6dc5f644d8ff225e123" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_a_g_remap_core_1_1_ini_parse_builder_1aa16d5125331092cce85d54a4a89ad8c9" kindref="member">IniParseBuilder::Factory</ref></type>
+        <definition>IniParseBuilder::Factory AGRemapCore::IniParseBuilderFuncs::yelanTranquil5_7</definition>
+        <argsstring>()</argsstring>
+        <name>yelanTranquil5_7</name>
+        <qualifiedname>AGRemapCore::IniParseBuilderFuncs::yelanTranquil5_7</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>embed:rst 
+The parser for a 5.7-era YelanTranquil ``.ini`` file :raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+The FIRST parser for a skin of SEVERAL components -- a ``Body`` of three draw slots, a
+``Bang`` and an ``Eye``, each with its own buffers and its own hashes. See
+``data/IniParseData/YelanTranquil/YelanTranquilParser.cpp``
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="702" column="45" bodyfile="src/data/IniParseData/YelanTranquil/YelanTranquilParser.cpp" bodystart="21" bodyend="80"/>
       </memberdef>
     </sectiondef>
     <briefdescription>
@@ -1044,7 +1200,7 @@ each returning the :cpp:type:`IniParseBuilder::Factory` for that pair
    actually needs them
 </verbatim> </para>
     </detaileddescription>
-    <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="56" column="5" bodyfile="include/AGRemapCore/data/IniParseBuilderData.h" bodystart="56" bodyend="574"/>
+    <location file="include/AGRemapCore/data/IniParseBuilderData.h" line="56" column="5" bodyfile="include/AGRemapCore/data/IniParseBuilderData.h" bodystart="56" bodyend="704"/>
     <listofallmembers>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a0f031e3c3bc6a5784f978725a2f30f90" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>amber4_0</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ac929d9cdc7d62f7339d4b5c340553daa" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>amberCN4_0</name></member>
@@ -1083,6 +1239,7 @@ each returning the :cpp:type:`IniParseBuilder::Factory` for that pair
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a625ba4f2c8f33e671f4e80c7287139ed" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>kleeBlossomingStarlight4_0</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a17a9366bd031c0726f56b54a41882463" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>lisa4_0</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a5e0e8d3c12a797ee525dd5afe57415e1" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>lisaStudent4_0</name></member>
+      <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a5eee4b72bf3705fb59ce164a00094b41" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>lisaStudent5_4</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1afa731ff64faf335aab4d3cf3d179ea74" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>lisaStudent5_7</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a965947e4ccfeb3487a53d74c717bf1d2" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>mona4_0</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1af77157f3eef27fc14605beda38503e27" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>monaCN4_0</name></member>
@@ -1100,6 +1257,8 @@ each returning the :cpp:type:`IniParseBuilder::Factory` for that pair
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ad48f0d06423104df2add0e45e3b8c0b4" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>xianglingCheer5_3</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a57cbc5fb84578adff9dab12a9515bcee" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>xingqiu4_0</name></member>
       <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a59be7b22f1f0563f617eaeaeeecad7df" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>xingqiuBamboo4_4</name></member>
+      <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1ad2295a98e4a4012930182f549a649b3d" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>yelan4_0</name></member>
+      <member refid="class_a_g_remap_core_1_1_ini_parse_builder_funcs_1a7d30d1abce22b6dc5f644d8ff225e123" prot="public" virt="non-virtual"><scope>AGRemapCore::IniParseBuilderFuncs</scope><name>yelanTranquil5_7</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

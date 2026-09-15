@@ -4,6 +4,8 @@
     <compoundname>AGRemapCore::RemapIniGroupedResource</compoundname>
     <basecompoundref refid="class_a_g_remap_core_1_1_ini_grouped_resource" prot="public" virt="non-virtual">AGRemapCore::IniGroupedResource</basecompoundref>
     <basecompoundref refid="class_a_g_remap_core_1_1_remap_ini_resource_mixin" prot="public" virt="non-virtual">AGRemapCore::RemapIniResourceMixin</basecompoundref>
+    <derivedcompoundref refid="class_a_g_remap_core_1_1_v_g_merge_group_resource" prot="public" virt="non-virtual">AGRemapCore::VGMergeGroupResource</derivedcompoundref>
+    <derivedcompoundref refid="class_a_g_remap_core_1_1_v_g_split_group_resource" prot="public" virt="non-virtual">AGRemapCore::VGSplitGroupResource</derivedcompoundref>
     <includes refid="_remap_ini_resource_8h" local="no">RemapIniResource.h</includes>
     <sectiondef kind="public-func">
       <memberdef kind="function" id="class_a_g_remap_core_1_1_remap_ini_grouped_resource_1ad9484a31db82da19d581cae76f33ce3d" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
@@ -158,6 +160,18 @@ process -- mirrors the pure-Python ``RemapIniGroupedResource`` class
       <node id="3">
         <label>AGRemapCore::RemapIniResourceMixin</label>
         <link refid="class_a_g_remap_core_1_1_remap_ini_resource_mixin"/>
+      </node>
+      <node id="4">
+        <label>AGRemapCore::VGMergeGroupResource</label>
+        <link refid="class_a_g_remap_core_1_1_v_g_merge_group_resource"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>AGRemapCore::VGSplitGroupResource</label>
+        <link refid="class_a_g_remap_core_1_1_v_g_split_group_resource"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>

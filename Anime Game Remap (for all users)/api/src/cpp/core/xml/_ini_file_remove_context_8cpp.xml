@@ -1337,7 +1337,7 @@
 <codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>rather<sp/>than<sp/>.ini.<sp/>Spelled<sp/>out<sp/>here<sp/>rather<sp/>than<sp/>shared,<sp/>because<sp/>the<sp/>two<sp/>are<sp/>opposites<sp/>--</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>one<sp/>of<sp/>them<sp/>changing<sp/>without<sp/>the<sp/>other<sp/>is<sp/>exactly<sp/>the<sp/>bug<sp/>worth<sp/>having<sp/>a<sp/>compile-visible</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>second<sp/>copy<sp/>for.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::filesystem::path<sp/>path(*iniFile_-&gt;getFile());</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::filesystem::path<sp/>path<sp/>=<sp/>FileService::strToPath(*iniFile_-&gt;getFile());</highlight></codeline>
 <codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::filesystem::path<sp/>backup<sp/>=<sp/>path.parent_path()<sp/>/</highlight></codeline>
 <codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(FilePrefixes::BackupFilePrefix<sp/>+<sp/>FileService::pathToStr(path.stem())<sp/>+<sp/>FileExt::Txt);</highlight></codeline>
 <codeline lineno="150"><highlight class="normal"></highlight></codeline>

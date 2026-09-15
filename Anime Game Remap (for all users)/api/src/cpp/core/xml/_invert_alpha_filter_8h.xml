@@ -3,6 +3,9 @@
   <compounddef id="_invert_alpha_filter_8h" kind="file" language="C++">
     <compoundname>InvertAlphaFilter.h</compoundname>
     <includes refid="_base_tex_filter_8h" local="yes">AGRemapCore/model/strategies/texEditors/texFilters/BaseTexFilter.h</includes>
+    <includedby refid="_cherry_hu_tao_fixer_8cpp" local="yes">src/data/IniFixData/CherryHuTao/CherryHuTaoFixer.cpp</includedby>
+    <includedby refid="_diluc_flamme_fixer_8cpp" local="yes">src/data/IniFixData/DilucFlamme/DilucFlammeFixer.cpp</includedby>
+    <includedby refid="_klee_blossoming_starlight_fixer_8cpp" local="yes">src/data/IniFixData/KleeBlossomingStarlight/KleeBlossomingStarlightFixer.cpp</includedby>
     <includedby refid="_invert_alpha_filter_8cpp" local="yes">src/model/strategies/texEditors/texFilters/InvertAlphaFilter.cpp</includedby>
     <incdepgraph>
       <node id="2">
@@ -22,8 +25,26 @@
         <link refid="_invert_alpha_filter_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
       </node>
       <node id="2">
+        <label>src/data/IniFixData/CherryHuTao/CherryHuTaoFixer.cpp</label>
+        <link refid="_cherry_hu_tao_fixer_8cpp"/>
+      </node>
+      <node id="3">
+        <label>src/data/IniFixData/DilucFlamme/DilucFlammeFixer.cpp</label>
+        <link refid="_diluc_flamme_fixer_8cpp"/>
+      </node>
+      <node id="4">
+        <label>src/data/IniFixData/KleeBlossomingStarlight/KleeBlossomingStarlightFixer.cpp</label>
+        <link refid="_klee_blossoming_starlight_fixer_8cpp"/>
+      </node>
+      <node id="5">
         <label>src/model/strategies/texEditors/texFilters/InvertAlphaFilter.cpp</label>
         <link refid="_invert_alpha_filter_8cpp"/>
       </node>

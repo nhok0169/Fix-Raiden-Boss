@@ -5,6 +5,7 @@
     <includes local="no">string</includes>
     <includes local="no">utility</includes>
     <includes local="no">vector</includes>
+    <includedby refid="_global_ini_classifiers_8cpp" local="yes">src/constants/GlobalIniClassifiers.cpp</includedby>
     <includedby refid="_hash_data_8cpp" local="yes">src/data/HashData.cpp</includedby>
     <includedby refid="_hash_to_mod_obj_data_8cpp" local="yes">src/data/HashToModObjData.cpp</includedby>
     <includedby refid="_hashes_8cpp" local="yes">src/model/assets/Hashes.cpp</includedby>
@@ -39,16 +40,22 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
       </node>
       <node id="2">
+        <label>src/constants/GlobalIniClassifiers.cpp</label>
+        <link refid="_global_ini_classifiers_8cpp"/>
+      </node>
+      <node id="3">
         <label>src/data/HashData.cpp</label>
         <link refid="_hash_data_8cpp"/>
       </node>
-      <node id="3">
+      <node id="4">
         <label>src/data/HashToModObjData.cpp</label>
         <link refid="_hash_to_mod_obj_data_8cpp"/>
       </node>
-      <node id="4">
+      <node id="5">
         <label>src/model/assets/Hashes.cpp</label>
         <link refid="_hashes_8cpp"/>
       </node>

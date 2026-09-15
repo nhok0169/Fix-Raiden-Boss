@@ -14,6 +14,8 @@
     <innerfile refid="_ini_res_edit_context_8h">IniResEditContext.h</innerfile>
     <innerfile refid="_res_group_collect_8h">ResGroupCollect.h</innerfile>
     <innerfile refid="_res_reg_collect_8h">ResRegCollect.h</innerfile>
+    <innerfile refid="_v_g_merge_group_res_builder_8h">VGMergeGroupResBuilder.h</innerfile>
+    <innerfile refid="_v_g_split_group_res_builder_8h">VGSplitGroupResBuilder.h</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

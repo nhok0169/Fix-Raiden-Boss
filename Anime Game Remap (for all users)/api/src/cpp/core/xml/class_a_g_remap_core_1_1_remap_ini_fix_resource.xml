@@ -5,6 +5,7 @@
     <basecompoundref refid="class_a_g_remap_core_1_1_ini_fix_resource" prot="public" virt="non-virtual">AGRemapCore::IniFixResource</basecompoundref>
     <basecompoundref refid="class_a_g_remap_core_1_1_remap_ini_resource_mixin" prot="public" virt="non-virtual">AGRemapCore::RemapIniResourceMixin</basecompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_remap_blend_resource" prot="public" virt="non-virtual">AGRemapCore::RemapBlendResource</derivedcompoundref>
+    <derivedcompoundref refid="class_a_g_remap_core_1_1_remap_position_resource" prot="public" virt="non-virtual">AGRemapCore::RemapPositionResource</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_remap_tex_edit_resource" prot="public" virt="non-virtual">AGRemapCore::RemapTexEditResource</derivedcompoundref>
     <includes refid="_remap_ini_resource_8h" local="no">RemapIniResource.h</includes>
     <sectiondef kind="public-func">
@@ -25,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/iniresources/RemapIniResource.h" line="141" column="18" bodyfile="src/model/iniresources/RemapIniResource.cpp" bodystart="77" bodyend="79"/>
+        <location file="include/AGRemapCore/model/iniresources/RemapIniResource.h" line="141" column="18" bodyfile="src/model/iniresources/RemapIniResource.cpp" bodystart="78" bodyend="80"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_remap_ini_fix_resource_1a9dd483f2278d47a391bed8f6ce9650db" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>bool</type>
@@ -55,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/iniresources/RemapIniResource.h" line="148" column="18" bodyfile="src/model/iniresources/RemapIniResource.cpp" bodystart="81" bodyend="84"/>
+        <location file="include/AGRemapCore/model/iniresources/RemapIniResource.h" line="148" column="18" bodyfile="src/model/iniresources/RemapIniResource.cpp" bodystart="82" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_remap_ini_fix_resource_1a937e1e64d43384b1ee81e234f0f0a035" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -163,6 +164,12 @@ mirrors the pure-Python ``RemapIniFixResource`` class (``model/iniresources/Rema
         <link refid="class_a_g_remap_core_1_1_remap_ini_resource_mixin"/>
       </node>
       <node id="6">
+        <label>AGRemapCore::RemapPositionResource</label>
+        <link refid="class_a_g_remap_core_1_1_remap_position_resource"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
         <label>AGRemapCore::RemapTexEditResource</label>
         <link refid="class_a_g_remap_core_1_1_remap_tex_edit_resource"/>
         <childnode refid="1" relation="public-inheritance">

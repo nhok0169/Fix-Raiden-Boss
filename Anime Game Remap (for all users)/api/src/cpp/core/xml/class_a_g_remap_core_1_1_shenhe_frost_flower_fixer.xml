@@ -36,7 +36,7 @@ The fixer for a 6.1-era ShenheFrostFlower ``.ini`` file -- what
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniFixData/ShenheFrostFlower/ShenheFrostFlowerFixer.h" line="45" column="43" bodyfile="src/data/IniFixData/ShenheFrostFlower/ShenheFrostFlowerFixer.cpp" bodystart="82" bodyend="84"/>
+        <location file="include/AGRemapCore/data/IniFixData/ShenheFrostFlower/ShenheFrostFlowerFixer.h" line="45" column="43" bodyfile="src/data/IniFixData/ShenheFrostFlower/ShenheFrostFlowerFixer.cpp" bodystart="137" bodyend="139"/>
       </memberdef>
     </sectiondef>
     <briefdescription>

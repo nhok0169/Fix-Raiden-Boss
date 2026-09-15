@@ -6,6 +6,7 @@
     <includedby refid="_gamma_filter_8h" local="yes">include/AGRemapCore/model/strategies/texEditors/texFilters/GammaFilter.h</includedby>
     <includedby refid="_hue_adjust_8h" local="yes">include/AGRemapCore/model/strategies/texEditors/texFilters/HueAdjust.h</includedby>
     <includedby refid="_invert_alpha_filter_8h" local="yes">include/AGRemapCore/model/strategies/texEditors/texFilters/InvertAlphaFilter.h</includedby>
+    <includedby refid="_material_band_remap_filter_8h" local="yes">include/AGRemapCore/model/strategies/texEditors/texFilters/MaterialBandRemapFilter.h</includedby>
     <includedby refid="_pixel_filter_8h" local="yes">include/AGRemapCore/model/strategies/texEditors/texFilters/PixelFilter.h</includedby>
     <includedby refid="_transparency_adjust_filter_8h" local="yes">include/AGRemapCore/model/strategies/texEditors/texFilters/TransparencyAdjustFilter.h</includedby>
     <includedby refid="_base_tex_filter_8cpp" local="yes">src/model/strategies/texEditors/texFilters/BaseTexFilter.cpp</includedby>
@@ -15,17 +16,19 @@
         <link refid="_base_tex_filter_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="7" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="16" relation="include">
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
         </childnode>
       </node>
       <node id="2">
@@ -33,74 +36,150 @@
         <link refid="_colour_replace_filter_8h"/>
         <childnode refid="3" relation="include">
         </childnode>
-      </node>
-      <node id="4">
-        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/GammaFilter.h</label>
-        <link refid="_gamma_filter_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
         <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-      </node>
-      <node id="7">
-        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/HueAdjust.h</label>
-        <link refid="_hue_adjust_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-      </node>
-      <node id="9">
-        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/InvertAlphaFilter.h</label>
-        <link refid="_invert_alpha_filter_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="11">
-        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/PixelFilter.h</label>
-        <link refid="_pixel_filter_8h"/>
+      <node id="10">
+        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/GammaFilter.h</label>
+        <link refid="_gamma_filter_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
         <childnode refid="12" relation="include">
         </childnode>
       </node>
       <node id="13">
-        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/TransparencyAdjustFilter.h</label>
-        <link refid="_transparency_adjust_filter_8h"/>
+        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/HueAdjust.h</label>
+        <link refid="_hue_adjust_8h"/>
         <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="15" relation="include">
+      </node>
+      <node id="15">
+        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/InvertAlphaFilter.h</label>
+        <link refid="_invert_alpha_filter_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
         </childnode>
       </node>
-      <node id="14">
+      <node id="18">
+        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/MaterialBandRemapFilter.h</label>
+        <link refid="_material_band_remap_filter_8h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/PixelFilter.h</label>
+        <link refid="_pixel_filter_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>include/AGRemapCore/model/strategies/texEditors/texFilters/TransparencyAdjustFilter.h</label>
+        <link refid="_transparency_adjust_filter_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>src/data/IniFixData/Arlecchino/ArlecchinoFixer.cpp</label>
+        <link refid="_arlecchino_fixer_8cpp"/>
+      </node>
+      <node id="25">
+        <label>src/data/IniFixData/Ayaka/AyakaFixer.cpp</label>
+        <link refid="_ayaka_fixer_8cpp"/>
+      </node>
+      <node id="4">
+        <label>src/data/IniFixData/AyakaSpringbloom/AyakaSpringbloomFixer.cpp</label>
+        <link refid="_ayaka_springbloom_fixer_8cpp"/>
+      </node>
+      <node id="5">
+        <label>src/data/IniFixData/CherryHuTao/CherryHuTaoFixer.cpp</label>
+        <link refid="_cherry_hu_tao_fixer_8cpp"/>
+      </node>
+      <node id="6">
+        <label>src/data/IniFixData/DilucFlamme/DilucFlammeFixer.cpp</label>
+        <link refid="_diluc_flamme_fixer_8cpp"/>
+      </node>
+      <node id="26">
         <label>src/data/IniFixData/KeqingOpulent/KeqingOpulentFixer.cpp</label>
         <link refid="_keqing_opulent_fixer_8cpp"/>
       </node>
-      <node id="5">
+      <node id="7">
+        <label>src/data/IniFixData/Kirara/KiraraFixer.cpp</label>
+        <link refid="_kirara_fixer_8cpp"/>
+      </node>
+      <node id="8">
+        <label>src/data/IniFixData/Klee/KleeFixer.cpp</label>
+        <link refid="_klee_fixer_8cpp"/>
+      </node>
+      <node id="16">
+        <label>src/data/IniFixData/KleeBlossomingStarlight/KleeBlossomingStarlightFixer.cpp</label>
+        <link refid="_klee_blossoming_starlight_fixer_8cpp"/>
+      </node>
+      <node id="19">
+        <label>src/data/IniFixData/Yelan/YelanFixer.cpp</label>
+        <link refid="_yelan_fixer_8cpp"/>
+      </node>
+      <node id="20">
+        <label>src/data/IniFixData/YelanTranquil/YelanTranquilFixer.cpp</label>
+        <link refid="_yelan_tranquil_fixer_8cpp"/>
+      </node>
+      <node id="11">
         <label>src/model/files/TextureFile.cpp</label>
         <link refid="_texture_file_8cpp"/>
       </node>
-      <node id="16">
+      <node id="28">
         <label>src/model/strategies/texEditors/texFilters/BaseTexFilter.cpp</label>
         <link refid="_base_tex_filter_8cpp"/>
       </node>
-      <node id="3">
+      <node id="9">
         <label>src/model/strategies/texEditors/texFilters/ColourReplaceFilter.cpp</label>
         <link refid="_colour_replace_filter_8cpp"/>
       </node>
-      <node id="6">
+      <node id="12">
         <label>src/model/strategies/texEditors/texFilters/GammaFilter.cpp</label>
         <link refid="_gamma_filter_8cpp"/>
       </node>
-      <node id="8">
+      <node id="14">
         <label>src/model/strategies/texEditors/texFilters/HueAdjust.cpp</label>
         <link refid="_hue_adjust_8cpp"/>
       </node>
-      <node id="10">
+      <node id="17">
         <label>src/model/strategies/texEditors/texFilters/InvertAlphaFilter.cpp</label>
         <link refid="_invert_alpha_filter_8cpp"/>
       </node>
-      <node id="12">
+      <node id="21">
+        <label>src/model/strategies/texEditors/texFilters/MaterialBandRemapFilter.cpp</label>
+        <link refid="_material_band_remap_filter_8cpp"/>
+      </node>
+      <node id="23">
         <label>src/model/strategies/texEditors/texFilters/PixelFilter.cpp</label>
         <link refid="_pixel_filter_8cpp"/>
       </node>
-      <node id="15">
+      <node id="27">
         <label>src/model/strategies/texEditors/texFilters/TransparencyAdjustFilter.cpp</label>
         <link refid="_transparency_adjust_filter_8cpp"/>
       </node>

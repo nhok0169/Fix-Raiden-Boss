@@ -504,6 +504,7 @@ Use it through :cpp:class:`ResRegCollect`, exactly as the `blend`_ and the textu
       <member refid="class_a_g_remap_core_1_1_res_create_1a662eb13b6cf6e70206994c21e7d467ef" prot="public" virt="non-virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>GraphGroups</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_creator_create_1a0cb4eaf7e051b5394d4a36b152bcd0c5" prot="public" virt="non-virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>GraphId</name></member>
       <member refid="class_a_g_remap_core_1_1_base_res_edit_1a6c5e35cc77b84c095d3fde50fcd8a880" prot="public" virt="non-virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>graphReplaceMode</name></member>
+      <member refid="class_a_g_remap_core_1_1_tex_create_1a14519c82b0b1576640f88bd1af381609" prot="private" virt="non-virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>names_</name></member>
       <member refid="class_a_g_remap_core_1_1_base_res_edit_1a69c0063dff581aa1aa2c6b416ee52a33" prot="public" virt="virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>renameUncollectedSection</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_creator_create_1a3f2f94e65efe6ee245fdac5e0f3e350d" prot="public" virt="non-virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>ResEditConfig</name></member>
       <member refid="class_a_g_remap_core_1_1_base_res_edit_1a3cdfcf625142e71ded6329d45c576c22" prot="public" virt="non-virtual"><scope>AGRemapCore::TexCreatorCreate</scope><name>resModObj</name></member>

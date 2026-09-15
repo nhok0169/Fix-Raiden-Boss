@@ -3,7 +3,9 @@
   <compounddef id="class_a_g_remap_core_1_1_res_replace" kind="class" language="C++" prot="public">
     <compoundname>AGRemapCore::ResReplace</compoundname>
     <basecompoundref refid="class_a_g_remap_core_1_1_base_res_edit" prot="public" virt="non-virtual">AGRemapCore::BaseResEdit&lt; std::string, std::string, std::hash&lt; std::string &gt;, std::equal_to&lt; std::string &gt; &gt;</basecompoundref>
+    <derivedcompoundref refid="class_a_g_remap_core_1_1_buf_replace" prot="public" virt="non-virtual">AGRemapCore::BufReplace&lt; K, V, KeyHash, KeyEqual &gt;</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_remap_blend_replace" prot="public" virt="non-virtual">AGRemapCore::RemapBlendReplace&lt; K, V, KeyHash, KeyEqual &gt;</derivedcompoundref>
+    <derivedcompoundref refid="class_a_g_remap_core_1_1_remap_position_replace" prot="public" virt="non-virtual">AGRemapCore::RemapPositionReplace&lt; K, V, KeyHash, KeyEqual &gt;</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_tex_replace" prot="public" virt="non-virtual">AGRemapCore::TexReplace&lt; K, V, KeyHash, KeyEqual &gt;</derivedcompoundref>
     <includes refid="_res_edit_8h" local="no">ResEdit.h</includes>
     <templateparamlist>
@@ -371,8 +373,26 @@ Class that creates the necessary parts for a fixed resource by building upon the
         <link refid="class_a_g_remap_core_1_1_base_res_edit"/>
       </node>
       <node id="3">
+        <label>AGRemapCore::BufReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
+        <link refid="class_a_g_remap_core_1_1_buf_replace"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>AGRemapCore::PositionEditReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
+        <link refid="class_a_g_remap_core_1_1_position_edit_replace"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
         <label>AGRemapCore::RemapBlendReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
         <link refid="class_a_g_remap_core_1_1_remap_blend_replace"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>AGRemapCore::RemapPositionReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
+        <link refid="class_a_g_remap_core_1_1_remap_position_replace"/>
         <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
@@ -382,22 +402,22 @@ Class that creates the necessary parts for a fixed resource by building upon the
         <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="6">
+      <node id="9">
         <label>AGRemapCore::TexEditorReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
         <link refid="class_a_g_remap_core_1_1_tex_editor_replace"/>
-        <childnode refid="5" relation="public-inheritance">
+        <childnode refid="8" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="5">
+      <node id="8">
         <label>AGRemapCore::TexReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
         <link refid="class_a_g_remap_core_1_1_tex_replace"/>
         <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="4">
+      <node id="5">
         <label>AGRemapCore::VGRemapBlendReplace&lt; K, V, KeyHash, KeyEqual &gt;</label>
         <link refid="class_a_g_remap_core_1_1_v_g_remap_blend_replace"/>
-        <childnode refid="3" relation="public-inheritance">
+        <childnode refid="4" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

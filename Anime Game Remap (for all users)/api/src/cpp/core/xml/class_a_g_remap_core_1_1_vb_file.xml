@@ -305,6 +305,7 @@ Used for handling ``.vb`` (vertex buffer) files :raw-html:`&lt;br /&gt;` :raw-ht
     </collaborationgraph>
     <location file="include/AGRemapCore/model/files/VbFile.h" line="44" column="5" bodyfile="include/AGRemapCore/model/files/VbFile.h" bodystart="44" bodyend="150"/>
     <listofallmembers>
+      <member refid="class_a_g_remap_core_1_1_buf_file_1a7c915ab0ed85cd3e85087a0efe8437f3" prot="public" virt="non-virtual"><scope>AGRemapCore::VbFile</scope><name>append</name></member>
       <member refid="class_a_g_remap_core_1_1_binary_file_1a2bd5a0dea0d3721e3924febb7e916ed9" prot="public" virt="non-virtual"><scope>AGRemapCore::VbFile</scope><name>BinaryFile</name></member>
       <member refid="class_a_g_remap_core_1_1_buf_file_1aaf2af92e66c98e4c78c57642d42487ea" prot="public" virt="non-virtual"><scope>AGRemapCore::VbFile</scope><name>BufColumn</name></member>
       <member refid="class_a_g_remap_core_1_1_buf_file_1a2cf5225088541e98e4574bb6cfaeade2" prot="public" virt="non-virtual"><scope>AGRemapCore::VbFile</scope><name>BufFile</name></member>

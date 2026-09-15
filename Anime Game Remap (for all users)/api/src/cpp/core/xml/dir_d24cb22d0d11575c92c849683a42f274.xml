@@ -7,6 +7,7 @@
     <innerfile refid="_gamma_filter_8cpp">GammaFilter.cpp</innerfile>
     <innerfile refid="_hue_adjust_8cpp">HueAdjust.cpp</innerfile>
     <innerfile refid="_invert_alpha_filter_8cpp">InvertAlphaFilter.cpp</innerfile>
+    <innerfile refid="_material_band_remap_filter_8cpp">MaterialBandRemapFilter.cpp</innerfile>
     <innerfile refid="_pixel_filter_8cpp">PixelFilter.cpp</innerfile>
     <innerfile refid="_transparency_adjust_filter_8cpp">TransparencyAdjustFilter.cpp</innerfile>
     <briefdescription>

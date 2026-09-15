@@ -6,6 +6,7 @@
     <derivedcompoundref refid="class_a_g_remap_core_1_1_gamma_filter" prot="public" virt="non-virtual">AGRemapCore::GammaFilter</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_hue_adjust" prot="public" virt="non-virtual">AGRemapCore::HueAdjust</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_invert_alpha_filter" prot="public" virt="non-virtual">AGRemapCore::InvertAlphaFilter</derivedcompoundref>
+    <derivedcompoundref refid="class_a_g_remap_core_1_1_material_band_remap_filter" prot="public" virt="non-virtual">AGRemapCore::MaterialBandRemapFilter</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_pixel_filter" prot="public" virt="non-virtual">AGRemapCore::PixelFilter</derivedcompoundref>
     <derivedcompoundref refid="class_a_g_remap_core_1_1_transparency_adjust_filter" prot="public" virt="non-virtual">AGRemapCore::TransparencyAdjustFilter</derivedcompoundref>
     <includes refid="_base_tex_filter_8h" local="no">BaseTexFilter.h</includes>
@@ -63,6 +64,7 @@
         <reimplementedby refid="class_a_g_remap_core_1_1_gamma_filter_1a547ef278ee31223b3e33f60de93d63d6">transform</reimplementedby>
         <reimplementedby refid="class_a_g_remap_core_1_1_hue_adjust_1a48311d89b828991fc3740f448c555d91">transform</reimplementedby>
         <reimplementedby refid="class_a_g_remap_core_1_1_invert_alpha_filter_1ad2d5ccc17bdd3ebb56d3f3d44eda79ef">transform</reimplementedby>
+        <reimplementedby refid="class_a_g_remap_core_1_1_material_band_remap_filter_1a90ba658b7f2e6fd5f24ecc0f60925f20">transform</reimplementedby>
         <reimplementedby refid="class_a_g_remap_core_1_1_pixel_filter_1a8766c7102808f2945375f8270baf6d1a">transform</reimplementedby>
         <reimplementedby refid="class_a_g_remap_core_1_1_transparency_adjust_filter_1a011e8521f6eccc5952f26fe5a9bbc636">transform</reimplementedby>
         <param>
@@ -127,12 +129,18 @@ Base class for transforming a texture file
         </childnode>
       </node>
       <node id="6">
+        <label>AGRemapCore::MaterialBandRemapFilter</label>
+        <link refid="class_a_g_remap_core_1_1_material_band_remap_filter"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
         <label>AGRemapCore::PixelFilter</label>
         <link refid="class_a_g_remap_core_1_1_pixel_filter"/>
         <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="7">
+      <node id="8">
         <label>AGRemapCore::TransparencyAdjustFilter</label>
         <link refid="class_a_g_remap_core_1_1_transparency_adjust_filter"/>
         <childnode refid="1" relation="public-inheritance">

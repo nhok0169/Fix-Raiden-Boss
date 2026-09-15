@@ -391,6 +391,7 @@ Use it through :cpp:class:`ResRegCollect`, exactly as the blend is:
       <member refid="class_a_g_remap_core_1_1_res_replace_1aa7d8cce909c8adcc48d4dea2e42ac782" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>GraphGroups</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_replace_1a587f2be4ca64012da54de8705462e02b" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>GraphId</name></member>
       <member refid="class_a_g_remap_core_1_1_base_res_edit_1a6c5e35cc77b84c095d3fde50fcd8a880" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>graphReplaceMode</name></member>
+      <member refid="class_a_g_remap_core_1_1_tex_replace_1af7d136f4d761b6dacb4c571393ff4e2b" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>modObj</name></member>
       <member refid="class_a_g_remap_core_1_1_base_res_edit_1a69c0063dff581aa1aa2c6b416ee52a33" prot="public" virt="virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>renameUncollectedSection</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_replace_1a293bb0e6c91e32d02da63d3e8fd62969" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>ResEditConfig</name></member>
       <member refid="class_a_g_remap_core_1_1_base_res_edit_1a3cdfcf625142e71ded6329d45c576c22" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditorReplace</scope><name>resModObj</name></member>

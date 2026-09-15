@@ -20,6 +20,24 @@
       </memberdef>
     </sectiondef>
     <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_keqing_fixer_1af2fe5ad94a5f5173834968d50886d0e4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_a_g_remap_core_1_1_ini_fix_builder_1adca50bda5796b1908b419c6a25964e50" kindref="member">IniFixBuilder::Factory</ref></type>
+        <definition>static IniFixBuilder::Factory AGRemapCore::KeqingFixer::v4_0</definition>
+        <argsstring>()</argsstring>
+        <name>v4_0</name>
+        <qualifiedname>AGRemapCore::KeqingFixer::v4_0</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>embed:rst 
+The 4.0 fix -- what :cpp:func:`IniFixBuilderFuncs::keqing4_0` returns,
+and documented there
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" line="47" column="43"/>
+      </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_keqing_fixer_1abc38b7f0e65cc97397247b212fad1fa4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_a_g_remap_core_1_1_ini_fix_builder_1adca50bda5796b1908b419c6a25964e50" kindref="member">IniFixBuilder::Factory</ref></type>
         <definition>IniFixBuilder::Factory AGRemapCore::KeqingFixer::v6_1</definition>
@@ -36,7 +54,7 @@ The fixer for a 6.1-era Keqing ``.ini`` file -- what
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" line="47" column="43" bodyfile="src/data/IniFixData/Keqing/KeqingFixer.cpp" bodystart="87" bodyend="89"/>
+        <location file="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" line="56" column="43" bodyfile="src/data/IniFixData/Keqing/KeqingFixer.cpp" bodystart="128" bodyend="130"/>
       </memberdef>
     </sectiondef>
     <briefdescription>
@@ -53,9 +71,10 @@ KeqingOpulent has no geometry for, so remapping onto the skin collapses two obje
 and remapping back expands one into two
 </verbatim> </para>
     </detaileddescription>
-    <location file="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" line="35" column="5" bodyfile="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" bodystart="35" bodyend="48"/>
+    <location file="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" line="35" column="5" bodyfile="include/AGRemapCore/data/IniFixData/Keqing/KeqingFixer.h" bodystart="35" bodyend="57"/>
     <listofallmembers>
       <member refid="class_a_g_remap_core_1_1_keqing_fixer_1ac926b37e89f6b61ced8aad360f68a512" prot="public" virt="non-virtual"><scope>AGRemapCore::KeqingFixer</scope><name>KeqingFixer</name></member>
+      <member refid="class_a_g_remap_core_1_1_keqing_fixer_1af2fe5ad94a5f5173834968d50886d0e4" prot="public" virt="non-virtual"><scope>AGRemapCore::KeqingFixer</scope><name>v4_0</name></member>
       <member refid="class_a_g_remap_core_1_1_keqing_fixer_1abc38b7f0e65cc97397247b212fad1fa4" prot="public" virt="non-virtual"><scope>AGRemapCore::KeqingFixer</scope><name>v6_1</name></member>
     </listofallmembers>
   </compounddef>

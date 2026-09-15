@@ -279,6 +279,7 @@ Used for handling ``Blend.buf`` files :raw-html:`&lt;br /&gt;` :raw-html:`&lt;br
     </collaborationgraph>
     <location file="include/AGRemapCore/model/files/BlendFile.h" line="51" column="5" bodyfile="include/AGRemapCore/model/files/BlendFile.h" bodystart="51" bodyend="104"/>
     <listofallmembers>
+      <member refid="class_a_g_remap_core_1_1_buf_file_1a7c915ab0ed85cd3e85087a0efe8437f3" prot="public" virt="non-virtual"><scope>AGRemapCore::BlendFile</scope><name>append</name></member>
       <member refid="class_a_g_remap_core_1_1_binary_file_1a2bd5a0dea0d3721e3924febb7e916ed9" prot="public" virt="non-virtual"><scope>AGRemapCore::BlendFile</scope><name>BinaryFile</name></member>
       <member refid="class_a_g_remap_core_1_1_blend_file_1a0b006ae2521b373ef323141ad696710c" prot="public" virt="non-virtual"><scope>AGRemapCore::BlendFile</scope><name>BlendFile</name></member>
       <member refid="class_a_g_remap_core_1_1_buf_file_1aaf2af92e66c98e4c78c57642d42487ea" prot="public" virt="non-virtual"><scope>AGRemapCore::BlendFile</scope><name>BufColumn</name></member>

@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="132" column="25" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="132" bodyend="-1"/>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="148" column="25" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="148" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_a_g_remap_core_1_1_tex_editor_1a924e985e3883008f196986a56823ab6d" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -48,7 +48,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="133" column="18" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="133" bodyend="-1"/>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="149" column="18" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_a_g_remap_core_1_1_tex_editor_1a204209abb07be940584249574fab71ce" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool AGRemapCore::TexEditor::mipmaps_</definition>
+        <argsstring></argsstring>
+        <name>mipmaps_</name>
+        <qualifiedname>AGRemapCore::TexEditor::mipmaps_</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="150" column="18" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="150" bodyend="-1"/>
       </memberdef>
     </sectiondef>
     <sectiondef kind="public-static-func">
@@ -112,10 +126,10 @@ clamped into it :raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
       </memberdef>
     </sectiondef>
     <sectiondef kind="public-func">
-      <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a31515a5b524f3ceab3d8fc93ba2bc302" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a4698241982f565d3326c0e7a9e154644" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
         <definition>AGRemapCore::TexEditor::TexEditor</definition>
-        <argsstring>(std::vector&lt; Filter &gt; filters={}, bool compress=true)</argsstring>
+        <argsstring>(std::vector&lt; Filter &gt; filters={}, bool compress=true, bool mipmaps=false)</argsstring>
         <name>TexEditor</name>
         <qualifiedname>AGRemapCore::TexEditor::TexEditor</qualifiedname>
         <param>
@@ -127,6 +141,11 @@ clamped into it :raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
           <type>bool</type>
           <declname>compress</declname>
           <defval>true</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>mipmaps</declname>
+          <defval>false</defval>
         </param>
         <briefdescription>
 <para>Constructs a new texture editor. </para>
@@ -171,7 +190,7 @@ Whether the edited texture is written back **compressed** -- see #getCompress.
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="84" column="31" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="52" bodyend="54"/>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="84" column="31" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="58" bodyend="60"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a92667b0ea7046dd8a709c776f21c5f2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -190,7 +209,7 @@ Whether the edited texture is written back **compressed** -- see #getCompress.
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="89" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="56" bodyend="58"/>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="89" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="62" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a49856d547f66ef308c766ec8f8de9631" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -240,6 +259,45 @@ encoded BCn at all :raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
         </inbodydescription>
         <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="114" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="50" bodyend="50"/>
       </memberdef>
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a97aeb90b0b40ec3ae640832df6bc4284" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool AGRemapCore::TexEditor::getMipmaps</definition>
+        <argsstring>() const</argsstring>
+        <name>getMipmaps</name>
+        <qualifiedname>AGRemapCore::TexEditor::getMipmaps</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>embed:rst 
+Whether #fix writes the edited texture back with its full mip chain -- handed straight
+to :cpp:func:`TextureFile::save`, which says why a texture wants one :raw-html:`&lt;br /&gt;` :raw-html:`&lt;br /&gt;`
+
+**Default**: ``false``
+</verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="125" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a9fbceaa42a49d58e5b7319480ed1566d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AGRemapCore::TexEditor::setMipmaps</definition>
+        <argsstring>(bool mipmaps)</argsstring>
+        <name>setMipmaps</name>
+        <qualifiedname>AGRemapCore::TexEditor::setMipmaps</qualifiedname>
+        <param>
+          <type>bool</type>
+          <declname>mipmaps</declname>
+        </param>
+        <briefdescription>
+<para>Sets <ref refid="class_a_g_remap_core_1_1_tex_editor_1a97aeb90b0b40ec3ae640832df6bc4284" kindref="member">getMipmaps</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="130" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="56" bodyend="56"/>
+      </memberdef>
       <memberdef kind="function" id="class_a_g_remap_core_1_1_tex_editor_1a8a8e497c09c7c04aa779b01613d5909e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
         <definition>void AGRemapCore::TexEditor::fix</definition>
@@ -286,7 +344,7 @@ No-op if #getFilters is empty, or if &apos;texFile&apos; does not exist on disk.
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="129" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="60" bodyend="76"/>
+        <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="145" column="18" bodyfile="src/model/strategies/texEditors/TexEditor.cpp" bodystart="66" bodyend="82"/>
       </memberdef>
     </sectiondef>
     <briefdescription>
@@ -322,7 +380,7 @@ Class for editing a texture file by running a fixed sequence of filters over it
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="35" column="5" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="35" bodyend="134"/>
+    <location file="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" line="35" column="5" bodyfile="include/AGRemapCore/model/strategies/texEditors/TexEditor.h" bodystart="35" bodyend="151"/>
     <listofallmembers>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a924e985e3883008f196986a56823ab6d" prot="private" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>compress_</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a81755987b8dddf6b962bc89ede342f01" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>Filter</name></member>
@@ -330,10 +388,13 @@ Class for editing a texture file by running a fixed sequence of filters over it
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a8a8e497c09c7c04aa779b01613d5909e" prot="public" virt="virtual"><scope>AGRemapCore::TexEditor</scope><name>fix</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a49856d547f66ef308c766ec8f8de9631" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>getCompress</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1ad93ce33164e951e75618af33e66b44a4" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>getFilters</name></member>
+      <member refid="class_a_g_remap_core_1_1_tex_editor_1a97aeb90b0b40ec3ae640832df6bc4284" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>getMipmaps</name></member>
+      <member refid="class_a_g_remap_core_1_1_tex_editor_1a204209abb07be940584249574fab71ce" prot="private" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>mipmaps_</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a6f04ae0b978965a15542872074f575a2" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>setCompress</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a92667b0ea7046dd8a709c776f21c5f2c" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>setFilters</name></member>
+      <member refid="class_a_g_remap_core_1_1_tex_editor_1a9fbceaa42a49d58e5b7319480ed1566d" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>setMipmaps</name></member>
       <member refid="class_a_g_remap_core_1_1_tex_editor_1a436e2479eb1527e22a9171b9c364be90" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>setTransparency</name></member>
-      <member refid="class_a_g_remap_core_1_1_tex_editor_1a31515a5b524f3ceab3d8fc93ba2bc302" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>TexEditor</name></member>
+      <member refid="class_a_g_remap_core_1_1_tex_editor_1a4698241982f565d3326c0e7a9e154644" prot="public" virt="non-virtual"><scope>AGRemapCore::TexEditor</scope><name>TexEditor</name></member>
       <member refid="class_a_g_remap_core_1_1_base_tex_editor_1aacc8b86353427bd8ef23074a4745ba9f" prot="public" virt="virtual"><scope>AGRemapCore::TexEditor</scope><name>~BaseTexEditor</name></member>
     </listofallmembers>
   </compounddef>
